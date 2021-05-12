@@ -1,0 +1,25 @@
+complete_from_path = "true"
+prompt = "echo $(starship prompt)"
+startup = ["""
+	alias less = less -R
+	alias xcopy = xsel --clipboard --input
+	alias xpaste = xsel --clipboard --output
+	alias l = exa
+	alias l1 = exa -1
+	alias la = exa -a
+	alias ll = exa -l -h -@ -m --time-style=iso
+	alias lla = exa -lh@ma --time-style=iso
+	alias lal = exa -lh@ma --time-style=iso
+
+	alias ps = ^ps
+	alias cal = ^cal
+
+	alias ..3 = ../../..
+	alias ..4 = ../../../..
+	fortune | cowsay -f tux
+"""]
+table_mode = "compact"
+
+[line_editor]
+completion_type = "list"
+# echo $(STARSHIP_SHELL= starship prompt)

@@ -1,0 +1,67 @@
+window:
+  dimensions:
+    columns: 80
+    lines: 24
+  decorations:
+    full
+  title: Alacritty
+
+cursor:
+  style:
+    shape:
+      Block
+    blinking:
+      On
+    blink_interval: 1300
+
+# back-ground
+background_opacity: 0.7
+
+font:
+  normal:
+    family: 'UbuntuMono Nerd Font'
+    style: Regular
+
+  bold:
+    family: 'UbuntuMono Nerd Font'
+    style: Bold
+  
+  italic:
+    family: 'UbuntuMono Nerd Font'
+    style: Italic
+  
+  bold_italic:
+    family: 'UbuntuMono Nerd Font'
+    style: Bold Italic
+
+  size: 9
+
+# Gnome Dark
+colors:
+  primary:
+    foreground: '#d0cfcc'
+    background: '#380C2A'
+    bright_foreground: '#ffffff'
+
+  normal:
+    black:   '#171421'
+    red:     '#c01c28'
+    green:   '#26a269'
+    yellow:  '#a2734c'
+    # blue:    '#12488b'
+    magenta: '#a347ba'
+    cyan:    '#2aa1b3'
+    # white:   '#d0cfcc'
+
+  # bright:
+    # black:   '#5e5c64'
+    # red:     '#f66151'
+    # green:   '#33d17a'
+    # yellow:  '#e9ad0c'
+    # blue:    '#2a7bde'
+    # magenta: '#c061cb'
+    # cyan:    '#33c7de'
+    # white:   '#ffffff'
+
+key_bindings:
+  - { key: F11, command: { program: "wmctrl", args: ["-r", ":ACTIVE:", "-b", "toggle,fullscreen" ]}}
