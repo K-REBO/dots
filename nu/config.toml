@@ -4,7 +4,9 @@ startup = ["""
 	alias less = less -R
 	alias xcopy = xsel --clipboard --input
 	alias xpaste = xsel --clipboard --output
-	alias l = exa
+
+	alias l = ls
+	alias ls = exa
 	alias l1 = exa -1
 	alias la = exa -a
 	alias ll = exa -l -h -@ -m --time-style=iso
