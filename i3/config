@@ -40,9 +40,10 @@ font pango:monospace 8
 
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-exec_always  feh --bg-scale ~/.config/i3/wallpaper/roofgirl.jpg
+exec_always  feh --bg-scale ~/.config/i3/wallpaper/gentoo.png
 exec_always compton -CGfF  --vsync opengl
 exec_always ibus restart
+exec_always tlp start
 
 
 
