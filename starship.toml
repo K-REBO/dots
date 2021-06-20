@@ -20,3 +20,8 @@ discharging_symbol = "💀"
 
 [cmd_duration]
 disabled = true
+
+
+[deno]
+format = "via [🦕 $version](green bold) "
+

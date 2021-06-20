@@ -10,10 +10,16 @@ alias la="exa -a"
 alias ll="exa -l -h -@ -m --time-style=iso"
 alias lla="exa -lh@ma --time-style=iso"
 alias lal="exa -lh@ma --time-style=iso"
+alias z="zoxide"
+alias dust="dust -r"
+alias br="broot"
 
-alias .2="cd ../.."
-alias .3="cd ../../.."
-alias .4="cd ../../../.."
+alias ..2="cd ../.."
+alias ..3="cd ../../.."
+alias ..4="cd ../../../.."
+alias ..5="cd ../../../../.."
 
+
+zoxide init fish --hook prompt | source
 fortune | cowsay
 starship init fish | source
