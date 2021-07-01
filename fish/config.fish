@@ -20,6 +20,12 @@ alias ..4="cd ../../../.."
 alias ..5="cd ../../../../.."
 
 
-zoxide init fish --hook prompt | source
+zoxide init fish  | source
+
+# This alias needs to after zoxide inited
+alias cd="z"
+
+
+mcfly init fish | source
 fortune | cowsay
 starship init fish | source
