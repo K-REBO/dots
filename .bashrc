@@ -40,6 +40,5 @@ export XAUTHORITY=~/.Xauthority
 
 export PATH="$HOME/.deno/bin:$PATH"
 
-# source <(silver init)
 
 fish

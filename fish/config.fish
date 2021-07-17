@@ -21,11 +21,6 @@ alias ..5="cd ../../../../.."
 
 
 zoxide init fish  | source
-
-# This alias needs to after zoxide inited
-alias cd="z"
-
-
 mcfly init fish | source
 fortune | cowsay
 starship init fish | source
