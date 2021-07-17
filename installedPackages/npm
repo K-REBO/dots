@@ -1,0 +1,8 @@
+/usr/lib
+├── @slidev/cli@0.20.4
+├── gitmoji-cli@4.1.0
+├── netlify-cli@3.21.9
+├── npm@7.19.1
+├── qrcode-terminal@0.12.0
+└── windicss@3.0.9
+
