@@ -22,5 +22,6 @@ alias ..5="cd ../../../../.."
 
 zoxide init fish  | source
 mcfly init fish | source
-fortune | cowsay
+fortune | cowsay -f tux
+
 starship init fish | source

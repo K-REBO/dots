@@ -1,5 +1,6 @@
 app-admin/doas
 app-admin/sysklogd
+app-editors/emacs
 app-editors/vim
 app-editors/vscode
 app-emulation/docker
@@ -22,7 +23,6 @@ dev-qt/qtgraphicaleffects
 dev-qt/qtquickcontrols
 dev-qt/qtquickcontrols2
 dev-util/github-cli
-dev-util/vulkan-tools
 dev-vcs/git
 games-misc/cowsay
 games-misc/fortune-mod
@@ -34,11 +34,13 @@ media-fonts/noto-emoji
 media-fonts/source-pro
 media-gfx/blender
 media-gfx/feh
+media-gfx/flameshot
+media-gfx/imagemagick
 media-gfx/ueberzug
 media-libs/fontconfig
-media-sound/ncmpcpp
 media-video/mpv
 media-video/vlc
+net-analyzer/wireshark
 net-libs/libpcap
 net-libs/nodejs
 net-misc/dhcpcd
@@ -49,10 +51,8 @@ net-wireless/iw
 net-wireless/wireless-tools
 sys-apps/progress
 sys-boot/grub:2
-sys-boot/woeusb
 sys-devel/lld
 sys-fs/exfatprogs
-sys-fs/fuse:0
 sys-kernel/genkernel
 sys-kernel/gentoo-sources
 sys-kernel/linux-firmware
