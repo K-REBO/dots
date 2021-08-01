@@ -20,6 +20,8 @@ alias ..4="cd ../../../.."
 alias ..5="cd ../../../../.."
 
 
+source (vr completions fish | psub)
+
 zoxide init fish  | source
 mcfly init fish | source
 fortune | cowsay -f tux

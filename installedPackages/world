@@ -58,6 +58,7 @@ sys-kernel/gentoo-sources
 sys-kernel/linux-firmware
 www-client/firefox-bin
 www-client/links
+x11-apps/xeyes
 x11-apps/xhost
 x11-apps/xrandr
 x11-base/xorg-server

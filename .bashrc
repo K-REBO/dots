@@ -40,6 +40,10 @@ export XAUTHORITY=~/.Xauthority
 
 export PATH="$HOME/.deno/bin:$PATH"
 
+
+
+
+
 ~/.config/dots/installedPackages/autoAdd.sh
 
 fish

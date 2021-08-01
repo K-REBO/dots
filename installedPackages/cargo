@@ -21,7 +21,6 @@ clippy-driver
 csview
 deno
 dust
-evcxr
 exa
 fd
 ferris-fetch
