@@ -1,0 +1,16 @@
+[user]
+	email = holmes10031208@gmail.com
+	name = Bido Nakamura
+[pager]
+	diff = delta
+
+[delta]
+	line-numbers = true
+	side-by-side = true
+    plus-style = "syntax #012800"
+    minus-style = "syntax #340001"
+    syntax-theme = Monokai Extended
+    navigate = true
+
+[interactive]
+	diffFilter = delta --color-only

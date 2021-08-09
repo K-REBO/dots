@@ -24,6 +24,7 @@ source (vr completions fish | psub)
 
 zoxide init fish  | source
 mcfly init fish | source
-fortune | cowsay -f tux
+fortune | cowsay -f ghostbusters
+figlet  Ghost Busters!
 
 starship init fish | source

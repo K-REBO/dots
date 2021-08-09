@@ -31,6 +31,7 @@ hexyl
 hyperfine
 just
 kondo
+lolcat
 makers
 matrix
 mcfly
@@ -42,6 +43,7 @@ pipes-rs
 procs
 pueue
 pueued
+racer
 rls
 rustc
 rustdoc
@@ -62,6 +64,7 @@ wasm-bindgen
 wasm-bindgen-test-runner
 wasm-pack
 wasm-pack.stamp
+wasm-snip
 xcp
 xh
 xsv
