@@ -19,11 +19,13 @@ cargo-udeps
 cargo-upgrade
 clippy-driver
 csview
+delta
 deno
 dust
 exa
 fd
 ferris-fetch
+gitui
 gix
 gixp
 globe
