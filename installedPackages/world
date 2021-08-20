@@ -30,12 +30,12 @@ games-misc/fortune-mod
 games-misc/nyancat
 mail-client/thunderbird-bin
 media-fonts/ja-ipafonts
-media-fonts/noto-cjk
 media-fonts/noto-emoji
 media-fonts/source-pro
 media-gfx/blender
 media-gfx/feh
 media-gfx/flameshot
+media-gfx/gimp
 media-gfx/imagemagick
 media-gfx/ueberzug
 media-libs/fontconfig
@@ -44,6 +44,7 @@ media-video/vlc
 net-analyzer/wireshark
 net-libs/libpcap
 net-libs/nodejs
+net-misc/aria2
 net-misc/dhcpcd
 net-misc/netifrc
 net-misc/networkmanager

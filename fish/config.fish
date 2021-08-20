@@ -13,6 +13,10 @@ alias lal="exa -lh@ma --time-style=iso"
 alias z="zoxide"
 alias dust="dust -r"
 alias br="broot"
+alias pl="please"
+alias pe="pleaseedit"
+
+
 
 alias ..2="cd ../.."
 alias ..3="cd ../../.."
