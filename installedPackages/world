@@ -24,6 +24,7 @@ dev-qt/qtgraphicaleffects
 dev-qt/qtquickcontrols
 dev-qt/qtquickcontrols2
 dev-util/github-cli
+dev-util/pkgconf
 dev-vcs/git
 games-misc/cowsay
 games-misc/fortune-mod
