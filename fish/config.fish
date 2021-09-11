@@ -13,9 +13,6 @@ alias lal="exa -lh@ma --time-style=iso"
 alias z="zoxide"
 alias dust="dust -r"
 alias br="broot"
-alias pl="please"
-alias pe="pleaseedit"
-
 
 
 alias ..2="cd ../.."
@@ -24,10 +21,14 @@ alias ..4="cd ../../../.."
 alias ..5="cd ../../../../.."
 
 
-source (vr completions fish | psub)
 
 zoxide init fish  | source
 mcfly init fish | source
+gh completion -s fish | source
+
+
+
+
 fortune | cowsay -f ghostbusters
 figlet  Ghost Busters!
 

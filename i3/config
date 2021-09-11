@@ -11,9 +11,15 @@
 
 
 
+bindsym $mod+i exec wmfocus
 bindsym $mod+c exec code
 bindsym $mod+p exec flameshot gui
 bindsym $mod+g exec rofi -modi file-browser-extended -show file-browser-extended -file-browser-cmd "exo-open" -file-browser-dir "~"
+
+
+#smart_gaps on
+#gaps inner 5
+
 
 
 # class                 border  bground text    indicator child_border
@@ -80,7 +86,7 @@ bindsym $mod+Return exec alacritty
 # kill focused window
 bindsym $mod+Shift+q kill
 
-# start dmenu (a program launcher)
+# start rofi (a program launcher)
 #
 bindsym $mod+d exec rofi -font "UbuntuMono 17" -show combi -icon-theme "Papirus" -show-icons -theme solarized
 

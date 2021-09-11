@@ -2,7 +2,8 @@
 # VERSION: 3.0
 SETUVAR __fish_initialized:3100
 SETUVAR _fisher_jorgebucaran_2F_fisher_files:/home/bido/\x2econfig/fish/functions/fisher\x2efish\x1e/home/bido/\x2econfig/fish/completions/fisher\x2efish
-SETUVAR _fisher_plugins:jorgebucaran/fisher
+SETUVAR _fisher_laughedelic_2F_fish__logo_files:/home/bido/\x2econfig/fish/functions/fish_logo\x2efish\x1e/home/bido/\x2econfig/fish/completions/fish_logo\x2efish
+SETUVAR _fisher_plugins:jorgebucaran/fisher\x1elaughedelic/fish_logo
 SETUVAR fish_color_autosuggestion:969896
 SETUVAR fish_color_cancel:\x2dr
 SETUVAR fish_color_command:c397d8
