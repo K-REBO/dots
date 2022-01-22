@@ -12,7 +12,7 @@
 
 
 bindsym $mod+i exec wmfocus --textcolorcurrent lightseagreen
-bindsym $mod+c exec emacs
+bindsym $mod+c exec emacs 
 bindsym $mod+p exec flameshot gui
 bindsym $mod+g exec rofi -modi file-browser-extended -show file-browser-extended -file-browser-cmd "exo-open" -file-browser-dir "~"
 
