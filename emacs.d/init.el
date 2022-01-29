@@ -52,25 +52,21 @@
     ;; initialize leaf-keywords.el
     (leaf-keywords-init)))
 
-;; ここにいっぱい設定を書く
 (provide 'init)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;                                                                                       ;;;;
-;;;;;   888     888                           .d8888b.                  .d888d8b            ;;;;
-;;;;;   888     888                          d88P  Y88b                d88P" Y8P            ;;;;
-;;;;;   888     888                          888    888                888                  ;;;;
-;;;;;   888     888.d8888b  .d88b. 888d888   888        .d88b. 88888b. 888888888 .d88b.     ;;;;
-;;;;;   888     88888K     d8P  Y8b888P"     888       d88""88b888 "88b888   888d88P"88b    ;;;;
-;;;;;   888     888"Y8888b.88888888888       888    888888  888888  888888   888888  888    ;;;;
-;;;;;   Y88b. .d88P     X88Y8b.    888       Y88b  d88PY88..88P888  888888   888Y88b 888    ;;;;
-;;;;;    "Y88888P"  88888P' "Y8888 888        "Y8888P"  "Y88P" 888  888888   888 "Y88888    ;;;;
-;;;;;                                                                                888    ;;;;
-;;;;;                                                                           Y8b d88P    ;;;;
-;;;;;                                                                            "Y88P"     ;;;;
-;;;;;                                                                                       ;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;                                                                                       ;;;
+;;;;   888     888                           .d8888b.                  .d888d8b            ;;;
+;;;;   888     888                          d88P  Y88b                d88P" Y8P            ;;;
+;;;;   888     888                          888    888                888                  ;;;
+;;;;   888     888.d8888b  .d88b. 888d888   888        .d88b. 88888b. 888888888 .d88b.     ;;;
+;;;;   888     88888K     d8P  Y8b888P"     888       d88""88b888 "88b888   888d88P"88b    ;;;
+;;;;   888     888"Y8888b.88888888888       888    888888  888888  888888   888888  888    ;;;
+;;;;   Y88b. .d88P     X88Y8b.    888       Y88b  d88PY88..88P888  888888   888Y88b 888    ;;;
+;;;;    "Y88888P"  88888P' "Y8888 888        "Y8888P"  "Y88P" 888  888888   888 "Y88888    ;;;
+;;;;                                                                                888    ;;;
+;;;;                                                                           Y8b d88P    ;;;
+;;;;                                                                            "Y88P"     ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
@@ -95,7 +91,7 @@
 
 
 ;; Alpha channel
-(add-to-list 'default-frame-alist '(alpha . (1.00 1.00)))
+;;(add-to-list 'default-frame-alist '(alpha . (1.00 1.00)))
 
 
 ;;Disable Scroll Bar
@@ -111,7 +107,6 @@
 ;; Rainbow Delimiters
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-
 
 ;;(setq nyan-animate-nyancat t)
 
@@ -140,6 +135,9 @@
 (nyan-mode t)
 
 
+;;SKK
+(global-set-key (kbd "C-x C-j") 'skk-mode)
+(defvar skk-henkan-strict-okuri-precedence)
 
 
 
@@ -154,11 +152,11 @@
 
 ;;(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 
-(leaf electric
-  :doc "window maker and Command loop for `electric' modes"
-  :tag "builtin"
-  :added "2020-08-27"
-  :init (electric-pair-mode 1))
+;;(leaf electric
+;;  :doc "window maker and Command loop for `electric' modes"
+;;  :tag "builtin"
+;;  :added "2020-08-27"
+;;  :init (electric-pair-mode 1))
 
 (leaf ivy
   :doc "Incremental Vertical completYon"
@@ -286,7 +284,7 @@
      ("melpa" . "https://melpa.org/packages/")
      ("org" . "https://orgmode.org/elpa/")))
  '(package-selected-packages
-   '(ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
+   '(yaml-mode ddskk which-key rainbow-mode ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
  '(prescient-aggressive-file-save t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
