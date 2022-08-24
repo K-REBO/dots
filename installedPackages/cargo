@@ -33,12 +33,14 @@ lolcat
 makers
 mcfly
 miniserve
+nu
 onefetch
 pastel
 pipes-rs
 procs
 pueue
 pueued
+rg
 rls
 rustc
 rustdoc
@@ -46,6 +48,7 @@ rustfmt
 rust-gdb
 rust-lldb
 rustup
+savage
 sccache
 starship
 tldr

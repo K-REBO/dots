@@ -68,13 +68,16 @@
 ;;;;                                                                            "Y88P"     ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; server
+(server-start)
 
-
-
-
-
-
-
+;;;;   _                _        _     _ _
+;;;;  | |    ___   ___ | | _____| |   (_) | _____
+;;;;  | |   / _ \ / _ \| |/ / __| |   | | |/ / _ \
+;;;;  | |__| (_) | (_) |   <\__ \ |___| |   <  __/
+;;;;  |_____\___/ \___/|_|\_\___/_____|_|_|\_\___|
+                                            
+ 
 ;; Theme
 (require 'doom-themes)
 (if (display-graphic-p)
@@ -82,17 +85,32 @@
 
 ;; Fonts
 (setq default-frame-alist
-      '((font . "Source Code Pro 10")))
-
+    '((font . "Source Code Pro 12")))
+;;日本語フォント
+(if (display-graphic-p)
 (set-fontset-font (frame-parameter nil 'font)
                   'japanese-jisx0208
-                  (font-spec :family "IPA P明朝" :size 14))
+                  (font-spec :family "IPA P明朝" :size 14)))
 
+;;行の折り返し
+(set-default 'truncate-lines t)
+
+;; 自動括弧閉じ
+(smartparens-mode t)
+
+;;line number
+;;(global-linum-mode t)
+;;(set-face-foreground 'linum "dimgray")
 
 
 ;; Alpha channel
 ;;(add-to-list 'default-frame-alist '(alpha . (1.00 1.00)))
 
+
+;; nobackup such as *~
+(setq make-backup-files nil)
+;;; nobackup such as #*#
+(setq auto-save-default nil)
 
 ;;Disable Scroll Bar
 (scroll-bar-mode -1)
@@ -127,6 +145,7 @@
 (setq dashboard-set-heading-icons t)
 ;;Dashboard render
 (dashboard-setup-startup-hook)
+
 ;; Beacon
 (beacon-mode 1)
 
@@ -134,19 +153,71 @@
 ;; nyan-mode
 (nyan-mode t)
 
-
-;;SKK
-(global-set-key (kbd "C-x C-j") 'skk-mode)
-(defvar skk-henkan-strict-okuri-precedence)
+;; indent with TABs(not SPACES due to TAB is user-friendly so that those who read code can change indent-width thierself and it is good for reduce disk-space)
+(setq-default indent-tabs-mode t)
 
 
+;; (electric-pair-mode t)
+
+;;comment color
+;;(set-face-foreground 'font-lock-comment-face "#3ea250") ;;comment-color from VS
+;;(set-face-foreground 'font-lock-comment-face "#5a8b7c") ;;comment-color VS + dracula
+
+;;  _                _        _     _ _          _____ _   _ ____
+;; | |    ___   ___ | | _____| |   (_) | _____  | ____| \ | |  _ \
+;; | |   / _ \ / _ \| |/ / __| |   | | |/ / _ \ |  _| |  \| | | | |
+;; | |__| (_) | (_) |   <\__ \ |___| |   <  __/ | |___| |\  | |_| |
+;; |_____\___/ \___/|_|\_\___/_____|_|_|\_\___| |_____|_| \_|____/
+                                                                
+
+;; for cua-mode
+(cua-selection-mode t)
 
 
+(leaf markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode))
+
+(use-package lsp-mode
+  :custom ((lsp-inhibit-message t)
+         (lsp-message-project-root-warning t)
+         (create-lockfiles nil))
+  :hook   (prog-major-mode . lsp-prog-major-mode-enable))
+
+(use-package lsp-ui
+  :after lsp-mode
+  :custom (scroll-margin 0)
+  :hook   (lsp-mode . lsp-ui-mode))
+
+(use-package company-capf
+  :after (lsp-mode company yasnippet)
+  :defines company-backends
+  :functions company-backend-with-yas
+  :init (cl-pushnew (company-backend-with-yas 'company-capf) company-backends))
 
 
+;; Typescript
+(add-hook 'typescript-mode-hook #'lsp)
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode))
 
 
+;; Javascript
+(add-to-list 'auto-mode-alist '("\\.js\\;" . js2-mode))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Rust
+(add-to-list 'exec-path (expand-file-name "~/.cargo/rust-analyzer/rust-analyzer"));;the path of rust-analyzer
+(add-to-list 'exec-path (expand-file-name "~/.cargo/bin"))
+
+(use-package rust-mode
+  :ensure t
+  :custom rust-format-on-save t)
+
+
+(use-package cargo
+  :ensure t
+  :hook (rust-mode . cargo-minor-mode))
 
 ;; Which key
 
@@ -276,6 +347,7 @@
 ")
  '(custom-safe-themes
    '("234dbb732ef054b109a9e5ee5b499632c63cc24f7c2383a849815dacc1727cb6" default))
+ '(default-input-method "japanese-skk")
  '(ivy-initial-inputs-alist nil)
  '(ivy-prescient-retain-classic-highlighting t)
  '(ivy-use-selectable-prompt t)
@@ -284,7 +356,7 @@
      ("melpa" . "https://melpa.org/packages/")
      ("org" . "https://orgmode.org/elpa/")))
  '(package-selected-packages
-   '(yaml-mode ddskk which-key rainbow-mode ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
+   '(tide smartparens js2-mode typescript-mode centaur-tabs use-package lsp-ui lsp-mode cargo lispy markdown-mode yaml-mode ddskk which-key rainbow-mode ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
  '(prescient-aggressive-file-save t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

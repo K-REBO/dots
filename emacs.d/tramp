@@ -1,0 +1,33 @@
+;; -*- emacs-lisp -*- <22/05/19 23:09:38 /home/bido/.emacs.d/tramp>
+;; Tramp connection history.  Don't change this file.
+;; Run `M-x tramp-cleanup-all-connections' instead.
+
+(((tramp-file-name "sudoedit" "root" nil "oberk" nil nil nil)
+  ("case-insensitive" nil))
+ ((tramp-file-name "ssh" "bido" nil "192.168.1.14" nil nil nil)
+  ("uname" "Linux 5.4.0-58-generic")
+  ("locale" "LC_ALL=en_US.utf8")
+  ("test" "test")
+  ("remote-path"
+   ("/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin"))
+  ("pipe-buf" 4096)
+  ("remote-shell" "/bin/sh")
+  ("~" "/home/bido")
+  ("file-exists" "test -e")
+  ("case-insensitive" nil)
+  ("perl-file-spec" t)
+  ("perl-cwd-realpath" t)
+  ("perl" "\\perl")
+  ("readlink" "\\readlink")
+  ("stat" "env QUOTING_STYLE=locale \\stat")
+  ("id" "/bin/id")
+  ("gid-integer" 1000)
+  ("gid-string" "bido")
+  ("ls" "/bin/ls --color=never")
+  ("ls--quoting-style=literal --show-control-chars" "--quoting-style=literal --show-control-chars")
+  ("ls--dired" "--dired")
+  ("df-blocksize" 1)
+  ("df" "\\df --block-size=1 --output=size,used,avail")
+  ("bzr" nil)
+  ("git" "\\git")
+  ("hg" nil)))

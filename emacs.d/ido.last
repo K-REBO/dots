@@ -1,0 +1,40 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/home/bido/projects/myPod/" . "playerGUI/")
+ ("/home/bido/projects/" . "myPod/")
+ ("/home/bido/" . "projects/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/home/bido/projects/myPod/playerGUI/"
+ "/home/bido/sandbox/eframe_template/src/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "player.html"
+ "main.rs"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/home/bido/projects/myPod/playerGUI/" (25118 57285 147873 933000) "./" "src/" "README.md" "player.html" "Cargo.toml" "../")
+
+ ("/home/bido/projects/myPod/" (25117 33244 357636 692000) "utils/" "playerGUI/" "./" "justfile" ".git/" "manage/" "setup/" "driver/" "README.md" "../")
+
+ ("/home/bido/projects/" (25116 52975 216798 853000) "oberk.dev/" "./" "myPod/" "../")
+
+ ("/home/bido/" (25118 50708 597295 736000) ".xsmGjt1En" ".bash_profile" ".rustup/" ".bashrc" "Desktop/" ".mozilla/" ".wget-hsts" "./" ".bashrc~" ".xprofile" ".vscode/" ".gambit_history" ".pki/" ".Xauthority" ".profile" ".gitmoji/" ".xsel.log" ".bak/" ".skk-record" ".cache/" ".ssh/" ".bash_logout" "sandbox/" ".viminfo" ".local/" ".xinitrc" "Downloads/" "documents/" ".lyrics/" ".deno/" "playground/" ".lesshst" ".mpd/" ".emacs.d/" ".vimrc" ".thunderbird/" ".cargo/" "downloads/" ".maildir/" ".npm/" ".config/" ".gitconfig" ".xsmYTLCUl" ".dbus/" "exercises/" ".w3m/" ".mcfly/" ".roswell/" "projects/" ".xsm83ytUg" ".bash_history" ".fehbg" "../" ".skk-jisyo.BAK" ".skk-jisyo")
+
+ ("/home/bido/sandbox/" (25118 52178 882560 958000) "./" "bookReport.txt" "scripts/" "pi/" "remindable_line.sh" "t.mp4.zst" "eframe_template/" "bevy_chess/" "../")
+
+ ("/home/bido/sandbox/eframe_template/" (25118 54276 961047 864000) ".github/" "./" "src/" ".gitignore" ".git/" "README.md" "Cargo.toml" "target/" "Cargo.lock" "../")
+
+ ("/home/bido/sandbox/eframe_template/src/" (25118 54172 388288 368000) "./" "main.rs" ".#lib.rs" "../")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

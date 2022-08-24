@@ -15,10 +15,11 @@ alias dust="dust -r"
 alias br="broot"
 
 
-alias ..2="cd ../.."
-alias ..3="cd ../../.."
-alias ..4="cd ../../../.."
-alias ..5="cd ../../../../.."
+
+alias ...="cd ../.."
+alias ....="cd ../../.."
+alias .....="cd ../../../.."
+alias .......="cd ../../../../.."
 
 
 
@@ -27,6 +28,7 @@ mcfly init fish | source
 gh completion -s fish | source
 
 
+# export RUSTC_WRAPPER=(which sccache)
 
 
 fortune | cowsay -f ghostbusters
