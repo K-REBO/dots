@@ -26,6 +26,7 @@ exa
 fd
 ferris-fetch
 hexyl
+hx
 hyperfine
 just
 kondo
@@ -42,10 +43,12 @@ pueue
 pueued
 rg
 rls
+runtime
 rustc
 rustdoc
 rustfmt
 rust-gdb
+rust-gdbgui
 rust-lldb
 rustup
 savage

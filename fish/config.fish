@@ -22,6 +22,9 @@ alias .....="cd ../../../.."
 alias .......="cd ../../../../.."
 
 
+# https://github.com/soimort/translate-shell
+alias trans "docker run -it soimort/translate-shell -shell"
+
 
 zoxide init fish  | source
 mcfly init fish | source
@@ -35,3 +38,9 @@ fortune | cowsay -f ghostbusters
 figlet  Ghost Busters!
 
 starship init fish | source
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+#eval /home/bido/.anaconda3/bin/conda "shell.fish" "hook" $argv | source
+# <<< conda initialize <<<
+
