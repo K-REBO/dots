@@ -49,7 +49,8 @@ font pango:monospace 8
 
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
 exec_always  feh --bg-scale ~/.config/i3/wallpaper/roofgirl.jpg
-exec_always compton -CGfF  --vsync opengl
+#exec_always picom -CGfF  --vsync opengl
+exec_always picom
 exec_always ibus restart
 exec_always tlp start
 
@@ -64,7 +65,8 @@ exec_always tlp start
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+# exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
@@ -81,7 +83,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec /home/bido/.cargo/bin/alacritty
 
 # kill focused window
 bindsym $mod+Shift+q kill
