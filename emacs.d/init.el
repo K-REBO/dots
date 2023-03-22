@@ -79,6 +79,7 @@
                                             
  
 ;; Theme
+
 (require 'doom-themes)
 (if (display-graphic-p)
     (load-theme 'doom-dracula t))

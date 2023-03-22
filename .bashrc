@@ -25,6 +25,8 @@ fi
 
 # alias
 alias ls=ls --color=auto
+alias wget="wget --no-hsts"
+
 
 
 # Put your fun stuff here.
@@ -39,7 +41,6 @@ export WASMER_DIR="/home/bido/.wasmer"
 export XAUTHORITY=~/.Xauthority
 
 export PATH="$HOME/.deno/bin:$PATH"
-
 
 
 
