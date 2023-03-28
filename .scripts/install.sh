@@ -1,6 +1,9 @@
 #!/bin/bash
 
+## preferences
+doas="doas" # or sudo
 DOTS_DIR=$HOME"/.config/dots"
+##
 
 
 alacritty () {
@@ -69,3 +72,19 @@ install_gentoo_packages () {
 install_cargo_packages () {
 	cargo install $DOTS_DIR/installedPackages/cargo
 }
+
+
+
+alacritty
+cargo
+starship
+i3
+gitconfig
+bashrc
+vimrc
+uair
+rofi
+polybar
+fish
+install_gentoo_packages
+install_cargo_packages

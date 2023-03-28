@@ -6,3 +6,15 @@ dot files
 - alacritty
 - starship
 - fish
+- gentoo linux/
+
+## How to install it
+
+
+``` bash
+emerge dev-vsc/git
+cd ~/.config
+git git@github.com:K-REBO/dots.git
+cd ./dots/.scripts
+bash install.sh
+```
