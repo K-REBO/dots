@@ -34,7 +34,10 @@ gh completion -s fish | source
 # export RUSTC_WRAPPER=(which sccache)
 
 
-fortune | cowsay -f ghostbusters
-figlet  Ghost Busters!
+function fish_greeting
+	fortune | cowsay -f ghostbusters
+	figlet  Ghost Busters!
+	echo "🐟"
+end
 
 starship init fish | source
