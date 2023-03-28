@@ -1,0 +1,15 @@
+[defaults]
+format = "{time}\n"
+time_format = "%M:%S"
+
+[[sessions]]
+name = "work"
+duration = "25m"
+format = "🍅{time}\n"
+command = "notify-send 'Work Done!' && paplay /usr/share/sounds/freedesktop/stereo/complete.oga"
+
+[[sessions]]
+name = "rest"
+duration = "5m"
+format = "{time}\n"
+command = "notify-send 'Rest Done!' && paplay /usr/share/sounds/freedesktop/stereo/complete.oga"

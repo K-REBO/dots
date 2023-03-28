@@ -1,5 +1,7 @@
 app-admin/doas
+app-containers/docker
 app-editors/emacs
+app-editors/nano
 app-editors/vim
 app-editors/vscode
 app-i18n/ibus
@@ -26,11 +28,13 @@ gui-libs/display-manager-init
 mail-client/thunderbird-bin
 media-fonts/dejavu
 media-fonts/ja-ipafonts
+media-fonts/noto-emoji
 media-fonts/source-code-pro
 media-fonts/ubuntu-font-family
 media-gfx/feh
 media-gfx/flameshot
 media-gfx/imagemagick
+media-plugins/alsa-plugins
 media-sound/mpc
 media-sound/mpd
 media-sound/ncmpcpp
@@ -52,12 +56,15 @@ sys-fs/fuse
 sys-fs/fuse:0
 sys-kernel/genkernel
 sys-kernel/gentoo-sources
+sys-power/tlp
 www-client/firefox-bin
 www-client/links
+x11-apps/xhost
 x11-base/xorg-server
 x11-misc/arandr
 x11-misc/i3status
 x11-misc/picom
+x11-misc/polybar
 x11-misc/rofi
 x11-misc/sddm
 x11-misc/xsel

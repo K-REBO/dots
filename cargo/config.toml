@@ -1,0 +1,17 @@
+[alias]
+b = "build"
+bl = "build --release"
+
+c = "check"
+
+r = "run"
+rl = "run --release"
+
+s = "search"
+i = "install"
+
+up = "install-update"
+
+[build]
+jobs = 2
+rustc-wrapper = "/home/bido/.cargo/bin/sccache"

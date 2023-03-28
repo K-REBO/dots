@@ -1,3 +1,4 @@
+aichat
 alacritty
 bat
 broot
@@ -32,9 +33,12 @@ rustfmt
 rust-gdb
 rust-gdbgui
 rust-lldb
+rustscan
 rustup
 sccache
 starship
 tldr
+uair
+uairctl
 wmfocus
 zoxide
