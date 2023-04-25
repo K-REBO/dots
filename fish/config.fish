@@ -12,7 +12,7 @@ alias lla="exa -lh@ma --time-style=iso"
 alias lal="exa -lh@ma --time-style=iso"
 alias z="zoxide"
 alias dust="dust -r"
-alias br="broot"
+# alias br="broot"
 
 
 

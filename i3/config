@@ -69,6 +69,8 @@ exec_always ibus-daemon --xim -d
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
+# vscode
+exec --no-startup-id dbus-update-activation-environment --all
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status

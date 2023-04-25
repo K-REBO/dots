@@ -21,3 +21,5 @@
 	conflictstyle= diff3
 [diff]
 	colorMoved = default
+[credential]
+	helper = /usr/libexec/git-core/git-credential-libsecret
