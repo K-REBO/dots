@@ -89,7 +89,7 @@ bindsym $mod+Return exec /home/bido/.cargo/bin/alacritty
 bindsym $mod+Shift+q kill
 
 # start rofi (a program launcher)
-bindsym $mod+d exec rofi -font "UbuntuMono 17" -show run -icon-theme "Papirus" -show-icons -theme solarized
+bindsym $mod+d exec rofi -font "UbuntuMono 21" -show run -icon-theme "Papirus" -show-icons -theme solarized
 # bindsym $mod+d exec rofi -show run -run-shell-command '{terminal} -e bash -ic "{cmd} && read"'
 
 # There also is the (new) i3-dmenu-desktop which only displays applications
