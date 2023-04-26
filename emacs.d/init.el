@@ -86,12 +86,12 @@
 
 ;; Fonts
 (setq default-frame-alist
-    '((font . "Source Code Pro 12")))
+      '((font . "Source Code Pro 18")))
 ;;日本語フォント
 (if (display-graphic-p)
 (set-fontset-font (frame-parameter nil 'font)
                   'japanese-jisx0208
-                  (font-spec :family "IPA P明朝" :size 14)))
+                  (font-spec :family "IPA P明朝" :size 16)))
 
 ;;行の折り返し
 (set-default 'truncate-lines t)
@@ -99,9 +99,9 @@
 ;; 自動括弧閉じ
 (smartparens-mode t)
 
-;;line number
-;;(global-linum-mode t)
-;;(set-face-foreground 'linum "dimgray")
+;; line number
+(global-linum-mode t)
+(set-face-foreground 'linum "dimgray")
 
 
 ;; Alpha channel
@@ -136,11 +136,12 @@
 ;;neotree
 (require 'neotree)
 (global-set-key [f8] 'neotree-toggle)
+(neotree-toggle)
 
 
 ;;Dashboard board
 (require 'dashboard)
-;(setq dashboard-startup-banner "~/.emacs.d/static/logo/RMS.png")
+(setq dashboard-startup-banner "~/.emacs.d/static/logo/RMS.png")
 (setq dashboard-set-file-icons t)
 (setq dashboard-banner-logo-title "Shut the fuck up and write some CODE")
 (setq dashboard-set-heading-icons t)

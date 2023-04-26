@@ -33,7 +33,7 @@ alias wget="wget --no-hsts"
 source "$HOME/.cargo/env"
 export PATH="$PATH:$HOME/.local/bin"
 
-source /home/bido/.config/broot/launcher/bash/br
+#source /home/bido/.config/broot/launcher/bash/br
 
 # Wasmer
 export WASMER_DIR="/home/bido/.wasmer"
