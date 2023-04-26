@@ -40,4 +40,7 @@ function fish_greeting
 	echo "🐟"
 end
 
+bash ~/.config/dots/installedPackages/autoAdd.sh
+
+
 starship init fish | source

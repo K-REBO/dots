@@ -86,12 +86,12 @@
 
 ;; Fonts
 (setq default-frame-alist
-      '((font . "Source Code Pro 18")))
+      '((font . "Source Code Pro 16")))
 ;;日本語フォント
 (if (display-graphic-p)
 (set-fontset-font (frame-parameter nil 'font)
                   'japanese-jisx0208
-                  (font-spec :family "IPA P明朝" :size 16)))
+                  (font-spec :family "IPA P明朝" :size 26)))
 
 ;;行の折り返し
 (set-default 'truncate-lines t)
