@@ -14,4 +14,4 @@ up = "install-update"
 
 [build]
 jobs = 2
-rustc-wrapper = "/home/bido/.cargo/bin/sccache"
+#rustc-wrapper = "/home/bido/.cargo/bin/sccache"

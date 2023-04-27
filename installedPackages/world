@@ -15,6 +15,7 @@ app-misc/figlet
 app-misc/neofetch
 app-misc/oneko
 app-misc/sl
+app-misc/tty-clock
 app-portage/eix
 app-portage/gentoolkit
 app-shells/fish

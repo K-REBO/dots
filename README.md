@@ -1,6 +1,7 @@
 # dots
 dot files
 ![screenshot](https://raw.githubusercontent.com/K-REBO/dots/master/.screenshot/2023_03_28.png)
+![screenshot of my configured emacs](https://raw.githubusercontent.com/K-REBO/dots/master/.screenshot/emacs.png)
 
 - i3
 - alacritty
