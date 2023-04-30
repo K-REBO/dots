@@ -12,6 +12,7 @@ delta
 deno
 dust
 exa
+ferris-fetch
 hem
 hexyl
 hyperfine
@@ -21,6 +22,7 @@ mcfly
 miniserve
 pastel
 rls
+rust-analyzer
 rustc
 rustdoc
 rustfmt

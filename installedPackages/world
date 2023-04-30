@@ -53,6 +53,7 @@ net-wireless/iw
 net-wireless/wireless-tools
 sys-apps/busybox
 sys-apps/ethtool
+sys-apps/gptfdisk
 sys-apps/progress
 sys-apps/smartmontools
 sys-boot/grub
