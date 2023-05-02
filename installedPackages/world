@@ -57,6 +57,7 @@ sys-apps/gptfdisk
 sys-apps/progress
 sys-apps/smartmontools
 sys-boot/grub
+sys-fs/duf
 sys-fs/fuse:0
 sys-kernel/genkernel
 sys-kernel/gentoo-sources
