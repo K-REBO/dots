@@ -34,11 +34,7 @@ gh completion -s fish | source
 # export RUSTC_WRAPPER=(which sccache)
 
 
-function fish_greeting
-	fortune | cowsay -f ghostbusters
-	figlet  Ghost Busters!
-	echo "🐟"
-end
+fish_greeting
 
 bash ~/.config/dots/installedPackages/autoAdd.sh
 
