@@ -4,6 +4,7 @@ bat
 binocle
 cargo
 cargo-clippy
+cargo-compete
 cargo-fmt
 cargo-install-update
 cargo-install-update-config
@@ -19,6 +20,7 @@ hexyl
 hyperfine
 kitkat
 kondo
+llm
 mcfly
 miniserve
 pastel

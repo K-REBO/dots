@@ -103,6 +103,8 @@
 (global-linum-mode t)
 (set-face-foreground 'linum "dimgray")
 
+;; scratch msgを取り除く
+(setq initial-scratch-message nil)
 
 ;; Alpha channel
 ;;(add-to-list 'default-frame-alist '(alpha . (1.00 1.00)))
@@ -123,6 +125,8 @@
 (setq ring-bell-function 'ignore)
 
 
+(setq-default tab-width 4)
+
 ;; Rainbow Delimiters
 (require 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
@@ -133,10 +137,10 @@
 (require 'doom-modeline)
 (doom-modeline-mode 1)
 
-;;neotree
+;; Neotree
 (require 'neotree)
 (global-set-key [f8] 'neotree-toggle)
-(neotree-toggle)
+;;(neotree-toggle)
 
 
 ;;Dashboard board

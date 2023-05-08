@@ -12,6 +12,7 @@ app-i18n/ibus
 app-i18n/mozc
 app-misc/cpufetch
 app-misc/figlet
+app-misc/jq
 app-misc/neofetch
 app-misc/oneko
 app-misc/sl
@@ -40,6 +41,7 @@ media-gfx/flameshot
 media-gfx/imagemagick
 media-libs/opencolorio
 media-video/ffmpeg
+media-video/handbrake
 media-video/vlc
 net-analyzer/nmap
 net-im/discord
@@ -53,6 +55,7 @@ net-wireless/iw
 net-wireless/wireless-tools
 sys-apps/busybox
 sys-apps/ethtool
+sys-apps/flatpak
 sys-apps/gptfdisk
 sys-apps/progress
 sys-apps/smartmontools

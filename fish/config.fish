@@ -34,8 +34,6 @@ gh completion -s fish | source
 # export RUSTC_WRAPPER=(which sccache)
 
 
-fish_greeting
-
 bash ~/.config/dots/installedPackages/autoAdd.sh
 
 
