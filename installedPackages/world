@@ -1,4 +1,5 @@
 app-admin/doas
+app-arch/zip
 app-containers/docker
 app-containers/docker-cli
 app-containers/docker-compose
@@ -44,6 +45,8 @@ media-video/ffmpeg
 media-video/handbrake
 media-video/vlc
 net-analyzer/nmap
+net-dns/bind-tools
+net-ftp/ftp
 net-im/discord
 net-libs/nodejs
 net-misc/aria2
@@ -51,6 +54,7 @@ net-misc/dhcpcd
 net-misc/networkmanager
 net-misc/ntp
 net-misc/yt-dlp
+net-vpn/openvpn
 net-wireless/iw
 net-wireless/wireless-tools
 sys-apps/busybox
@@ -58,7 +62,7 @@ sys-apps/ethtool
 sys-apps/flatpak
 sys-apps/gptfdisk
 sys-apps/progress
-sys-apps/smartmontools
+sys-apps/xdg-desktop-portal-gtk
 sys-boot/grub
 sys-fs/duf
 sys-fs/fuse:0
