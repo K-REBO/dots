@@ -177,7 +177,12 @@
                                                                 
 
 ;; for cua-mode
-(cua-selection-mode t)
+;;(cua-selection-mode t)
+
+;; for rectangle selection and
+(require 'multiple-cursors)
+(global-set-key (kdd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kdd "C-d") 'mc/mark-next-like-this)
 
 
 (leaf markdown-mode
@@ -359,10 +364,10 @@
  '(ivy-use-selectable-prompt t)
  '(package-archives
    '(("gnu" . "https://elpa.gnu.org/packages/")
-     ("melpa" . "https://melpa.org/packages/")
-     ("org" . "https://orgmode.org/elpa/")))
+	 ("melpa" . "https://melpa.org/packages/")
+	 ("org" . "https://orgmode.org/elpa/")))
  '(package-selected-packages
-   '(all-the-icons tide smartparens js2-mode typescript-mode centaur-tabs use-package lsp-ui lsp-mode cargo lispy markdown-mode yaml-mode ddskk which-key rainbow-mode ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
+   '(multiple-cursors all-the-icons tide smartparens js2-mode typescript-mode centaur-tabs use-package lsp-ui lsp-mode cargo lispy markdown-mode yaml-mode ddskk which-key rainbow-mode ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
  '(prescient-aggressive-file-save t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

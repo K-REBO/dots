@@ -42,4 +42,8 @@ export XAUTHORITY=~/.Xauthority
 
 export PATH="$HOME/.deno/bin:$PATH"
 
+export WASMTIME_HOME="$HOME/.wasmtime"
+export PATH="$WASMTIME_HOME/bin:$PATH"
+
+
 fish

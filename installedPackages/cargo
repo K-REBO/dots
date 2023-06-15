@@ -37,6 +37,7 @@ rustup
 sccache
 starship
 tldr
+trunk
 uair
 uairctl
 wmfocus
