@@ -1,4 +1,6 @@
 app-admin/doas
+app-arch/unar
+app-arch/unrar
 app-arch/zip
 app-containers/docker
 app-containers/docker-buildx
@@ -11,8 +13,10 @@ app-editors/vscode
 app-eselect/eselect-python
 app-eselect/eselect-repository
 app-i18n/ibus
+app-i18n/ibus-rime
 app-i18n/mozc
 app-misc/cpufetch
+app-misc/dateutils
 app-misc/figlet
 app-misc/jq
 app-misc/neofetch
@@ -23,10 +27,12 @@ app-portage/eix
 app-portage/gentoolkit
 app-shells/fish
 dev-lisp/clisp
+dev-perl/HTTP-Daemon
 dev-python/conda
 dev-python/pip
 dev-qt/qtquickcontrols2
 dev-util/github-cli
+dev-util/rocm-smi
 dev-vcs/git
 dev-vcs/git-lfs
 games-misc/cowsay
@@ -65,6 +71,7 @@ sys-apps/busybox
 sys-apps/ethtool
 sys-apps/flatpak
 sys-apps/gptfdisk
+sys-apps/lshw
 sys-apps/progress
 sys-apps/xdg-desktop-portal-gtk
 sys-block/parted
@@ -74,10 +81,9 @@ sys-fs/fuse:0
 sys-fs/ntfs3g
 sys-kernel/genkernel
 sys-kernel/gentoo-sources
-sys-power/tlp
 www-client/firefox-bin
+x11-apps/xinput
 x11-base/xorg-server
-x11-drivers/xf86-input-synaptics
 x11-misc/arandr
 x11-misc/picom
 x11-misc/polybar

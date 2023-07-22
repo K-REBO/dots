@@ -9,3 +9,6 @@ fi
 
 export GOPATH=$HOME/.go
 export PATH=$GOROOT/bin:$PATH
+
+#export FLYCTL_INSTALL="/home/bido/.fly"
+#export PATH=$FLYCTL_INSTALL/bin:$PATH

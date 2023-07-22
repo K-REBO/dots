@@ -12,6 +12,7 @@ i = "install"
 
 up = "install-update"
 
+
 [build]
-jobs = 2
+jobs = 14
 rustc-wrapper = "/home/bido/.cargo/bin/sccache"

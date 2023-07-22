@@ -5,6 +5,7 @@ binocle
 cargo
 cargo-clippy
 cargo-compete
+cargo-create-tauri-app
 cargo-fmt
 cargo-install-update
 cargo-install-update-config
@@ -14,12 +15,19 @@ delta
 deno
 dust
 exa
+fd
 ferris-fetch
 hem
 hexyl
 hyperfine
 kitkat
 kondo
+lefthk-worker
+leftwm
+leftwm-check
+leftwm-command
+leftwm-state
+leftwm-worker
 llm
 mcfly
 miniserve

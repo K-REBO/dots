@@ -367,7 +367,7 @@
 	 ("melpa" . "https://melpa.org/packages/")
 	 ("org" . "https://orgmode.org/elpa/")))
  '(package-selected-packages
-   '(multiple-cursors all-the-icons tide smartparens js2-mode typescript-mode centaur-tabs use-package lsp-ui lsp-mode cargo lispy markdown-mode yaml-mode ddskk which-key rainbow-mode ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
+   '(yatex all-the-icons tide smartparens js2-mode typescript-mode centaur-tabs use-package lsp-ui lsp-mode cargo lispy markdown-mode yaml-mode ddskk which-key rainbow-mode ghub pacmacs dashboard-hackernews rust-mode srcery-theme ace-window doom-themes rainbow-delimiters dracula-theme spacemacs-theme company-c-headers company flycheck ivy-prescient prescient counsel swiper ivy blackout el-get hydra leaf-keywords))
  '(prescient-aggressive-file-save t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
