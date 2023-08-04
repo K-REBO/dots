@@ -39,6 +39,7 @@ rustdoc
 rustfmt
 rust-gdb
 rust-gdbgui
+rustlings
 rust-lldb
 rustscan
 rustup

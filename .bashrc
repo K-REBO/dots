@@ -45,5 +45,8 @@ export PATH="$HOME/.deno/bin:$PATH"
 export WASMTIME_HOME="$HOME/.wasmtime"
 export PATH="$WASMTIME_HOME/bin:$PATH"
 
+export GO_HOME="$HOME/.go"
+export PATH="$GO_HOME/bin:$PATH"
+
 
 fish
