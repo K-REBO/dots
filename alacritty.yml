@@ -1,4 +1,7 @@
 window:
+# background
+  opacity: 0.8
+
   dimensions:
     columns: 80
     lines: 24
@@ -13,11 +16,6 @@ cursor:
     blinking:
       On
     blink_interval: 1300
-
-# back-ground
-window:
-  opacity: 0.8
-  
 
 font:
   normal:

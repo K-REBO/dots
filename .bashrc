@@ -29,7 +29,14 @@ alias wget="wget --no-hsts"
 
 
 
+
+
+
+
+
 # Put your fun stuff here.
+
+
 source "$HOME/.cargo/env"
 export PATH="$PATH:$HOME/.local/bin"
 
@@ -48,5 +55,12 @@ export PATH="$WASMTIME_HOME/bin:$PATH"
 export GO_HOME="$HOME/.go"
 export PATH="$GO_HOME/bin:$PATH"
 
+# dprint
+export DPRINT_INSTALL="/home/bido/.dprint"
+export PATH="$DPRINT_INSTALL/bin:$PATH"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH
 
 fish
