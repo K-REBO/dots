@@ -13,6 +13,7 @@ cargo-miri
 clippy-driver
 delta
 deno
+denort
 dprint
 dust
 evcxr

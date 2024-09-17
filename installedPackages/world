@@ -1,7 +1,9 @@
+app-admin/ccze
 app-admin/doas
 app-arch/unar
 app-arch/unrar
 app-arch/zip
+app-cdr/cdrtools
 app-containers/docker
 app-containers/docker-buildx
 app-containers/docker-cli
@@ -10,6 +12,9 @@ app-editors/emacs
 app-editors/imhex
 app-editors/vim
 app-editors/vscode
+app-emulation/virtualbox
+app-emulation/virtualbox-additions
+app-emulation/virtualbox-guest-additions
 app-eselect/eselect-python
 app-eselect/eselect-repository
 app-i18n/ibus
@@ -29,7 +34,6 @@ app-portage/gentoolkit
 app-shells/fish
 dev-lang/zig-bin
 dev-lisp/clisp
-dev-perl/Filesys-SmbClient
 dev-perl/HTTP-Daemon
 dev-python/conda
 dev-python/pip
@@ -44,7 +48,6 @@ games-misc/fortune-mod
 games-misc/lolcat
 games-util/game-device-udev-rules
 games-util/steam-launcher
-games-util/steam-meta
 gui-libs/display-manager-init
 mail-client/thunderbird-bin
 media-fonts/dejavu
@@ -89,12 +92,14 @@ sys-apps/progress
 sys-apps/xdg-desktop-portal-gtk
 sys-block/parted
 sys-boot/grub
+sys-fs/ddrescue
 sys-fs/duf
 sys-fs/exfat-utils
 sys-fs/fuse:0
 sys-fs/ntfs3g
 sys-kernel/genkernel
 sys-kernel/gentoo-sources
+sys-power/tlp
 www-client/firefox-bin
 x11-apps/xhost
 x11-apps/xinput

@@ -47,7 +47,7 @@ exec_always --no-startup-id xset b off
 
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
-exec_always  feh --bg-scale ~/.config/i3/wallpaper/roofgirl.jpg
+exec_always  feh --bg-scale ~/.config/i3/wallpaper/moshi_moshi_moshimo_saa.jpg
 #exec_always picom -CGfF  --vsync opengl
 exec_always picom
 exec_always ibus-daemon --xim -d

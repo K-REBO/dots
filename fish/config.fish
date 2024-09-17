@@ -12,6 +12,8 @@ alias lla="eza -lh@ma --time-style=iso"
 alias lal="eza -lh@ma --time-style=iso"
 alias z="zoxide"
 alias dust="dust -r"
+
+alias less="less -Q"
 # alias br="broot"
 
 
