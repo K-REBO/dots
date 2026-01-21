@@ -1,0 +1,27 @@
+# Nix build artifacts
+result
+result-*
+
+# Nix flake lock file (コミットすることを推奨)
+# flake.lock
+
+# Home Manager generations
+.home-manager-generations
+
+# Backup files
+*.bak
+*~
+.*.swp
+.*.swo
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Optional: 壁紙が大きい場合はコメント解除
+# config/hypr/wallpapers/
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*
