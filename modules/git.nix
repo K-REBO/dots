@@ -4,12 +4,19 @@
   programs.git = {
     enable = true;
 
-    # ユーザー情報
-    userName = "Bido Nakamura";
-    userEmail = "K-REBO@users.noreply.github.com";
+    # 新形式: settings
+    settings = {
+      # ユーザー情報
+      user = {
+        name = "Bido Nakamura";
+        email = "K-REBO@users.noreply.github.com";
+      };
 
-    # デフォルトエディタ
-    extraConfig = {
+      # エイリアス
+      alias = {
+        staged = "diff --cached --name-only";
+      };
+
       core = {
         editor = "vim";
         pager = "delta";
@@ -40,11 +47,6 @@
       credential = {
         helper = "/usr/libexec/git-core/git-credential-libsecret";
       };
-    };
-
-    # エイリアス
-    aliases = {
-      staged = "diff --cached --name-only";
     };
 
     # deltaは既にcli-tools.nixでインストール済み

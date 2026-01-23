@@ -93,16 +93,16 @@
         disabled = true;
       };
 
-      # Jujutsu統合
-      custom.jj = {
-        command = "prompt";
-        format = "$output ";
-        ignore_timeout = true;
-        shell = ["starship-jj" "--ignore-working-copy" "starship"];
-        use_stdin = false;
-        detect_folders = [".jj"];
-        when = "jj root >/dev/null 2>/dev/null";
-      };
+      # Jujutsu統合（starship-jjがNixpkgsにないためコメントアウト）
+      # custom.jj = {
+      #   command = "prompt";
+      #   format = "$output ";
+      #   ignore_timeout = true;
+      #   shell = ["starship-jj" "--ignore-working-copy" "starship"];
+      #   use_stdin = false;
+      #   detect_folders = [".jj"];
+      #   when = "jj root >/dev/null 2>/dev/null";
+      # };
     };
   };
 
@@ -125,6 +125,6 @@
 
   # その他のパッケージ
   home.packages = with pkgs; [
-    starship-jj  # Starshipのjujutsu統合
+    # starship-jj  # Starshipのjujutsu統合（Nixpkgsに存在しない）
   ];
 }

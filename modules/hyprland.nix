@@ -3,10 +3,10 @@
 {
   wayland.windowManager.hyprland = {
     enable = true;
-    package = pkgs.hyprland;
+    package = null;  # NixOSモジュールのパッケージを使用
 
-    # システムパッケージとして有効化
-    systemd.enable = true;
+    # UWSM使用時はsystemd統合を無効化（必須）
+    systemd.enable = false;
     xwayland.enable = true;
 
     # 設定ファイル
@@ -50,8 +50,11 @@
     # フォーカス管理（ローカルプロジェクト）
     # wmfocusはcargoでビルド済み
 
-    # Hyprpanel (pacmanでインストール済み)
-    # Hyprshell (pacmanでインストール済み)
+    # Hyprpanel (status bar)
+    hyprpanel
+
+    # Hyprshell (window switcher)
+    hyprshell
   ];
 
   # hypridle設定
@@ -71,8 +74,8 @@
   # 環境変数（fcitx5用など）
   home.sessionVariables = {
     # Hyprland用
-    XCURSOR_SIZE = "10";
-    HYPRCURSOR_SIZE = "10";
+    XCURSOR_SIZE = "24";
+    HYPRCURSOR_SIZE = "24";
 
     # fcitx5用（fcitx5.nixでも設定するが念のため）
     GTK_IM_MODULE = "fcitx";

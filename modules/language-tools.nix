@@ -6,6 +6,7 @@
   home.packages = with pkgs; [
     # Rust (rustupは既存のものを使用)
     # rust-analyzer  # VSCodeモジュールでインストール済み
+    rustup
 
     # Python
     python3
@@ -35,7 +36,8 @@
     pkg-config
 
     # C/C++
-    gcc
+    # gccとclangは同時に入れると競合するため、clangのみ使用
+    # gcc
     clang
     lldb
   ];

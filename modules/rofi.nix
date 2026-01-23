@@ -3,7 +3,7 @@
 {
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi-wayland;
+    package = pkgs.rofi;  # rofi-waylandはrofiに統合済み
 
     # 基本設定
     extraConfig = {

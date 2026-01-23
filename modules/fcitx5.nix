@@ -2,32 +2,14 @@
 
 {
   # fcitx5入力メソッド
-  i18n.inputMethod = {
-    enabled = "fcitx5";
-    fcitx5.addons = with pkgs; [
-      fcitx5-mozc        # 日本語入力（Mozc）
-      fcitx5-gtk         # GTK統合
-      fcitx5-configtool  # 設定ツール
-    ];
-  };
+  # 注意: fcitx5のコア設定はNixOSシステムレベル（configuration.nix）で行われています
+  # ここではユーザー設定ファイルのみを管理します
 
-  # 環境変数
-  home.sessionVariables = {
-    GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = "fcitx";
-    XMODIFIERS = "@im=fcitx";
-    SDL_IM_MODULE = "fcitx";
-  };
-
-  # fcitx5パッケージ
+  # 追加パッケージ（configuration.nixに含まれていないもの）
   home.packages = with pkgs; [
-    fcitx5
-    fcitx5-mozc
-    fcitx5-gtk
-    fcitx5-qt
-    fcitx5-configtool
-
-    # wayland_fcitx5_indicatorはローカルプロジェクト（cargoでビルド済み）
+    libsForQt5.fcitx5-qt           # Qt5統合
+    qt6Packages.fcitx5-qt          # Qt6統合
+    qt6Packages.fcitx5-configtool  # 設定ツール
   ];
 
   # dots/config/fcitx5/ の設定ファイルを使用

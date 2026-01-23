@@ -29,19 +29,19 @@
         source ~/.env
       fi
 
-      # zoxide初期化
-      eval "$(zoxide init bash)"
+      # zoxide初期化 (only if command exists)
+      command -v zoxide &> /dev/null && eval "$(zoxide init bash)"
 
-      # mcfly初期化
-      eval "$(mcfly init bash)"
+      # mcfly初期化 (only if command exists)
+      command -v mcfly &> /dev/null && eval "$(mcfly init bash)"
 
-      # GitHub CLI補完
-      eval "$(gh completion -s bash)"
+      # GitHub CLI補完 (only if command exists)
+      command -v gh &> /dev/null && eval "$(gh completion -s bash)"
 
-      # Fishシェルを起動（bashから自動的にfishへ移行）
-      # 注意: この行をコメントアウトすると、bashのまま起動します
-      if command -v fish &> /dev/null; then
-        exec fish
+      # zshシェルを起動（bashから自動的にzshへ移行）
+      # 条件: インタラクティブシェル、zshが存在、まだzshでない
+      if [[ $- == *i* ]] && command -v zsh &> /dev/null && [[ -z "$ZSH_VERSION" ]]; then
+        exec zsh
       fi
     '';
 
@@ -79,8 +79,5 @@
     historyControl = [ "ignoredups" "ignorespace" ];
   };
 
-  # Cargo環境変数（bashrcから）
-  home.sessionVariables = {
-    GOPATH = "$HOME/.go";
-  };
+  # 環境変数はlanguage-tools.nixで一元管理
 }

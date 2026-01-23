@@ -35,6 +35,7 @@
     ./modules/hyprland.nix
     ./modules/fcitx5.nix
     ./modules/xremap.nix
+    ./modules/hyprpanel.nix
 
     # Phase 4: システムサービス（ユーザーレベル）
     ./modules/pipewire.nix
@@ -43,5 +44,6 @@
     ./modules/fonts.nix
     ./modules/applications.nix
     ./modules/themes.nix
+    ./modules/xdg.nix
   ];
 }

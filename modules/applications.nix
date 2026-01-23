@@ -12,7 +12,7 @@
     # ============
     # 生産性
     # ============
-    obsidian                    # ノートアプリ
+    # obsidian                  # ノートアプリ（ネットワークエラーのため一時無効化）
 
     # ============
     # メディアプレーヤー
@@ -36,7 +36,7 @@
     # ============
     # ファイルマネージャ
     # ============
-    dolphin                     # KDEファイルマネージャ
+    kdePackages.dolphin         # KDEファイルマネージャ
 
     # ============
     # コミュニケーション
@@ -48,7 +48,7 @@
     # ユーティリティ
     # ============
     rsync                       # ファイル同期
-    transmission-gtk            # Torrentクライアント（GUI）
+    transmission_4-gtk          # Torrentクライアント（GUI）
     gparted                     # パーティション管理
 
     # ============
@@ -67,7 +67,7 @@
     # ============
     # その他ツール
     # ============
-    obsidian-cli                # Obsidian CLI（もしNixにあれば）
+    # obsidian-cli              # Obsidian CLI（Nixpkgsに存在しない）
   ];
 
   # Firefox設定（オプション）

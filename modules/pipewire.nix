@@ -2,25 +2,8 @@
 
 {
   # Pipewire オーディオサーバー
-  # Home-Managerでユーザーレベルのサービスとして管理
-  services.pipewire = {
-    enable = true;
-
-    # PulseAudio互換レイヤー
-    pulse.enable = true;
-
-    # ALSA統合
-    alsa = {
-      enable = true;
-      support32Bit = true;
-    };
-
-    # JACK統合
-    jack.enable = true;
-
-    # Wireplumber（セッションマネージャー）
-    wireplumber.enable = true;
-  };
+  # 注意: Pipewireのサービス設定はNixOSシステムレベル（configuration.nix）で行う必要があります
+  # ここではオーディオ関連のユーザーツールのみをインストールします
 
   # オーディオツール
   home.packages = with pkgs; [
@@ -30,8 +13,7 @@
     helvum         # Pipewire パッチベイ
 
     # CLIツール
-    pipewire
-    wireplumber
+    pulsemixer     # CLI audio mixer
 
     # 既にcli-tools.nixでインストール済みのものはコメントアウト
   ];

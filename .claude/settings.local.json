@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(nix:*)",
+      "Bash(home-manager --version:*)",
+      "Bash(systemctl:*)"
+    ]
+  }
+}

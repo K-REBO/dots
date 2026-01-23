@@ -9,8 +9,8 @@
     noto-fonts                    # 基本
     noto-fonts-cjk-sans          # 日本語・中国語・韓国語（Sans）
     noto-fonts-cjk-serif         # 日本語・中国語・韓国語（Serif）
-    noto-fonts-emoji             # 絵文字
-    noto-fonts-extra             # 追加言語
+    noto-fonts-color-emoji       # 絵文字
+    # noto-fonts-extra           # noto-fontsに統合済み
 
     # DejaVu フォント
     dejavu_fonts                 # プログラミング・汎用
@@ -19,14 +19,10 @@
     liberation_ttf               # Arial, Times New Roman, Courier New代替
 
     # Nerd Fonts（アイコン統合プログラミングフォント）
-    (nerdfonts.override {
-      fonts = [
-        "UbuntuMono"             # 既存設定で使用
-        "JetBrainsMono"          # polybarで使用
-        "FiraCode"               # オプション
-        "Hack"                   # オプション
-      ];
-    })
+    nerd-fonts.ubuntu-mono       # 既存設定で使用
+    nerd-fonts.jetbrains-mono    # polybarで使用
+    nerd-fonts.fira-code         # オプション
+    nerd-fonts.hack              # オプション
 
     # GNOME用
     cantarell-fonts

@@ -40,7 +40,7 @@
           family = "UbuntuMono Nerd Font";
           style = "Bold Italic";
         };
-        size = 9.0;
+        size = 18.0;
       };
 
       # Gnome Dark カラースキーム

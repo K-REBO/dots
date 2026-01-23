@@ -18,8 +18,9 @@
     };
 
     cursorTheme = {
-      name = "Adwaita";
-      package = pkgs.gnome.adwaita-icon-theme;
+      name = "Bibata-Modern-Classic";
+      package = pkgs.bibata-cursors;
+      size = 24;
     };
 
     font = {
@@ -55,7 +56,7 @@
     adwaita-icon-theme
 
     # カーソルテーマ
-    gnome.adwaita-icon-theme
+    bibata-cursors
 
     # Qt統合
     libsForQt5.qtstyleplugins

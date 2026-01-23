@@ -8,6 +8,7 @@
     eza           # lsの代替
     dust          # duの代替（ディスク使用量）
     hexyl         # hexダンプ
+    duf
 
     # プロセス・システム情報
     procs         # psの代替
@@ -25,7 +26,7 @@
     tokei         # コード統計
 
     # Git関連
-    git-delta     # gitの差分表示
+    delta         # gitの差分表示
     jujutsu       # jj-cli: バージョン管理
 
     # ビルド・開発支援
@@ -43,6 +44,9 @@
 
     # ツールバージョン管理
     mise          # 言語バージョン管理
+
+    claude-code
+    gemini-cli
   ];
 
   # batの設定
@@ -55,4 +59,10 @@
   };
 
   # ezaのエイリアスはshell.nixで設定
+
+  # direnv（nix develop自動有効化）
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;  # キャッシュ機能付きのnix統合
+  };
 }
