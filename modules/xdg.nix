@@ -18,4 +18,7 @@
     templates = config.home.homeDirectory;
     videos = config.home.homeDirectory;
   };
+
+  # 既存ファイルを上書き
+  xdg.configFile."user-dirs.dirs".force = true;
 }

@@ -23,7 +23,7 @@
       lal = "eza -lh@ma --time-style=iso";
 
       # Other tools
-      z = "zoxide";
+      #z = "zoxide";
       dust = "dust -r";
       oc = "obsidian-cli";
 
@@ -58,7 +58,7 @@
     # ============================================================
     # Shell options and initialization
     # ============================================================
-    initExtra = ''
+    initContent = ''
       # ============================================================
       # Environment variables
       # ============================================================
@@ -142,10 +142,9 @@
       fi
 
       # ============================================================
-      # Display greeting on shell start (optional)
+      # Display greeting on shell start
       # ============================================================
-      # Uncomment the following line if you want the greeting to show on every shell start
-      # fish_greeting
+      fortune | cowsay -f ghostbusters
 
       # ============================================================
       # Zsh plugins - autosuggestions color configuration
