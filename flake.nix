@@ -23,9 +23,11 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nur.url = "github:nix-community/NUR";
   };
 
-  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, ... }@inputs: let
     system = "x86_64-linux";
 
     wmfocusOverlay = final: prev: {
@@ -70,7 +72,7 @@
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
-      overlays = [ wmfocusOverlay kdenliveOverlay ];
+      overlays = [ wmfocusOverlay kdenliveOverlay nur.overlays.default ];
     };
   in {
     # NixOS configuration
@@ -92,7 +94,7 @@
               { programs.wayland-fcitx5-indicator.enable = true; }
             ];
           };
-          nixpkgs.overlays = [ wmfocusOverlay kdenliveOverlay ];
+          nixpkgs.overlays = [ wmfocusOverlay kdenliveOverlay nur.overlays.default ];
         }
       ];
     };

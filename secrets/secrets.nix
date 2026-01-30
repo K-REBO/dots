@@ -14,6 +14,9 @@ in
   # WiFi password
   "wifi-password.age".publicKeys = all;
 
+  # Mozilla account recovery key
+  "mozilla-recovery-key.age".publicKeys = users;
+
   # SSH private key example
   # "ssh-key.age".publicKeys = users;
 

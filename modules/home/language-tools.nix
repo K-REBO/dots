@@ -48,6 +48,28 @@
   # mise設定（既にshell.nixで初期化済み）
   # miseで管理されているツールは既存の設定を維持
 
+  # Cargo config
+  home.file.".cargo/config.toml".text = ''
+    [alias]
+    b = "build"
+    bl = "build --release"
+
+    c = "check"
+
+    r = "run"
+    rl = "run --release"
+
+    s = "search"
+    i = "install"
+
+    up = "install-update"
+
+
+    [build]
+    jobs = 14
+    rustc-wrapper = "${config.home.homeDirectory}/.cargo/bin/sccache"
+  '';
+
   # 環境変数（既にbash.nixとshell.nixで設定済み）
   home.sessionVariables = {
     # Cargo
