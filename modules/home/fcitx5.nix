@@ -13,7 +13,7 @@
   ];
 
   # dots/config/fcitx5/ の設定ファイルを使用
-  xdg.configFile."fcitx5/config".source = ../config/fcitx5/config;
-  xdg.configFile."fcitx5/profile".source = ../config/fcitx5/profile;
-  xdg.configFile."fcitx5/conf".source = ../config/fcitx5/conf;
+  xdg.configFile."fcitx5/config".source = ../../config/fcitx5/config;
+  xdg.configFile."fcitx5/profile".source = ../../config/fcitx5/profile;
+  xdg.configFile."fcitx5/conf".source = ../../config/fcitx5/conf;
 }

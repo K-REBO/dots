@@ -19,6 +19,9 @@
     # Deno
     deno
 
+    # Playwright (ブラウザ自動化)
+    playwright-driver.browsers
+
     # Go
     go
 
@@ -37,8 +40,8 @@
 
     # C/C++
     # gccとclangは同時に入れると競合するため、clangのみ使用
-    # gcc
-    clang
+     gcc
+    #clang
     lldb
   ];
 
@@ -55,6 +58,10 @@
 
     # Deno
     DENO_INSTALL = "${config.home.homeDirectory}/.deno";
+
+    # Playwright
+    PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
+    PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
   };
 
   # PATH設定は各シェル設定で管理

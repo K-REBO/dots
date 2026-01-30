@@ -2,7 +2,7 @@
 
 {
   # xremap設定ファイル
-  xdg.configFile."xremap/config.yaml".source = ../config/xremap/config.yaml;
+  xdg.configFile."xremap/config.yaml".source = ../../config/xremap/config.yaml;
 
   # xremapパッケージ
   home.packages = with pkgs; [

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   # Phase 1: CLIツール
@@ -47,6 +47,9 @@
 
     claude-code
     gemini-cli
+  ] ++ [
+    # Nix関連 (flake inputsから取得して競合を回避)
+    inputs.home-manager.packages.${pkgs.system}.home-manager
   ];
 
   # batの設定

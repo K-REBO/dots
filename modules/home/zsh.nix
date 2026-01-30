@@ -35,6 +35,9 @@
 
       # translate-shell via docker
       trans = "docker run -it soimort/translate-shell -shell";
+
+      # wget without history file
+      wget = "wget --no-hsts";
     };
 
     # ============================================================
@@ -63,11 +66,23 @@
       # Environment variables
       # ============================================================
       export GO_HOME="$HOME/.go"
+      export PATH="$HOME/.cargo/bin:$PATH"
+      export PATH="$HOME/.local/bin:$PATH"
+      export PATH="$HOME/.deno/bin:$PATH"
+      export PATH="$HOME/.moon/bin:$PATH"
       export PATH="$GO_HOME/bin:$PATH"
+
+      # LD_LIBRARY_PATH
+      export LD_LIBRARY_PATH="/usr/lib:$LD_LIBRARY_PATH"
 
       # Set LD_LIBRARY_PATH for Playwright
       if [[ ":$LD_LIBRARY_PATH:" != *":/home/bido/.local/lib/playwright:"* ]]; then
           export LD_LIBRARY_PATH="/home/bido/.local/lib/playwright:''${LD_LIBRARY_PATH}"
+      fi
+
+      # .envファイルがあればsource（秘密情報用）
+      if [ -f ~/.env ]; then
+        source ~/.env
       fi
 
       # ============================================================
@@ -103,23 +118,10 @@
       bindkey '^[[Z' reverse-menu-complete    # Shift-TAB
 
       # ============================================================
-      # Tool initializations
+      # mise (runtime manager) - Home Managerにmiseモジュールがないため手動
       # ============================================================
-      # zoxide - directory jumper
-      eval "$(zoxide init zsh)"
-
-      # mcfly - history search
-      eval "$(mcfly init zsh)"
-
-      # gh - GitHub CLI completion
-      eval "$(gh completion -s zsh)"
-
-      # mise - runtime manager
       eval "$(mise activate zsh)"
       eval "$(mise activate zsh --shims)"
-
-      # starship - prompt
-      eval "$(starship init zsh)"
 
       # ============================================================
       # Custom functions
@@ -237,12 +239,10 @@
   # Additional packages needed for zsh setup
   # ============================================================
   home.packages = with pkgs; [
-    zoxide    # Directory jumper
-    mcfly     # History search
-    mise      # Runtime manager
-    gh        # GitHub CLI
-    fortune   # For fish_greeting
-    cowsay    # For fish_greeting
-    figlet    # For fish_greeting
+    mise      # Runtime manager (Home Managerモジュールがないため)
+    fortune   # For greeting
+    cowsay    # For greeting
+    figlet    # For greeting
   ];
+  # zoxide, mcfly, gh は programs.* で管理されるため削除
 }

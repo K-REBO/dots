@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   wayland.windowManager.hyprland = {
@@ -12,7 +12,14 @@
     # 設定ファイル
     # dots/config/hypr/hyprland.conf を使用
     # NixOSフル移行後は、以下のsettings属性で管理することを推奨
-    extraConfig = builtins.readFile ../config/hypr/hyprland.conf;
+    extraConfig = builtins.readFile ../../config/hypr/hyprland.conf + ''
+
+      # wmfocus (Nix store path)
+      bind = $mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --textcolorcurrent lightseagreen --font "UbuntuMono Nerd Font":120 --halign center --valign center
+
+      # wayland_fcitx5_indicator (IME mode indicator)
+      exec-once = ${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator
+    '';
   };
 
   # Hyprland関連パッケージ
@@ -47,9 +54,6 @@
     # wofi
     # rofi-wayland
 
-    # フォーカス管理（ローカルプロジェクト）
-    # wmfocusはcargoでビルド済み
-
     # Hyprpanel (status bar)
     hyprpanel
 
@@ -59,23 +63,24 @@
 
   # hypridle設定
   # dots/config/hypr/hypridle.conf を使用
-  xdg.configFile."hypr/hypridle.conf".source = ../config/hypr/hypridle.conf;
+  xdg.configFile."hypr/hypridle.conf".source = ../../config/hypr/hypridle.conf;
 
   # hyprlock設定
   # dots/config/hypr/hyprlock.conf を使用
-  xdg.configFile."hypr/hyprlock.conf".source = ../config/hypr/hyprlock.conf;
+  xdg.configFile."hypr/hyprlock.conf".source = ../../config/hypr/hyprlock.conf;
 
   # 壁紙ディレクトリをコピー
-  xdg.configFile."hypr/wallpapers".source = ../config/hypr/wallpapers;
+  xdg.configFile."hypr/wallpapers".source = ../../config/hypr/wallpapers;
 
   # スクリプトディレクトリをコピー
-  xdg.configFile."hypr/scripts".source = ../config/hypr/scripts;
+  xdg.configFile."hypr/scripts".source = ../../config/hypr/scripts;
 
   # 環境変数（fcitx5用など）
   home.sessionVariables = {
     # Hyprland用
     XCURSOR_SIZE = "24";
     HYPRCURSOR_SIZE = "24";
+    XCURSOR_THEME = "Bibata-Modern-Classic";
 
     # fcitx5用（fcitx5.nixでも設定するが念のため）
     GTK_IM_MODULE = "fcitx";

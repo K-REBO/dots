@@ -3,7 +3,23 @@
     "allow": [
       "Bash(nix:*)",
       "Bash(home-manager --version:*)",
-      "Bash(systemctl:*)"
+      "Bash(systemctl:*)",
+      "Bash(nautilus:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(home-manager switch:*)",
+      "Bash(nix-shell:*)",
+      "Bash(echo:*)",
+      "Bash(bash:*)",
+      "Bash(hyprctl clients:*)",
+      "Bash(hyprctl reload:*)",
+      "Bash(hyprctl getoption:*)",
+      "Bash(hyprctl keyword:*)",
+      "Bash(pkill:*)",
+      "Bash(hyprctl rules:*)",
+      "Bash(hyprctl:*)",
+      "Bash(readlink:*)",
+      "Bash(pgrep:*)",
+      "Bash(sudo cat:*)"
     ]
   }
 }

@@ -14,36 +14,36 @@
   # モジュールのインポート
   imports = [
     # Phase 1: CLIツール
-    ./modules/cli-tools.nix
-    ./modules/shell.nix
-    ./modules/alacritty.nix
-    ./modules/bash.nix
-    ./modules/zsh.nix
-    ./modules/git.nix
-    ./modules/vim.nix
+    ./modules/home/cli-tools.nix
+    ./modules/home/shell.nix
+    ./modules/home/alacritty.nix
+    ./modules/home/bash.nix
+    ./modules/home/zsh.nix
+    ./modules/home/git.nix
+    ./modules/home/vim.nix
 
     # Phase 2A: 開発環境
-    ./modules/vscode.nix
-    ./modules/language-tools.nix
+    ./modules/home/vscode.nix
+    ./modules/home/language-tools.nix
 
     # Phase 2B: WMツール
-    ./modules/rofi.nix
-    ./modules/wofi.nix
-    ./modules/polybar.nix
+    ./modules/home/rofi.nix
+    ./modules/home/wofi.nix
+    ./modules/home/polybar.nix
 
     # Phase 3: デスクトップ環境
-    ./modules/hyprland.nix
-    ./modules/fcitx5.nix
-    ./modules/xremap.nix
-    ./modules/hyprpanel.nix
+    ./modules/home/hyprland.nix
+    ./modules/home/fcitx5.nix
+    ./modules/home/xremap.nix
+    ./modules/home/hyprpanel.nix
 
     # Phase 4: システムサービス（ユーザーレベル）
-    ./modules/pipewire.nix
+    ./modules/home/pipewire.nix
 
     # Phase 5: 追加設定
-    ./modules/fonts.nix
-    ./modules/applications.nix
-    ./modules/themes.nix
-    ./modules/xdg.nix
+    ./modules/home/fonts.nix
+    ./modules/home/applications.nix
+    ./modules/home/themes.nix
+    ./modules/home/xdg.nix
   ];
 }

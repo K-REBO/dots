@@ -21,6 +21,8 @@ Thumbs.db
 # Optional: 壁紙が大きい場合はコメント解除
 # config/hypr/wallpapers/
 
+.direnv
+
 # Editor files
 .vscode/
 .idea/

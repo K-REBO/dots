@@ -1,6 +1,13 @@
 { config, pkgs, ... }:
 
 {
+  # XDG Desktop Portal設定（Hyprland用）
+  xdg.portal = {
+    enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    config.common.default = [ "hyprland" "gtk" ];
+  };
+
   # XDGユーザーディレクトリ設定
   xdg.userDirs = {
     enable = true;
