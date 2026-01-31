@@ -57,22 +57,10 @@
       };
     };
 
-    # kdenlive: ffmpeg-fullがshadercを必要とするがリンクされていない問題の修正
-    kdenliveOverlay = final: prev: {
-      kdePackages = prev.kdePackages // {
-        kdenlive = prev.kdePackages.kdenlive.overrideAttrs (old: {
-          buildInputs = old.buildInputs ++ [ final.shaderc ];
-          env = (old.env or {}) // {
-            NIX_LDFLAGS = (old.env.NIX_LDFLAGS or "") + " -lshaderc_shared";
-          };
-        });
-      };
-    };
-
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
-      overlays = [ wmfocusOverlay kdenliveOverlay nur.overlays.default ];
+      overlays = [ wmfocusOverlay nur.overlays.default ];
     };
   in {
     # NixOS configuration
@@ -94,7 +82,7 @@
               { programs.wayland-fcitx5-indicator.enable = true; }
             ];
           };
-          nixpkgs.overlays = [ wmfocusOverlay kdenliveOverlay nur.overlays.default ];
+          nixpkgs.overlays = [ wmfocusOverlay nur.overlays.default ];
         }
       ];
     };

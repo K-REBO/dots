@@ -67,7 +67,7 @@
 
     [build]
     jobs = 14
-    rustc-wrapper = "${config.home.homeDirectory}/.cargo/bin/sccache"
+    rustc-wrapper = "${pkgs.sccache}/bin/sccache"
   '';
 
   # 環境変数（既にbash.nixとshell.nixで設定済み）

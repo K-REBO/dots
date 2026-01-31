@@ -27,6 +27,9 @@
     options 8821au rtw_power_mgnt=0 rtw_enusbss=0
   '';
 
+  # aarch64クロスビルド用（Raspberry Pi等）
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+
   # ====================
   # Networking
   # ====================

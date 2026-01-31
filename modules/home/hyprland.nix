@@ -56,9 +56,6 @@
 
     # Hyprpanel (status bar)
     hyprpanel
-
-    # Hyprshell (window switcher)
-    hyprshell
   ];
 
   # hypridle設定

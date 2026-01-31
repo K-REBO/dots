@@ -45,6 +45,7 @@
     # ツールバージョン管理
     mise          # 言語バージョン管理
 
+    # LLM agent cliツール
     claude-code
     gemini-cli
 
