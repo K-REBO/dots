@@ -4,39 +4,40 @@
 * {
   all: unset;
   font-family: "JetBrainsMono Nerd Font", monospace;
-  font-size: 14px;
+  font-size: 16px;
 }
 
-/* Tokyo Night colors */
-$bg: #1a1b26;
-$bg-dark: #16161e;
-$bg-light: #24283b;
-$fg: #a9b1d6;
-$fg-dark: #565f89;
-$red: #f7768e;
-$green: #73daca;
-$yellow: #e0af68;
-$blue: #7aa2f7;
-$magenta: #bb9af7;
-$cyan: #7dcfff;
-$orange: #ff9e64;
+/* Tokyo Night colors - bold */
+$bg: transparent;
+$bg-dark: rgba(10, 10, 15, 0.9);
+$bg-light: rgba(25, 28, 45, 0.9);
+$bg-solid: #1a1b26;
+$fg: #e0e6ff;
+$fg-dark: #8890b0;
+$red: #ff5577;
+$green: #00ffaa;
+$yellow: #ffcc00;
+$blue: #00aaff;
+$magenta: #ff77ff;
+$cyan: #00ddff;
+$orange: #ffaa00;
 
 /* Main bar */
 .bar {
   background-color: $bg;
-  padding: 0 12px;
+  padding: 0 14px;
 }
 
 /* Common widget styles */
 .left, .right {
-  padding: 4px 0;
+  padding: 5px 0;
 }
 
 /* Power button */
 .power-button {
   color: $red;
-  font-size: 16px;
-  padding: 0 8px;
+  font-size: 18px;
+  padding: 0 10px;
   &:hover {
     color: lighten($red, 10%);
   }
@@ -45,30 +46,32 @@ $orange: #ff9e64;
 /* Workspaces */
 .workspaces {
   background-color: $bg-light;
-  border-radius: 6px;
-  padding: 2px 8px;
+  border-radius: 8px;
+  padding: 3px 10px;
 }
 
 .ws {
-  padding: 2px 6px;
-  margin: 0 2px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  margin: 0 3px;
+  border-radius: 5px;
   color: $fg-dark;
   transition: all 0.2s ease;
 
   &:hover {
     color: $fg;
-    background-color: rgba($cyan, 0.1);
+    background-color: rgba($cyan, 0.2);
   }
 }
 
 .ws-active {
-  color: $cyan;
-  background-color: rgba($cyan, 0.15);
+  color: #000;
+  background-color: $cyan;
+  font-weight: bold;
 }
 
 .ws-occupied {
-  color: $fg;
+  color: $magenta;
+  background-color: rgba($magenta, 0.2);
 }
 
 .ws-empty {
@@ -78,19 +81,25 @@ $orange: #ff9e64;
 /* Volume */
 .volume {
   color: $green;
-  padding: 0 8px;
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 3px 10px;
 }
 
 /* WiFi */
 .wifi {
   color: $magenta;
-  padding: 0 8px;
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 3px 10px;
 }
 
 /* Bluetooth */
 .bluetooth {
   color: $blue;
-  padding: 0 8px;
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 3px 10px;
   &:hover {
     color: lighten($blue, 10%);
   }
@@ -99,7 +108,9 @@ $orange: #ff9e64;
 /* Battery */
 .battery {
   color: $blue;
-  padding: 0 8px;
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 3px 10px;
 
   &.charging {
     color: $green;
@@ -113,7 +124,9 @@ $orange: #ff9e64;
 /* IME */
 .ime {
   color: $yellow;
-  padding: 0 8px;
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 3px 10px;
   font-weight: bold;
   &:hover {
     color: lighten($yellow, 10%);
@@ -123,14 +136,16 @@ $orange: #ff9e64;
 /* Brightness */
 .brightness {
   color: $yellow;
-  padding: 0 8px;
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 3px 10px;
 }
 
 /* DateTime */
 .datetime {
   background-color: $bg-light;
-  border-radius: 6px;
-  padding: 2px 12px;
+  border-radius: 8px;
+  padding: 3px 14px;
 
   .date {
     color: $fg-dark;

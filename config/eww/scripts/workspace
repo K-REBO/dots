@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Hyprland workspace script with app icons
 # Output format: 1[󰈹] 2[󰓇] 3
+# Only shows active workspace and workspaces with windows
 
 # App class to icon mapping
 get_icon() {
@@ -24,7 +25,7 @@ get_workspaces() {
   active=$(hyprctl activeworkspace -j | jq -r '.id')
 
   # Get all workspaces with windows
-  workspaces=$(hyprctl workspaces -j | jq -r '.[].id' | sort -n)
+  occupied_ws=$(hyprctl workspaces -j | jq -r '.[].id' | sort -n)
 
   # Get clients per workspace
   clients=$(hyprctl clients -j)
@@ -36,24 +37,25 @@ get_workspaces() {
     # Check if workspace has windows
     ws_clients=$(echo "$clients" | jq -r ".[] | select(.workspace.id == $i) | .class" | head -1)
 
-    # Determine class and content
-    if [ "$i" = "$active" ]; then
-      class="ws ws-active"
-    elif [ -n "$ws_clients" ]; then
-      class="ws ws-occupied"
-    else
-      class="ws ws-empty"
-    fi
+    # Only show active workspace or workspaces with windows
+    if [ "$i" = "$active" ] || [ -n "$ws_clients" ]; then
+      # Determine class and content
+      if [ "$i" = "$active" ]; then
+        class="ws ws-active"
+      else
+        class="ws ws-occupied"
+      fi
 
-    # Get icon for first client
-    if [ -n "$ws_clients" ]; then
-      icon=$(get_icon "$ws_clients")
-      content="${i}[${icon}]"
-    else
-      content="$i"
-    fi
+      # Get icon for first client
+      if [ -n "$ws_clients" ]; then
+        icon=$(get_icon "$ws_clients")
+        content="${i}[${icon}]"
+      else
+        content="$i"
+      fi
 
-    result+=" (button :class \"$class\" :onclick \"hyprctl dispatch workspace $i\" \"$content\")"
+      result+=" (button :class \"$class\" :onclick \"hyprctl dispatch workspace $i\" \"$content\")"
+    fi
   done
 
   result+=")"

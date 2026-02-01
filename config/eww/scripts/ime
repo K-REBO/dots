@@ -21,12 +21,34 @@ toggle() {
   fcitx5-remote -t 2>/dev/null
 }
 
+menu() {
+  options="設定\n再起動\nKill"
+  selected=$(echo -e "$options" | wofi --dmenu --prompt "IME" --width 150 --height 150)
+
+  case "$selected" in
+    "設定")
+      fcitx5-configtool &
+      ;;
+    "再起動")
+      fcitx5-remote -e
+      sleep 0.5
+      fcitx5 -d --replace &
+      ;;
+    "Kill")
+      fcitx5-remote -e
+      ;;
+  esac
+}
+
 case "$1" in
   icon)
     get_icon
     ;;
   toggle)
     toggle
+    ;;
+  menu)
+    menu
     ;;
   *)
     get_icon

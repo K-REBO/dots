@@ -43,12 +43,24 @@ get_name() {
   fi
 }
 
+get_ssid() {
+  ssid=$(nmcli -t -f NAME,TYPE connection show --active 2>/dev/null | grep ":wifi$" | cut -d: -f1)
+  if [ -n "$ssid" ]; then
+    echo "$ssid"
+  else
+    echo ""
+  fi
+}
+
 case "$1" in
   icon)
     get_icon
     ;;
   name)
     get_name
+    ;;
+  ssid)
+    get_ssid
     ;;
   *)
     get_icon

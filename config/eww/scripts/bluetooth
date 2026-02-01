@@ -37,6 +37,23 @@ get_status() {
   fi
 }
 
+get_device() {
+  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
+
+  if [ "$powered" != "yes" ]; then
+    echo ""
+    exit
+  fi
+
+  connected=$(bluetoothctl devices Connected 2>/dev/null | head -1 | cut -d' ' -f3-)
+
+  if [ -n "$connected" ]; then
+    echo "$connected"
+  else
+    echo ""
+  fi
+}
+
 toggle() {
   powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
 
@@ -53,6 +70,9 @@ case "$1" in
     ;;
   status)
     get_status
+    ;;
+  device)
+    get_device
     ;;
   toggle)
     toggle

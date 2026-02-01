@@ -1,10 +1,6 @@
 ;; eww configuration for Hyprland
 ;; Top horizontal bar with Tokyo Night theme
 
-;; Script paths
-(defvar eww "eww -c $HOME/.config/eww")
-(defvar scripts "$HOME/.config/eww/scripts")
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                            Widgets                                    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12,66 +8,75 @@
 ;; Power Button ;;
 (defwidget power []
   (button :class "power-button"
-          :onclick "${scripts}/power"
+          :onclick "$HOME/.config/eww/scripts/power"
           :tooltip "Power Menu"
           ""))
 
 ;; Workspaces (Hyprland) ;;
 (defwidget workspaces []
   (literal :content workspace))
-(deflisten workspace "${scripts}/workspace")
+(deflisten workspace :initial "(box :class 'workspaces' '')" "$HOME/.config/eww/scripts/workspace")
 
 ;; Volume ;;
 (defwidget volume []
-  (eventbox :onscroll "${scripts}/volume {}"
-            :onclick "${scripts}/volume toggle"
+  (eventbox :onscroll "$HOME/.config/eww/scripts/volume {}"
+            :onclick "$HOME/.config/eww/scripts/volume toggle"
   (box :class "volume"
-       :tooltip "Volume: ${volume-percent}%"
-    (label :text volume-icon))))
-(defpoll volume-icon :interval "1s" "${scripts}/volume icon")
-(defpoll volume-percent :interval "1s" "${scripts}/volume percent")
+       :space-evenly false
+       :spacing 4
+    (label :text volume-icon)
+    (label :text "${volume-percent}%"))))
+(defpoll volume-icon :interval "1s" "$HOME/.config/eww/scripts/volume icon")
+(defpoll volume-percent :interval "1s" "$HOME/.config/eww/scripts/volume percent")
 
 ;; WiFi ;;
 (defwidget wifi []
   (box :class "wifi"
-       :tooltip wifi-name
-    (label :text wifi-icon)))
-(defpoll wifi-icon :interval "5s" "${scripts}/wifi icon")
-(defpoll wifi-name :interval "5s" "${scripts}/wifi name")
+       :space-evenly false
+       :spacing 4
+    (label :text wifi-icon)
+    (label :text wifi-ssid)))
+(defpoll wifi-icon :interval "5s" "$HOME/.config/eww/scripts/wifi icon")
+(defpoll wifi-ssid :interval "5s" "$HOME/.config/eww/scripts/wifi ssid")
 
 ;; Bluetooth ;;
 (defwidget bluetooth []
   (button :class "bluetooth"
-          :onclick "${scripts}/bluetooth toggle"
-          :tooltip bluetooth-status
-    bluetooth-icon))
-(defpoll bluetooth-icon :interval "5s" "${scripts}/bluetooth icon")
-(defpoll bluetooth-status :interval "5s" "${scripts}/bluetooth status")
+          :onclick "$HOME/.config/eww/scripts/bluetooth toggle"
+  (box :space-evenly false
+       :spacing 4
+    (label :text bluetooth-icon)
+    (label :text bluetooth-device))))
+(defpoll bluetooth-icon :interval "5s" "$HOME/.config/eww/scripts/bluetooth icon")
+(defpoll bluetooth-device :interval "5s" "$HOME/.config/eww/scripts/bluetooth device")
 
 ;; Battery ;;
 (defwidget battery []
   (box :class "battery ${battery-status}"
-       :tooltip "Battery: ${battery-percent}%"
-    (label :text battery-icon)))
-(defpoll battery-icon :interval "30s" "${scripts}/battery icon")
-(defpoll battery-percent :interval "30s" "${scripts}/battery percent")
-(defpoll battery-status :interval "30s" "${scripts}/battery status")
+       :space-evenly false
+       :spacing 4
+    (label :text battery-icon)
+    (label :text "${battery-percent}%")))
+(defpoll battery-icon :interval "30s" "$HOME/.config/eww/scripts/battery icon")
+(defpoll battery-percent :interval "30s" "$HOME/.config/eww/scripts/battery percent")
+(defpoll battery-status :interval "30s" "$HOME/.config/eww/scripts/battery status")
 
 ;; IME (fcitx5) ;;
 (defwidget ime []
   (button :class "ime"
-          :onclick "${scripts}/ime toggle"
+          :onclick "$HOME/.config/eww/scripts/ime toggle"
+          :onrightclick "$HOME/.config/eww/scripts/ime menu"
           :tooltip "Input Method"
     ime-icon))
-(defpoll ime-icon :interval "1s" "${scripts}/ime icon")
+(defpoll ime-icon :interval "1s" "$HOME/.config/eww/scripts/ime icon")
 
 ;; Brightness ;;
 (defwidget brightness []
-  (eventbox :onscroll "${scripts}/brightness {}"
+  (eventbox :onscroll "$HOME/.config/eww/scripts/brightness {}"
   (box :class "brightness"
        :tooltip "Brightness: ${brightness-percent}%"
     (label :text ""))))
-(defpoll brightness-percent :interval "5s" "${scripts}/brightness percent")
+(defpoll brightness-percent :interval "5s" "$HOME/.config/eww/scripts/brightness percent")
 
 ;; DateTime ;;
 (defwidget datetime []
@@ -132,7 +137,7 @@
   :geometry (geometry :x "0"
                       :y "0"
                       :width "100%"
-                      :height "32px"
+                      :height "36px"
                       :anchor "top center")
   :stacking "fg"
   :exclusive true
