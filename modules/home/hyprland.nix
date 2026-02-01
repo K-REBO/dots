@@ -15,8 +15,7 @@
     extraConfig = builtins.readFile ../../config/hypr/hyprland.conf + ''
 
       # wmfocus (Nix store path)
-      bind = $mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --textcolorcurrent lightseagreen --font "UbuntuMono Nerd Font":120
-
+      bind = $mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --textcolorcurrent lightseagreen --font "UbuntuMono Nerd Font":120 --offset 5,5 --margin 0.1,0.2,0.2,0
       # wayland_fcitx5_indicator (IME mode indicator)
       exec-once = ${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator
     '';

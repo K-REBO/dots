@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# WiFi status script using nmcli
+
+get_icon() {
+  # Check if WiFi is enabled
+  wifi_state=$(nmcli radio wifi 2>/dev/null)
+  if [ "$wifi_state" = "disabled" ]; then
+    echo "󰤭"
+    exit
+  fi
+
+  # Check connection status
+  connection=$(nmcli -t -f TYPE,STATE connection show --active 2>/dev/null | grep "^wifi")
+  if [ -z "$connection" ]; then
+    echo "󰤯"
+    exit
+  fi
+
+  # Get signal strength
+  signal=$(nmcli -t -f IN-USE,SIGNAL dev wifi list 2>/dev/null | grep "^\*" | cut -d: -f2)
+
+  if [ -z "$signal" ]; then
+    echo "󰤨"
+  elif [ "$signal" -ge 80 ]; then
+    echo "󰤨"
+  elif [ "$signal" -ge 60 ]; then
+    echo "󰤥"
+  elif [ "$signal" -ge 40 ]; then
+    echo "󰤢"
+  elif [ "$signal" -ge 20 ]; then
+    echo "󰤟"
+  else
+    echo "󰤯"
+  fi
+}
+
+get_name() {
+  ssid=$(nmcli -t -f NAME,TYPE connection show --active 2>/dev/null | grep ":wifi$" | cut -d: -f1)
+  if [ -n "$ssid" ]; then
+    echo "Connected: $ssid"
+  else
+    echo "Disconnected"
+  fi
+}
+
+case "$1" in
+  icon)
+    get_icon
+    ;;
+  name)
+    get_name
+    ;;
+  *)
+    get_icon
+    ;;
+esac

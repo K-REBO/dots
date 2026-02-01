@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# IME (fcitx5) status script
+
+get_icon() {
+  # fcitx5-remote returns:
+  # 1 = inactive (English)
+  # 2 = active (Japanese/other)
+  status=$(fcitx5-remote 2>/dev/null)
+
+  case "$status" in
+    2)
+      echo "あ"
+      ;;
+    *)
+      echo "A"
+      ;;
+  esac
+}
+
+toggle() {
+  fcitx5-remote -t 2>/dev/null
+}
+
+case "$1" in
+  icon)
+    get_icon
+    ;;
+  toggle)
+    toggle
+    ;;
+  *)
+    get_icon
+    ;;
+esac

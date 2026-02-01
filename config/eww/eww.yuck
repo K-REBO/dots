@@ -1,0 +1,140 @@
+;; eww configuration for Hyprland
+;; Top horizontal bar with Tokyo Night theme
+
+;; Script paths
+(defvar eww "eww -c $HOME/.config/eww")
+(defvar scripts "$HOME/.config/eww/scripts")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                            Widgets                                    ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Power Button ;;
+(defwidget power []
+  (button :class "power-button"
+          :onclick "${scripts}/power"
+          :tooltip "Power Menu"
+          ""))
+
+;; Workspaces (Hyprland) ;;
+(defwidget workspaces []
+  (literal :content workspace))
+(deflisten workspace "${scripts}/workspace")
+
+;; Volume ;;
+(defwidget volume []
+  (eventbox :onscroll "${scripts}/volume {}"
+            :onclick "${scripts}/volume toggle"
+  (box :class "volume"
+       :tooltip "Volume: ${volume-percent}%"
+    (label :text volume-icon))))
+(defpoll volume-icon :interval "1s" "${scripts}/volume icon")
+(defpoll volume-percent :interval "1s" "${scripts}/volume percent")
+
+;; WiFi ;;
+(defwidget wifi []
+  (box :class "wifi"
+       :tooltip wifi-name
+    (label :text wifi-icon)))
+(defpoll wifi-icon :interval "5s" "${scripts}/wifi icon")
+(defpoll wifi-name :interval "5s" "${scripts}/wifi name")
+
+;; Bluetooth ;;
+(defwidget bluetooth []
+  (button :class "bluetooth"
+          :onclick "${scripts}/bluetooth toggle"
+          :tooltip bluetooth-status
+    bluetooth-icon))
+(defpoll bluetooth-icon :interval "5s" "${scripts}/bluetooth icon")
+(defpoll bluetooth-status :interval "5s" "${scripts}/bluetooth status")
+
+;; Battery ;;
+(defwidget battery []
+  (box :class "battery ${battery-status}"
+       :tooltip "Battery: ${battery-percent}%"
+    (label :text battery-icon)))
+(defpoll battery-icon :interval "30s" "${scripts}/battery icon")
+(defpoll battery-percent :interval "30s" "${scripts}/battery percent")
+(defpoll battery-status :interval "30s" "${scripts}/battery status")
+
+;; IME (fcitx5) ;;
+(defwidget ime []
+  (button :class "ime"
+          :onclick "${scripts}/ime toggle"
+          :tooltip "Input Method"
+    ime-icon))
+(defpoll ime-icon :interval "1s" "${scripts}/ime icon")
+
+;; Brightness ;;
+(defwidget brightness []
+  (eventbox :onscroll "${scripts}/brightness {}"
+  (box :class "brightness"
+       :tooltip "Brightness: ${brightness-percent}%"
+    (label :text ""))))
+(defpoll brightness-percent :interval "5s" "${scripts}/brightness percent")
+
+;; DateTime ;;
+(defwidget datetime []
+  (box :class "datetime"
+       :space-evenly false
+       :spacing 8
+    (label :class "date" :text date-text)
+    (label :class "time" :text time-text)))
+(defpoll date-text :interval "60s" "date '+%m/%d %a'")
+(defpoll time-text :interval "1s" "date '+%H:%M'")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                          Bar Layout                                   ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Left Section ;;
+(defwidget left []
+  (box :class "left"
+       :space-evenly false
+       :halign "start"
+       :spacing 12
+    (power)
+    (workspaces)))
+
+;; Center Section (empty) ;;
+(defwidget center []
+  (box :class "center"
+       :halign "center"))
+
+;; Right Section ;;
+(defwidget right []
+  (box :class "right"
+       :space-evenly false
+       :halign "end"
+       :spacing 12
+    (volume)
+    (wifi)
+    (bluetooth)
+    (battery)
+    (ime)
+    (brightness)
+    (datetime)))
+
+;; Main Bar ;;
+(defwidget bar []
+  (centerbox :class "bar"
+             :orientation "h"
+    (left)
+    (center)
+    (right)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                            Windows                                    ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defwindow bar
+  :monitor 0
+  :geometry (geometry :x "0"
+                      :y "0"
+                      :width "100%"
+                      :height "32px"
+                      :anchor "top center")
+  :stacking "fg"
+  :exclusive true
+  :focusable false
+  (bar))

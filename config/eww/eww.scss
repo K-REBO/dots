@@ -1,0 +1,143 @@
+/* eww styles - Tokyo Night theme */
+
+/* Reset */
+* {
+  all: unset;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 14px;
+}
+
+/* Tokyo Night colors */
+$bg: #1a1b26;
+$bg-dark: #16161e;
+$bg-light: #24283b;
+$fg: #a9b1d6;
+$fg-dark: #565f89;
+$red: #f7768e;
+$green: #73daca;
+$yellow: #e0af68;
+$blue: #7aa2f7;
+$magenta: #bb9af7;
+$cyan: #7dcfff;
+$orange: #ff9e64;
+
+/* Main bar */
+.bar {
+  background-color: $bg;
+  padding: 0 12px;
+}
+
+/* Common widget styles */
+.left, .right {
+  padding: 4px 0;
+}
+
+/* Power button */
+.power-button {
+  color: $red;
+  font-size: 16px;
+  padding: 0 8px;
+  &:hover {
+    color: lighten($red, 10%);
+  }
+}
+
+/* Workspaces */
+.workspaces {
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 2px 8px;
+}
+
+.ws {
+  padding: 2px 6px;
+  margin: 0 2px;
+  border-radius: 4px;
+  color: $fg-dark;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: $fg;
+    background-color: rgba($cyan, 0.1);
+  }
+}
+
+.ws-active {
+  color: $cyan;
+  background-color: rgba($cyan, 0.15);
+}
+
+.ws-occupied {
+  color: $fg;
+}
+
+.ws-empty {
+  color: $fg-dark;
+}
+
+/* Volume */
+.volume {
+  color: $green;
+  padding: 0 8px;
+}
+
+/* WiFi */
+.wifi {
+  color: $magenta;
+  padding: 0 8px;
+}
+
+/* Bluetooth */
+.bluetooth {
+  color: $blue;
+  padding: 0 8px;
+  &:hover {
+    color: lighten($blue, 10%);
+  }
+}
+
+/* Battery */
+.battery {
+  color: $blue;
+  padding: 0 8px;
+
+  &.charging {
+    color: $green;
+  }
+
+  &.low {
+    color: $red;
+  }
+}
+
+/* IME */
+.ime {
+  color: $yellow;
+  padding: 0 8px;
+  font-weight: bold;
+  &:hover {
+    color: lighten($yellow, 10%);
+  }
+}
+
+/* Brightness */
+.brightness {
+  color: $yellow;
+  padding: 0 8px;
+}
+
+/* DateTime */
+.datetime {
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 2px 12px;
+
+  .date {
+    color: $fg-dark;
+  }
+
+  .time {
+    color: $fg;
+    font-weight: bold;
+  }
+}

@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Bluetooth status script using bluetoothctl
+
+get_icon() {
+  # Check if bluetooth is powered on
+  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
+
+  if [ "$powered" != "yes" ]; then
+    echo "󰂲"
+    exit
+  fi
+
+  # Check if any device is connected
+  connected=$(bluetoothctl devices Connected 2>/dev/null)
+
+  if [ -n "$connected" ]; then
+    echo "󰂱"
+  else
+    echo "󰂯"
+  fi
+}
+
+get_status() {
+  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
+
+  if [ "$powered" != "yes" ]; then
+    echo "Bluetooth Off"
+    exit
+  fi
+
+  connected=$(bluetoothctl devices Connected 2>/dev/null | head -1 | cut -d' ' -f3-)
+
+  if [ -n "$connected" ]; then
+    echo "Connected: $connected"
+  else
+    echo "Bluetooth On"
+  fi
+}
+
+toggle() {
+  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
+
+  if [ "$powered" = "yes" ]; then
+    bluetoothctl power off
+  else
+    bluetoothctl power on
+  fi
+}
+
+case "$1" in
+  icon)
+    get_icon
+    ;;
+  status)
+    get_status
+    ;;
+  toggle)
+    toggle
+    ;;
+  *)
+    get_icon
+    ;;
+esac

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Brightness control script using brightnessctl
+
+get_percent() {
+  brightnessctl -m 2>/dev/null | cut -d',' -f4 | tr -d '%'
+}
+
+case "$1" in
+  percent)
+    get_percent
+    ;;
+  up)
+    brightnessctl set 5%+ 2>/dev/null
+    ;;
+  down)
+    brightnessctl set 5%- 2>/dev/null
+    ;;
+  *)
+    # Scroll handling
+    if [ "$1" = "up" ] || [ "$1" = "" ]; then
+      brightnessctl set 5%+ 2>/dev/null
+    else
+      brightnessctl set 5%- 2>/dev/null
+    fi
+    ;;
+esac

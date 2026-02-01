@@ -240,11 +240,11 @@
     "wmfocus-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1769974993,
-        "narHash": "sha256-UsjwhrzJ4GwGuIfaZBYBGpaVy36not8nZ7lyYkdE1G4=",
+        "lastModified": 1769977055,
+        "narHash": "sha256-TTca2lERMjmaVEQkVV70YN/tlvEiHrBIf4l2jsEsRrw=",
         "owner": "K-REBO",
         "repo": "wmfocus",
-        "rev": "29078503d13e9771c2859baef0fa0247446fbfce",
+        "rev": "679c0cc1979a2c18bd02d82c17ba5f8c0d2398e6",
         "type": "github"
       },
       "original": {

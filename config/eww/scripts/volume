@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Volume control script using wpctl (PipeWire)
+
+get_volume() {
+  wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{print int($2 * 100)}'
+}
+
+is_muted() {
+  wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | grep -q MUTED
+}
+
+get_icon() {
+  if is_muted; then
+    echo "󰖁"
+  else
+    vol=$(get_volume)
+    if [ "$vol" -ge 70 ]; then
+      echo "󰕾"
+    elif [ "$vol" -ge 30 ]; then
+      echo "󰖀"
+    elif [ "$vol" -gt 0 ]; then
+      echo "󰕿"
+    else
+      echo "󰖁"
+    fi
+  fi
+}
+
+case "$1" in
+  icon)
+    get_icon
+    ;;
+  percent)
+    get_volume
+    ;;
+  toggle)
+    wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+    ;;
+  up)
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+    ;;
+  down)
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+    ;;
+  *)
+    # Scroll handling
+    if [ "$1" = "up" ] || [ "$1" = "" ]; then
+      wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+    else
+      wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+    fi
+    ;;
+esac

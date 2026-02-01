@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# Battery status script
+
+BAT_PATH="/sys/class/power_supply/BAT0"
+
+# Fallback to BAT1 if BAT0 doesn't exist
+if [ ! -d "$BAT_PATH" ]; then
+  BAT_PATH="/sys/class/power_supply/BAT1"
+fi
+
+# If still no battery, show AC icon
+if [ ! -d "$BAT_PATH" ]; then
+  case "$1" in
+    icon) echo "󰚥" ;;
+    percent) echo "100" ;;
+    status) echo "" ;;
+  esac
+  exit
+fi
+
+get_percent() {
+  cat "$BAT_PATH/capacity" 2>/dev/null || echo "0"
+}
+
+get_status() {
+  status=$(cat "$BAT_PATH/status" 2>/dev/null)
+  case "$status" in
+    Charging) echo "charging" ;;
+    Discharging)
+      percent=$(get_percent)
+      if [ "$percent" -le 20 ]; then
+        echo "low"
+      else
+        echo ""
+      fi
+      ;;
+    *) echo "" ;;
+  esac
+}
+
+get_icon() {
+  status=$(cat "$BAT_PATH/status" 2>/dev/null)
+  percent=$(get_percent)
+
+  if [ "$status" = "Charging" ]; then
+    echo "󰂄"
+    exit
+  fi
+
+  if [ "$percent" -ge 90 ]; then
+    echo "󰁹"
+  elif [ "$percent" -ge 80 ]; then
+    echo "󰂂"
+  elif [ "$percent" -ge 70 ]; then
+    echo "󰂁"
+  elif [ "$percent" -ge 60 ]; then
+    echo "󰂀"
+  elif [ "$percent" -ge 50 ]; then
+    echo "󰁿"
+  elif [ "$percent" -ge 40 ]; then
+    echo "󰁾"
+  elif [ "$percent" -ge 30 ]; then
+    echo "󰁽"
+  elif [ "$percent" -ge 20 ]; then
+    echo "󰁼"
+  elif [ "$percent" -ge 10 ]; then
+    echo "󰁻"
+  else
+    echo "󰂎"
+  fi
+}
+
+case "$1" in
+  icon)
+    get_icon
+    ;;
+  percent)
+    get_percent
+    ;;
+  status)
+    get_status
+    ;;
+  *)
+    get_icon
+    ;;
+esac
