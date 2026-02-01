@@ -51,6 +51,9 @@
 
     # ウィンドウフォーカス
     wmfocus
+
+    # キー入力表示（Wayland）
+    wshowkeys
   ] ++ [
     # Nix関連 (flake inputsから取得して競合を回避)
     inputs.home-manager.packages.${pkgs.system}.home-manager

@@ -44,8 +44,8 @@
        inoremap <C-e> <End>
        cnoremap <C-e> <End>
 
-
-
+      " 前回のカーソル位置を復元
+      autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
     '';
   };
 }
