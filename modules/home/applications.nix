@@ -62,9 +62,7 @@
     # ============
     # 録画・スクリーンショット
     # ============
-    # obs-studio                # 配信・録画（必要な場合）
-    kazam                       # スクリーン録画
-    simplescreenrecorder        # スクリーン録画
+    wf-recorder                 # Waylandスクリーン録画（Shift+Print）
 
     # ============
     # その他ツール
