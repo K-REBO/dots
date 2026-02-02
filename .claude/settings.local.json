@@ -33,7 +33,8 @@
       "Bash(find:*)",
       "Bash(file:*)",
       "Bash(git -C /home/bido/.config/nix log --all --pretty=format:\"%H %s\")",
-      "Bash(git -C /home/bido/.config/nix remote:*)"
+      "Bash(git -C /home/bido/.config/nix remote:*)",
+      "WebSearch"
     ]
   }
 }

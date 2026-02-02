@@ -148,6 +148,11 @@
     xwayland.enable = true;  # X11アプリ互換性
   };
 
+  # niri - scrollable-tiling Wayland compositor
+  programs.niri = {
+    enable = true;
+  };
+
   # XDG Desktop Portal (スクリーンシェア、ファイルピッカー等)
   xdg.portal = {
     enable = true;
