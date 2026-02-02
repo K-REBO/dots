@@ -125,35 +125,35 @@ $orange: #ffaa00;
 }
 
 // ワークスペースごとの色
-.ws-1.ws-active  { color: #000; background-color: $cyan; }
-.ws-1.ws-occupied { color: $cyan; background-color: rgba($cyan, 0.2); }
+.ws-1.ws-active  { color: #000; background-color: crimson; }
+.ws-1.ws-occupied { color: crimson; background-color: rgba(crimson, 0.2); }
 
-.ws-2.ws-active  { color: #000; background-color: $magenta; }
-.ws-2.ws-occupied { color: $magenta; background-color: rgba($magenta, 0.2); }
+.ws-2.ws-active  { color: #000; background-color: aqua; }
+.ws-2.ws-occupied { color: aqua; background-color: rgba(aqua, 0.2); }
 
-.ws-3.ws-active  { color: #000; background-color: $green; }
-.ws-3.ws-occupied { color: $green; background-color: rgba($green, 0.2); }
+.ws-3.ws-active  { color: #000; background-color: gold; }
+.ws-3.ws-occupied { color: gold; background-color: rgba(gold, 0.2); }
 
-.ws-4.ws-active  { color: #000; background-color: $yellow; }
-.ws-4.ws-occupied { color: $yellow; background-color: rgba($yellow, 0.2); }
+.ws-4.ws-active  { color: #000; background-color: blue; }
+.ws-4.ws-occupied { color: blue; background-color: rgba(blue, 0.2); }
 
-.ws-5.ws-active  { color: #000; background-color: $orange; }
-.ws-5.ws-occupied { color: $orange; background-color: rgba($orange, 0.2); }
+.ws-5.ws-active  { color: #000; background-color: lime; }
+.ws-5.ws-occupied { color: lime; background-color: rgba(lime, 0.2); }
 
-.ws-6.ws-active  { color: #000; background-color: $red; }
-.ws-6.ws-occupied { color: $red; background-color: rgba($red, 0.2); }
+.ws-6.ws-active  { color: #000; background-color: fuchsia; }
+.ws-6.ws-occupied { color: fuchsia; background-color: rgba(fuchsia, 0.2); }
 
-.ws-7.ws-active  { color: #000; background-color: $blue; }
-.ws-7.ws-occupied { color: $blue; background-color: rgba($blue, 0.2); }
+.ws-7.ws-active  { color: #000; background-color: yellow; }
+.ws-7.ws-occupied { color: yellow; background-color: rgba(yellow, 0.2); }
 
-.ws-8.ws-active  { color: #000; background-color: $cyan; }
-.ws-8.ws-occupied { color: $cyan; background-color: rgba($cyan, 0.2); }
+.ws-8.ws-active  { color: #000; background-color: deeppink; }
+.ws-8.ws-occupied { color: deeppink; background-color: rgba(deeppink, 0.2); }
 
-.ws-9.ws-active  { color: #000; background-color: $magenta; }
-.ws-9.ws-occupied { color: $magenta; background-color: rgba($magenta, 0.2); }
+.ws-9.ws-active  { color: #000; background-color: orangered; }
+.ws-9.ws-occupied { color: orangered; background-color: rgba(orangered, 0.2); }
 
-.ws-10.ws-active  { color: #000; background-color: $green; }
-.ws-10.ws-occupied { color: $green; background-color: rgba($green, 0.2); }
+.ws-10.ws-active  { color: #000; background-color: aqua; }
+.ws-10.ws-occupied { color: aqua; background-color: rgba(aqua, 0.2); }
 
 .ws-empty {
   color: $fg-dark;
