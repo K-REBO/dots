@@ -2,15 +2,38 @@
 ;; Top horizontal bar with Tokyo Night theme
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                         State Variables                               ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar power-reveal false)
+(defvar volume-reveal false)
+(defvar brightness-reveal false)
+(defvar wifi-reveal false)
+(defvar battery-reveal false)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                            Widgets                                    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Power Button ;;
+;; Power Menu ;;
 (defwidget power []
-  (button :class "power-button"
-          :onclick "$HOME/.config/eww/scripts/power"
-          :tooltip "Power Menu"
-          ""))
+  (eventbox :onhover "${EWW_CMD} update power-reveal=true"
+            :onhoverlost "${EWW_CMD} update power-reveal=false"
+    (box :class "power-menu" :space-evenly false :spacing 8
+      (label :class "power-nixos" :text "󱄅")
+      (revealer :transition "slideright" :reveal power-reveal :duration "300ms"
+        (box :space-evenly false :spacing 6
+          (label :class "power-separator" :text "|")
+          (button :class "power-shutdown" :onclick "systemctl poweroff" :tooltip "Shutdown"
+            (box :space-evenly false :spacing 4 (label :text "") (label :text "Shutdown")))
+          (button :class "power-reboot" :onclick "systemctl reboot" :tooltip "Reboot"
+            (box :space-evenly false :spacing 4 (label :text "") (label :text "Reboot")))
+          (button :class "power-suspend" :onclick "systemctl suspend" :tooltip "Suspend"
+            (box :space-evenly false :spacing 4 (label :text "󰒲") (label :text "Sleep")))
+          (button :class "power-lock" :onclick "hyprlock" :tooltip "Lock"
+            (box :space-evenly false :spacing 4 (label :text "") (label :text "Lock")))
+          (button :class "power-logout" :onclick "hyprctl dispatch exit" :tooltip "Logout"
+            (box :space-evenly false :spacing 4 (label :text "󰍃") (label :text "Logout"))))))))
 
 ;; Workspaces (Hyprland) ;;
 (defwidget workspaces []
@@ -19,25 +42,39 @@
 
 ;; Volume ;;
 (defwidget volume []
-  (eventbox :onscroll "$HOME/.config/eww/scripts/volume {}"
-            :onclick "$HOME/.config/eww/scripts/volume toggle"
-  (box :class "volume"
-       :space-evenly false
-       :spacing 4
-    (label :text volume-icon)
-    (label :text "${volume-percent}%"))))
+  (eventbox :onhover "${EWW_CMD} update volume-reveal=true"
+            :onhoverlost "${EWW_CMD} update volume-reveal=false"
+            :onscroll "$HOME/.config/eww/scripts/volume {}"
+    (box :class "volume" :space-evenly false :spacing 4
+      (revealer :transition "slideright" :reveal volume-reveal :duration "300ms"
+        (scale :class "volume-slider"
+               :value volume-percent
+               :min 0 :max 100
+               :onchange "$HOME/.config/eww/scripts/volume set {}"))
+      (button :onclick "$HOME/.config/eww/scripts/volume toggle"
+        (label :text volume-icon))
+      (label :text "${volume-percent}%"))))
 (defpoll volume-icon :interval "1s" "$HOME/.config/eww/scripts/volume icon")
 (defpoll volume-percent :interval "1s" "$HOME/.config/eww/scripts/volume percent")
 
 ;; WiFi ;;
 (defwidget wifi []
-  (box :class "wifi"
-       :space-evenly false
-       :spacing 4
-    (label :text wifi-icon)
-    (label :text wifi-ssid)))
+  (eventbox :onhover "${EWW_CMD} update wifi-reveal=true"
+            :onhoverlost "${EWW_CMD} update wifi-reveal=false"
+    (box :class "wifi" :space-evenly false :spacing 4
+      (label :text wifi-icon)
+      (label :text wifi-ssid)
+      (revealer :transition "slideright" :reveal wifi-reveal :duration "300ms"
+        (box :class "wifi-details" :space-evenly false :spacing 8
+          (label :text "󰒢 ${wifi-signal}%")
+          (label :text " ${wifi-ip}")
+          (label :text "󰛳 ${wifi-gateway}")
+          (button :class "wifi-settings" :onclick "nm-connection-editor &" :tooltip "Network Settings" "󰒓"))))))
 (defpoll wifi-icon :interval "5s" "$HOME/.config/eww/scripts/wifi icon")
 (defpoll wifi-ssid :interval "5s" "$HOME/.config/eww/scripts/wifi ssid")
+(defpoll wifi-signal :interval "5s" "$HOME/.config/eww/scripts/wifi signal")
+(defpoll wifi-ip :interval "30s" "$HOME/.config/eww/scripts/wifi ip")
+(defpoll wifi-gateway :interval "30s" "$HOME/.config/eww/scripts/wifi gateway")
 
 ;; Bluetooth ;;
 (defwidget bluetooth []
@@ -52,14 +89,14 @@
 
 ;; Battery ;;
 (defwidget battery []
-  (box :class "battery ${battery-status}"
-       :space-evenly false
-       :spacing 4
+  (box :class "battery ${battery-status}" :space-evenly false :spacing 4
     (label :text battery-icon)
-    (label :text "${battery-percent}%")))
+    (label :text "${battery-percent}%")
+    (label :class "battery-time" :text "(${battery-time})")))
 (defpoll battery-icon :interval "30s" "$HOME/.config/eww/scripts/battery icon")
 (defpoll battery-percent :interval "30s" "$HOME/.config/eww/scripts/battery percent")
 (defpoll battery-status :interval "30s" "$HOME/.config/eww/scripts/battery status")
+(defpoll battery-time :interval "30s" "$HOME/.config/eww/scripts/battery time")
 
 ;; IME (fcitx5) ;;
 (defwidget ime []
@@ -72,21 +109,34 @@
 
 ;; Brightness ;;
 (defwidget brightness []
-  (eventbox :onscroll "$HOME/.config/eww/scripts/brightness {}"
-  (box :class "brightness"
-       :tooltip "Brightness: ${brightness-percent}%"
-    (label :text ""))))
-(defpoll brightness-percent :interval "5s" "$HOME/.config/eww/scripts/brightness percent")
+  (eventbox :onhover "${EWW_CMD} update brightness-reveal=true"
+            :onhoverlost "${EWW_CMD} update brightness-reveal=false"
+            :onscroll "$HOME/.config/eww/scripts/brightness {}"
+    (box :class "brightness" :space-evenly false :spacing 4
+      (revealer :transition "slideright" :reveal brightness-reveal :duration "300ms"
+        (scale :class "brightness-slider"
+               :value brightness-percent
+               :min 0 :max 100
+               :onchange "$HOME/.config/eww/scripts/brightness set {}"))
+      (label :text "󰃠")
+      (label :text "${brightness-percent}%"))))
+(defvar brightness-percent 50)
+(deflisten brightness-listener :initial "" "$HOME/.config/eww/scripts/brightness listen")
 
 ;; DateTime ;;
+(defvar calendar-visible false)
 (defwidget datetime []
-  (box :class "datetime"
-       :space-evenly false
-       :spacing 8
-    (label :class "date" :text date-text)
-    (label :class "time" :text time-text)))
-(defpoll date-text :interval "60s" "date '+%m/%d %a'")
+  (button :class "datetime"
+          :onclick "$HOME/.config/eww/scripts/calendar toggle"
+    (box :space-evenly false :spacing 8
+      (label :class "date" :text date-text)
+      (label :class "time" :text time-text))))
+(defpoll date-text :interval "60s" "LC_TIME=C date '+%m/%d %a'")
 (defpoll time-text :interval "1s" "date '+%H:%M'")
+(defpoll calendar-day :interval "60s" "date '+%d'")
+(defpoll calendar-month :interval "3600s" "date '+%m'")
+(defpoll calendar-year :interval "3600s" "date '+%Y'")
+(defpoll weather-text :interval "1800s" "$HOME/.config/eww/scripts/weather")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                          Bar Layout                                   ;;
@@ -129,15 +179,53 @@
     (right)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                         Calendar Popup                                ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defwidget calendar-popup []
+  (box :class "calendar-popup" :orientation "v" :space-evenly false :spacing 12
+    ;; Current time display
+    (box :class "calendar-time-section" :orientation "v" :space-evenly false :halign "center"
+      (label :class "calendar-time" :text time-text)
+      (label :class "calendar-date-full" :text date-full))
+    ;; Calendar
+    (box :class "calendar-section" :halign "center"
+      (calendar :class "calendar"
+                :day calendar-day
+                :month calendar-month
+                :year calendar-year))
+    ;; Weather
+    (box :class "weather-section" :orientation "v" :space-evenly false :halign "center"
+      (label :class "weather-title" :text "Weather")
+      (label :class "weather-info" :text weather-text))))
+
+(defpoll date-full :interval "60s" "LC_TIME=C date '+%A, %B %d, %Y'")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                            Windows                                    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defwindow calendar
+  :monitor 0
+  :geometry (geometry :x "0"
+                      :y "0"
+                      :width "100%"
+                      :height "100%"
+                      :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable true
+  (eventbox :onclick "$HOME/.config/eww/scripts/calendar close"
+    (box :class "calendar-overlay" :halign "end" :valign "start"
+      (eventbox :onclick "echo"  ;; Prevent click propagation
+        (calendar-popup)))))
 
 (defwindow bar
   :monitor 0
   :geometry (geometry :x "0"
                       :y "0"
                       :width "100%"
-                      :height "36px"
+                      :height "40px"
                       :anchor "top center")
   :stacking "fg"
   :exclusive true

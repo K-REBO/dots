@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Weather script using wttr.in
+
+get_weather() {
+  # Get weather info from wttr.in (format: icon temp condition)
+  weather=$(curl -s "wttr.in/?format=%c+%t+%C" 2>/dev/null | head -1)
+
+  if [ -n "$weather" ] && [ "$weather" != "Unknown location" ]; then
+    echo "$weather"
+  else
+    echo "󰼯 Weather unavailable"
+  fi
+}
+
+get_weather

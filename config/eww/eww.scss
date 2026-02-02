@@ -3,8 +3,8 @@
 /* Reset */
 * {
   all: unset;
-  font-family: "JetBrainsMono Nerd Font", monospace;
-  font-size: 16px;
+  font-family: "JetBrainsMono NF", "JetBrainsMono Nerd Font", "Symbols Nerd Font", monospace;
+  font-size: 18px;
 }
 
 /* Tokyo Night colors - bold */
@@ -33,13 +33,70 @@ $orange: #ffaa00;
   padding: 5px 0;
 }
 
-/* Power button */
-.power-button {
+/* Power Menu */
+.power-menu {
+  background-color: $bg-light;
+  border-radius: 8px;
+  padding: 6px 14px;
+}
+
+.power-nixos {
+  color: $cyan;
+  font-size: 22px;
+}
+
+.power-separator {
+  color: $fg-dark;
+  margin: 0 4px;
+}
+
+.power-shutdown {
   color: $red;
-  font-size: 18px;
-  padding: 0 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
   &:hover {
     color: lighten($red, 10%);
+    background-color: rgba($red, 0.15);
+  }
+}
+
+.power-reboot {
+  color: $yellow;
+  padding: 2px 6px;
+  border-radius: 4px;
+  &:hover {
+    color: lighten($yellow, 10%);
+    background-color: rgba($yellow, 0.15);
+  }
+}
+
+.power-suspend {
+  color: $green;
+  padding: 2px 6px;
+  border-radius: 4px;
+  &:hover {
+    color: lighten($green, 10%);
+    background-color: rgba($green, 0.15);
+  }
+}
+
+.power-lock {
+  color: $blue;
+  padding: 2px 6px;
+  border-radius: 4px;
+  &:hover {
+    color: lighten($blue, 10%);
+    background-color: rgba($blue, 0.15);
+  }
+}
+
+.power-logout {
+  color: $magenta;
+  padding: 2px 6px;
+  border-radius: 4px;
+  &:hover {
+    color: lighten($magenta, 10%);
+    background-color: rgba($magenta, 0.15);
   }
 }
 
@@ -64,15 +121,39 @@ $orange: #ffaa00;
 }
 
 .ws-active {
-  color: #000;
-  background-color: $cyan;
   font-weight: bold;
 }
 
-.ws-occupied {
-  color: $magenta;
-  background-color: rgba($magenta, 0.2);
-}
+// ワークスペースごとの色
+.ws-1.ws-active  { color: #000; background-color: $cyan; }
+.ws-1.ws-occupied { color: $cyan; background-color: rgba($cyan, 0.2); }
+
+.ws-2.ws-active  { color: #000; background-color: $magenta; }
+.ws-2.ws-occupied { color: $magenta; background-color: rgba($magenta, 0.2); }
+
+.ws-3.ws-active  { color: #000; background-color: $green; }
+.ws-3.ws-occupied { color: $green; background-color: rgba($green, 0.2); }
+
+.ws-4.ws-active  { color: #000; background-color: $yellow; }
+.ws-4.ws-occupied { color: $yellow; background-color: rgba($yellow, 0.2); }
+
+.ws-5.ws-active  { color: #000; background-color: $orange; }
+.ws-5.ws-occupied { color: $orange; background-color: rgba($orange, 0.2); }
+
+.ws-6.ws-active  { color: #000; background-color: $red; }
+.ws-6.ws-occupied { color: $red; background-color: rgba($red, 0.2); }
+
+.ws-7.ws-active  { color: #000; background-color: $blue; }
+.ws-7.ws-occupied { color: $blue; background-color: rgba($blue, 0.2); }
+
+.ws-8.ws-active  { color: #000; background-color: $cyan; }
+.ws-8.ws-occupied { color: $cyan; background-color: rgba($cyan, 0.2); }
+
+.ws-9.ws-active  { color: #000; background-color: $magenta; }
+.ws-9.ws-occupied { color: $magenta; background-color: rgba($magenta, 0.2); }
+
+.ws-10.ws-active  { color: #000; background-color: $green; }
+.ws-10.ws-occupied { color: $green; background-color: rgba($green, 0.2); }
 
 .ws-empty {
   color: $fg-dark;
@@ -86,12 +167,51 @@ $orange: #ffaa00;
   padding: 3px 10px;
 }
 
+.volume-slider {
+  min-width: 80px;
+  margin-right: 8px;
+
+  trough {
+    background-color: rgba($fg-dark, 0.3);
+    border-radius: 4px;
+    min-height: 6px;
+  }
+
+  highlight {
+    background-color: $green;
+    border-radius: 4px;
+  }
+
+  slider {
+    background-color: $fg;
+    border-radius: 50%;
+    min-width: 12px;
+    min-height: 12px;
+  }
+}
+
 /* WiFi */
 .wifi {
   color: $magenta;
   background-color: $bg-light;
   border-radius: 6px;
   padding: 3px 10px;
+}
+
+.wifi-details {
+  color: $fg-dark;
+  margin-left: 4px;
+}
+
+.wifi-settings {
+  color: $fg-dark;
+  margin-left: 4px;
+  padding: 0 4px;
+  border-radius: 4px;
+  &:hover {
+    color: $fg;
+    background-color: rgba($magenta, 0.2);
+  }
 }
 
 /* Bluetooth */
@@ -121,6 +241,12 @@ $orange: #ffaa00;
   }
 }
 
+.battery-time {
+  color: $fg-dark;
+  margin-left: 4px;
+  font-size: 14px;
+}
+
 /* IME */
 .ime {
   color: $yellow;
@@ -141,11 +267,38 @@ $orange: #ffaa00;
   padding: 3px 10px;
 }
 
+.brightness-slider {
+  min-width: 80px;
+  margin-right: 8px;
+
+  trough {
+    background-color: rgba($fg-dark, 0.3);
+    border-radius: 4px;
+    min-height: 6px;
+  }
+
+  highlight {
+    background-color: $yellow;
+    border-radius: 4px;
+  }
+
+  slider {
+    background-color: $fg;
+    border-radius: 50%;
+    min-width: 12px;
+    min-height: 12px;
+  }
+}
+
 /* DateTime */
 .datetime {
   background-color: $bg-light;
   border-radius: 8px;
   padding: 3px 14px;
+
+  &:hover {
+    background-color: lighten($bg-light, 5%);
+  }
 
   .date {
     color: $fg-dark;
@@ -155,4 +308,89 @@ $orange: #ffaa00;
     color: $fg;
     font-weight: bold;
   }
+}
+
+/* Calendar Overlay */
+.calendar-overlay {
+  padding: 50px 14px 0 0;
+}
+
+/* Calendar Popup */
+.calendar-popup {
+  background-color: $bg-solid;
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 280px;
+  border: 1px solid rgba($fg-dark, 0.3);
+}
+
+.calendar-time-section {
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba($fg-dark, 0.2);
+  margin-bottom: 8px;
+}
+
+.calendar-time {
+  font-size: 48px;
+  font-weight: bold;
+  color: $fg;
+}
+
+.calendar-date-full {
+  font-size: 14px;
+  color: $fg-dark;
+}
+
+.calendar-section {
+  padding: 8px 0;
+}
+
+.calendar {
+  color: $fg;
+  background-color: transparent;
+
+  &:selected {
+    color: $bg-solid;
+    background-color: $cyan;
+    border-radius: 50%;
+  }
+
+  &:indeterminate {
+    color: $fg-dark;
+  }
+
+  &.header {
+    color: $cyan;
+    font-weight: bold;
+  }
+
+  &.button {
+    color: $fg-dark;
+    &:hover {
+      color: $fg;
+      background-color: rgba($cyan, 0.2);
+    }
+  }
+
+  &.highlight {
+    color: $cyan;
+    font-weight: bold;
+  }
+}
+
+.weather-section {
+  padding-top: 12px;
+  border-top: 1px solid rgba($fg-dark, 0.2);
+  margin-top: 8px;
+}
+
+.weather-title {
+  font-size: 12px;
+  color: $fg-dark;
+  margin-bottom: 4px;
+}
+
+.weather-info {
+  color: $fg;
+  font-size: 16px;
 }

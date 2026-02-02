@@ -42,6 +42,11 @@ case "$1" in
   down)
     wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
     ;;
+  set)
+    # Set volume to specific percentage (from slider)
+    vol="${2%.*}"  # Remove decimal part
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ "${vol}%"
+    ;;
   *)
     # Scroll handling
     if [ "$1" = "up" ] || [ "$1" = "" ]; then

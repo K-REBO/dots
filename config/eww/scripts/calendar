@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Calendar popup toggle script
+
+EWW_CMD="eww"
+
+toggle() {
+  if eww windows | grep -q "\*calendar"; then
+    eww close calendar
+  else
+    eww open calendar
+  fi
+}
+
+case "$1" in
+  toggle)
+    toggle
+    ;;
+  open)
+    eww open calendar
+    ;;
+  close)
+    eww close calendar
+    ;;
+  *)
+    toggle
+    ;;
+esac

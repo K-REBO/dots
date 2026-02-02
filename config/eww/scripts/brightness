@@ -1,8 +1,35 @@
 #!/usr/bin/env bash
 # Brightness control script using brightnessctl
 
+BRIGHTNESS_FILE="/sys/class/backlight/*/brightness"
+
 get_percent() {
   brightnessctl -m 2>/dev/null | cut -d',' -f4 | tr -d '%'
+}
+
+update_eww() {
+  eww update brightness-percent="$(get_percent)"
+}
+
+listen() {
+  # Output initial value
+  update_eww
+
+  # Find the actual brightness file path
+  brightness_path=$(echo $BRIGHTNESS_FILE)
+  if [ -f "$brightness_path" ]; then
+    brightness_dir=$(dirname "$brightness_path")
+    # Monitor brightness changes using inotifywait
+    inotifywait -m -e modify "$brightness_path" 2>/dev/null | while read -r; do
+      update_eww
+    done
+  else
+    # Fallback: poll every second if inotifywait not available or file not found
+    while true; do
+      update_eww
+      sleep 1
+    done
+  fi
 }
 
 case "$1" in
@@ -11,16 +38,22 @@ case "$1" in
     ;;
   up)
     brightnessctl set 5%+ 2>/dev/null
+    update_eww
     ;;
   down)
     brightnessctl set 5%- 2>/dev/null
+    update_eww
+    ;;
+  set)
+    # Set brightness to specific percentage (from slider)
+    val="${2%.*}"  # Remove decimal part
+    brightnessctl set "${val}%" 2>/dev/null
+    update_eww
+    ;;
+  listen)
+    listen
     ;;
   *)
-    # Scroll handling
-    if [ "$1" = "up" ] || [ "$1" = "" ]; then
-      brightnessctl set 5%+ 2>/dev/null
-    else
-      brightnessctl set 5%- 2>/dev/null
-    fi
+    get_percent
     ;;
 esac

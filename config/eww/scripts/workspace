@@ -7,15 +7,15 @@
 get_icon() {
   case "$1" in
     firefox|Firefox*) echo "󰈹" ;;
-    Alacritty|alacritty) echo "" ;;
+    Alacritty|alacritty) echo "󰆍" ;;
     spotify|Spotify) echo "󰓇" ;;
     code|Code|VSCodium) echo "󰨞" ;;
     discord|Discord) echo "󰙯" ;;
     slack|Slack) echo "󰒱" ;;
-    telegram*|Telegram*) echo "" ;;
-    chromium*|Chromium*|google-chrome*) echo "" ;;
-    thunar|nautilus|dolphin|pcmanfm) echo "" ;;
-    *) echo "" ;;
+    telegram*|Telegram*) echo "󰔁" ;;
+    chromium*|Chromium*|google-chrome*) echo "󰊯" ;;
+    thunar|nautilus|dolphin|pcmanfm) echo "󰉋" ;;
+    *) echo "󰀏" ;;
   esac
 }
 
@@ -35,21 +35,25 @@ get_workspaces() {
 
   for i in {1..10}; do
     # Check if workspace has windows
-    ws_clients=$(echo "$clients" | jq -r ".[] | select(.workspace.id == $i) | .class" | head -1)
+    ws_clients=$(echo "$clients" | jq -r ".[] | select(.workspace.id == $i) | .class")
 
     # Only show active workspace or workspaces with windows
     if [ "$i" = "$active" ] || [ -n "$ws_clients" ]; then
       # Determine class and content
       if [ "$i" = "$active" ]; then
-        class="ws ws-active"
+        class="ws ws-$i ws-active"
       else
-        class="ws ws-occupied"
+        class="ws ws-$i ws-occupied"
       fi
 
-      # Get icon for first client
+      # Build icons for all clients
       if [ -n "$ws_clients" ]; then
-        icon=$(get_icon "$ws_clients")
-        content="${i}[${icon}]"
+        icons=""
+        while IFS= read -r client; do
+          [ -n "$icons" ] && icons+=" "
+          icons+=$(get_icon "$client")
+        done <<< "$ws_clients"
+        content="${i}[${icons} ]"
       else
         content="$i"
       fi

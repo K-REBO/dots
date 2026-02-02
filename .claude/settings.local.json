@@ -22,7 +22,12 @@
       "Bash(sudo cat:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(brightnessctl:*)",
+      "Bash(/home/bido/.config/eww/scripts/brightness:*)",
+      "Bash(eww logs:*)",
+      "Bash(eww reload:*)",
+      "Bash(chmod:*)"
     ]
   }
 }

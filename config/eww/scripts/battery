@@ -70,6 +70,59 @@ get_icon() {
   fi
 }
 
+get_time() {
+  status=$(cat "$BAT_PATH/status" 2>/dev/null)
+
+  # Try to get time from power_now and energy_now
+  if [ -f "$BAT_PATH/power_now" ] && [ -f "$BAT_PATH/energy_now" ]; then
+    power=$(cat "$BAT_PATH/power_now" 2>/dev/null)
+    energy=$(cat "$BAT_PATH/energy_now" 2>/dev/null)
+
+    if [ -n "$power" ] && [ "$power" -gt 0 ] && [ -n "$energy" ]; then
+      if [ "$status" = "Charging" ]; then
+        energy_full=$(cat "$BAT_PATH/energy_full" 2>/dev/null)
+        remaining=$((energy_full - energy))
+        hours=$((remaining / power))
+        minutes=$(( (remaining % power) * 60 / power ))
+      else
+        hours=$((energy / power))
+        minutes=$(( (energy % power) * 60 / power ))
+      fi
+      printf "%dh %dm\n" "$hours" "$minutes"
+      exit
+    fi
+  fi
+
+  # Fallback: try using current_now
+  if [ -f "$BAT_PATH/current_now" ] && [ -f "$BAT_PATH/charge_now" ]; then
+    current=$(cat "$BAT_PATH/current_now" 2>/dev/null)
+    charge=$(cat "$BAT_PATH/charge_now" 2>/dev/null)
+
+    if [ -n "$current" ] && [ "$current" -gt 0 ] && [ -n "$charge" ]; then
+      if [ "$status" = "Charging" ]; then
+        charge_full=$(cat "$BAT_PATH/charge_full" 2>/dev/null)
+        remaining=$((charge_full - charge))
+        hours=$((remaining / current))
+        minutes=$(( (remaining % current) * 60 / current ))
+      else
+        hours=$((charge / current))
+        minutes=$(( (charge % current) * 60 / current ))
+      fi
+      printf "%dh %dm\n" "$hours" "$minutes"
+      exit
+    fi
+  fi
+
+  # Fallback if no time info available
+  if [ "$status" = "Charging" ]; then
+    echo "Charging"
+  elif [ "$status" = "Full" ]; then
+    echo "Full"
+  else
+    echo ""
+  fi
+}
+
 case "$1" in
   icon)
     get_icon
@@ -79,6 +132,9 @@ case "$1" in
     ;;
   status)
     get_status
+    ;;
+  time)
+    get_time
     ;;
   *)
     get_icon

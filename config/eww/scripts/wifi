@@ -35,7 +35,7 @@ get_icon() {
 }
 
 get_name() {
-  ssid=$(nmcli -t -f NAME,TYPE connection show --active 2>/dev/null | grep ":wifi$" | cut -d: -f1)
+  ssid=$(nmcli -t -f NAME,TYPE connection show --active 2>/dev/null | grep -E "wireless|wifi" | cut -d: -f1)
   if [ -n "$ssid" ]; then
     echo "Connected: $ssid"
   else
@@ -44,11 +44,45 @@ get_name() {
 }
 
 get_ssid() {
-  ssid=$(nmcli -t -f NAME,TYPE connection show --active 2>/dev/null | grep ":wifi$" | cut -d: -f1)
+  ssid=$(nmcli -t -f NAME,TYPE connection show --active 2>/dev/null | grep -E "wireless|wifi" | cut -d: -f1)
   if [ -n "$ssid" ]; then
     echo "$ssid"
   else
     echo ""
+  fi
+}
+
+get_signal() {
+  signal=$(nmcli -t -f IN-USE,SIGNAL dev wifi list 2>/dev/null | grep "^\*" | cut -d: -f2)
+  if [ -n "$signal" ]; then
+    echo "$signal"
+  else
+    echo "0"
+  fi
+}
+
+get_ip() {
+  # Get IP address of wifi interface
+  wifi_iface=$(nmcli -t -f DEVICE,TYPE device status 2>/dev/null | grep ":wifi$" | cut -d: -f1)
+  if [ -n "$wifi_iface" ]; then
+    ip=$(ip -4 addr show "$wifi_iface" 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+    if [ -n "$ip" ]; then
+      echo "$ip"
+    else
+      echo "N/A"
+    fi
+  else
+    echo "N/A"
+  fi
+}
+
+get_gateway() {
+  # Get default gateway
+  gateway=$(ip route show default 2>/dev/null | grep -oP '(?<=via\s)\d+(\.\d+){3}' | head -1)
+  if [ -n "$gateway" ]; then
+    echo "$gateway"
+  else
+    echo "N/A"
   fi
 }
 
@@ -61,6 +95,15 @@ case "$1" in
     ;;
   ssid)
     get_ssid
+    ;;
+  signal)
+    get_signal
+    ;;
+  ip)
+    get_ip
+    ;;
+  gateway)
+    get_gateway
     ;;
   *)
     get_icon
