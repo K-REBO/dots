@@ -10,8 +10,9 @@ NixOS + Home Manager で管理する個人用dotfiles
 - **WM**: Hyprland
 - **Bar**: eww
 - **Terminal**: Alacritty
-- **Shell**: Zsh / Fish
-- **Launcher**: Rofi / Wofi
+- **Shell**: Zsh
+- **Prompt**: Starship
+- **Launcher**: Rofi
 - **IME**: Fcitx5
 - **Editor**: VSCode / Vim
 
