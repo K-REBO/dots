@@ -27,7 +27,9 @@
       "Bash(/home/bido/.config/eww/scripts/brightness:*)",
       "Bash(eww logs:*)",
       "Bash(eww reload:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(tree:*)",
+      "Bash(sudo nixos-rebuild:*)"
     ]
   }
 }

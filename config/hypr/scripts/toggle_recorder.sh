@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # 録画保存先
 SAVE_DIR="$HOME/downloads"
 mkdir -p "$SAVE_DIR"
