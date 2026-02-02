@@ -29,7 +29,11 @@
       "Bash(eww reload:*)",
       "Bash(chmod:*)",
       "Bash(tree:*)",
-      "Bash(sudo nixos-rebuild:*)"
+      "Bash(sudo nixos-rebuild:*)",
+      "Bash(find:*)",
+      "Bash(file:*)",
+      "Bash(git -C /home/bido/.config/nix log --all --pretty=format:\"%H %s\")",
+      "Bash(git -C /home/bido/.config/nix remote:*)"
     ]
   }
 }

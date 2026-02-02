@@ -261,8 +261,8 @@
   # System
   # ====================
 
-  # ====================                                                        
-  # xremap用 udev設定                                                           
+  # ====================
+  # xremap用 udev設定
   # ====================                                                        
   services.udev.extraRules = ''                                                 
     KERNEL=="uinput", GROUP="input", MODE="0660", OPTIONS+="static_node=uinput" 
