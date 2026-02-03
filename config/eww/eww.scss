@@ -290,6 +290,24 @@ $orange: #ffaa00;
   }
 }
 
+/* Screen Recorder */
+.recorder {
+  background-color: $red;
+  border-radius: 6px;
+  padding: 3px 10px;
+  border: 1px solid $red;
+
+  .recorder-icon {
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .recorder-text {
+    color: #fff;
+    font-weight: bold;
+  }
+}
+
 /* DateTime */
 .datetime {
   background-color: $bg-light;

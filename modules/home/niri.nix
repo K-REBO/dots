@@ -1,13 +1,8 @@
 { config, pkgs, lib, ... }:
 
 {
-  # niri設定
-  programs.niri = {
-    enable = true;
-    package = null;  # NixOSモジュールのパッケージを使用
-  };
-
   # niri関連パッケージ
+  # NixOSレベルで programs.niri.enable = true を設定済み
   home.packages = with pkgs; [
     # X11アプリ対応
     xwayland-satellite
@@ -120,7 +115,8 @@
     // Environment (Hyprland env = から移行)
     // ====================
     environment {
-        GTK_IM_MODULE "fcitx"
+        // GTK_IM_MODULE は Wayland では不要（text-input-v3 プロトコルを使用）
+        // XWayland アプリ用には xwayland-satellite が DISPLAY を提供
         QT_IM_MODULE "fcitx"
         XMODIFIERS "@im=fcitx"
         SDL_IM_MODULE "fcitx"
@@ -144,6 +140,7 @@
         Mod+D { spawn "wofi" "-C" "~/.config/wofi/config"; }
         Mod+E { spawn "dolphin"; }
         Mod+L { spawn "swaylock"; }  // hyprlock → swaylock
+        Mod+O { toggle-overview; }   // ワークスペース/ウィンドウ一覧
         Mod+Shift+E { quit; }
         Mod+Shift+Slash { show-hotkey-overlay; }
 

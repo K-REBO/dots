@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Screen recorder status monitor for eww
+
+get_recording_time() {
+    # Get wf-recorder PID
+    pid=$(pgrep -x "wf-recorder")
+    if [ -z "$pid" ]; then
+        echo ""
+        return
+    fi
+
+    # Get elapsed time directly from ps (in seconds)
+    elapsed=$(ps -o etimes= -p "$pid" 2>/dev/null | tr -d ' ')
+    if [ -z "$elapsed" ] || [ "$elapsed" -lt 0 ] 2>/dev/null; then
+        echo "00:00"
+        return
+    fi
+
+    # Format as MM:SS
+    minutes=$((elapsed / 60))
+    seconds=$((elapsed % 60))
+    printf "%02d:%02d" $minutes $seconds
+}
+
+case "$1" in
+    status)
+        # One-shot status check
+        if pgrep -x "wf-recorder" > /dev/null; then
+            echo "recording"
+        else
+            echo ""
+        fi
+        ;;
+    time)
+        # One-shot time check
+        get_recording_time
+        ;;
+    *)
+        # Default: continuous monitoring for deflisten
+        while true; do
+            if pgrep -x "wf-recorder" > /dev/null; then
+                time=$(get_recording_time)
+                echo " REC ${time}"
+            else
+                echo ""
+            fi
+            sleep 1
+        done
+        ;;
+esac

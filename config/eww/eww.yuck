@@ -123,14 +123,25 @@
 (defvar brightness-percent 50)
 (deflisten brightness-listener :initial "" "$HOME/.config/eww/scripts/brightness listen")
 
+;; Screen Recorder ;;
+(defwidget recorder []
+  (box :class "recorder ${recorder-status != '' ? 'recording' : ''}"
+       :visible {recorder-status != ''}
+       :space-evenly false
+       :spacing 4
+    (label :class "recorder-icon" :text "")
+    (label :class "recorder-text" :text recorder-status)))
+(deflisten recorder-status :initial "" "$HOME/.config/eww/scripts/recorder")
+
 ;; DateTime ;;
-(defvar calendar-visible false)
 (defwidget datetime []
-  (button :class "datetime"
-          :onclick "$HOME/.config/eww/scripts/calendar toggle"
+  (eventbox :class "datetime"
+            :onhover "${EWW_CMD} open calendar"
     (box :space-evenly false :spacing 8
+      (label :text "")
       (label :class "date" :text date-text)
-      (label :class "time" :text time-text))))
+      (label :class "time" :text time-text)
+      (label :text ""))))
 (defpoll date-text :interval "60s" "LC_TIME=C date '+%m/%d %a'")
 (defpoll time-text :interval "1s" "date '+%H:%M'")
 (defpoll calendar-day :interval "60s" "date '+%d'")
@@ -168,6 +179,7 @@
     (battery)
     (ime)
     (brightness)
+    (recorder)
     (datetime)))
 
 ;; Main Bar ;;
@@ -214,10 +226,11 @@
                       :anchor "top center")
   :stacking "overlay"
   :exclusive false
-  :focusable true
-  (eventbox :onclick "$HOME/.config/eww/scripts/calendar close"
+  :focusable false
+  (eventbox :onclick "${EWW_CMD} close calendar"
     (box :class "calendar-overlay" :halign "end" :valign "start"
-      (eventbox :onclick "echo"  ;; Prevent click propagation
+      (eventbox :onclick "echo"
+                :onhoverlost "${EWW_CMD} close calendar"
         (calendar-popup)))))
 
 (defwindow bar
