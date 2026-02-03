@@ -182,6 +182,7 @@
     curl
     git
     htop
+    psmisc  # killall, fuser, pstree等
     # Hyprland関連パッケージはHome Managerで管理
   ];
 
