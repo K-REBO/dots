@@ -120,7 +120,7 @@
                :onchange "$HOME/.config/eww/scripts/brightness set {}"))
       (label :text "󰃠")
       (label :text "${brightness-percent}%"))))
-(defvar brightness-percent 50)
+(defpoll brightness-percent :interval "1s" "$HOME/.config/eww/scripts/brightness percent")
 (deflisten brightness-listener :initial "" "$HOME/.config/eww/scripts/brightness listen")
 
 ;; Screen Recorder ;;
