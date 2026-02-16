@@ -30,6 +30,18 @@
   outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, ... }@inputs: let
     system = "x86_64-linux";
 
+    yt-dlpOverlay = final: prev: {
+      yt-dlp = prev.yt-dlp.overrideAttrs (old: rec {
+        version = "2026.02.04";
+        src = final.fetchFromGitHub {
+          owner = "yt-dlp";
+          repo = "yt-dlp";
+          tag = version;
+          hash = "sha256-KXnz/ocHBftenDUkCiFoBRBxi6yWt0fNuRX+vKFWDQw=";
+        };
+      });
+    };
+
     wmfocusOverlay = final: prev: {
       wmfocus = final.rustPlatform.buildRustPackage {
         pname = "wmfocus";
@@ -60,7 +72,7 @@
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
-      overlays = [ wmfocusOverlay nur.overlays.default ];
+      overlays = [ yt-dlpOverlay wmfocusOverlay nur.overlays.default ];
     };
   in {
     # NixOS configuration
@@ -82,7 +94,7 @@
               { programs.wayland-fcitx5-indicator.enable = true; }
             ];
           };
-          nixpkgs.overlays = [ wmfocusOverlay nur.overlays.default ];
+          nixpkgs.overlays = [ yt-dlpOverlay wmfocusOverlay nur.overlays.default ];
         }
       ];
     };

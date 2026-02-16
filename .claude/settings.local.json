@@ -34,7 +34,14 @@
       "Bash(file:*)",
       "Bash(git -C /home/bido/.config/nix log --all --pretty=format:\"%H %s\")",
       "Bash(git -C /home/bido/.config/nix remote:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(nix-channel --list:*)",
+      "Bash(sudo nix-channel:*)",
+      "Bash(yt-dlp:*)",
+      "Bash(nix-prefetch-github:*)",
+      "Bash(grep:*)",
+      "WebFetch(domain:wiki.hyprland.org)",
+      "WebFetch(domain:wiki.hypr.land)"
     ]
   }
 }
