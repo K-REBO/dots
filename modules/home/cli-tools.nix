@@ -58,6 +58,9 @@
   ] ++ [
     # Nix関連 (flake inputsから取得して競合を回避)
     inputs.home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager
+
+    # 天気
+    inputs.weathr.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # batの設定

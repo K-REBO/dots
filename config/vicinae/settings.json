@@ -9,6 +9,10 @@
   "launcher_window": {
     "opacity": 0.88
   },
+  "favorites": [
+    "clipboard:history",
+    "core:search-emojis"
+  ],
   "providers": {
     "clipboard": {
       "preferences": {

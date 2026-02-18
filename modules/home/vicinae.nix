@@ -3,5 +3,8 @@
   home.packages = with pkgs; [ vicinae ];
 
   xdg.configFile."vicinae/config.jsonc".source = ../../config/vicinae/config.jsonc;
-  xdg.configFile."vicinae/settings.json".source = ../../config/vicinae/settings.json;
+  xdg.configFile."vicinae/settings.json" = {
+    source = ../../config/vicinae/settings.json;
+    force = true;
+  };
 }
