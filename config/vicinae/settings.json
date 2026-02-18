@@ -1,0 +1,19 @@
+{
+  "$schema": "https://vicinae.com/schemas/config.json",
+  "font": {
+    "normal": {
+      "family": "Noto Sans",
+      "size": 16
+    }
+  },
+  "launcher_window": {
+    "opacity": 0.88
+  },
+  "providers": {
+    "clipboard": {
+      "preferences": {
+        "monitoring": true
+      }
+    }
+  }
+}

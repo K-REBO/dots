@@ -4,6 +4,11 @@
   "escape_key_behavior": "close_window",
   "pop_to_root_on_close": true,
   "close_on_focus_loss": true,
+  "font": {
+    "normal": {
+      "size": 16.0
+    }
+  },
   "launcher_window": {
     "blur": { "enabled": true },
     "dim_around": true,

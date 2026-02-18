@@ -41,7 +41,10 @@
       "Bash(nix-prefetch-github:*)",
       "Bash(grep:*)",
       "WebFetch(domain:wiki.hyprland.org)",
-      "WebFetch(domain:wiki.hypr.land)"
+      "WebFetch(domain:wiki.hypr.land)",
+      "WebFetch(domain:vicinae.com)",
+      "Bash(vicinae --version:*)",
+      "Bash(vicinae:*)"
     ]
   }
 }
