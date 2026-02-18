@@ -40,6 +40,7 @@
     typst         # typst-cli
 
     # ユーティリティ
+    comma         # nixのパッケージを一時的に実行 (, コマンド)
     pastel        # カラーツール
 
     # ツールバージョン管理
@@ -56,7 +57,7 @@
     wshowkeys
   ] ++ [
     # Nix関連 (flake inputsから取得して競合を回避)
-    inputs.home-manager.packages.${pkgs.system}.home-manager
+    inputs.home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager
   ];
 
   # batの設定

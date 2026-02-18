@@ -1,0 +1,21 @@
+{
+  "$schema": "https://vicinae.com/schemas/config.json",
+  "keybinding": "emacs",
+  "escape_key_behavior": "close_window",
+  "pop_to_root_on_close": true,
+  "close_on_focus_loss": true,
+  "launcher_window": {
+    "blur": { "enabled": true },
+    "dim_around": true,
+    "client_side_decorations": {
+      "enabled": false
+    },
+    "compact_mode": { "enabled": false },
+    "size": { "width": 770, "height": 480 },
+    "layer_shell": {
+      "enabled": true,
+      "keyboard_interactivity": "exclusive",
+      "layer": "top"
+    }
+  }
+}

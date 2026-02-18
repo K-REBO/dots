@@ -31,6 +31,7 @@
     ./modules/home/rofi.nix
     ./modules/home/wofi.nix
     ./modules/home/polybar.nix
+    ./modules/home/vicinae.nix
 
     # Phase 3: デスクトップ環境
     ./modules/home/hyprland.nix

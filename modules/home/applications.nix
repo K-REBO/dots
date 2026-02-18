@@ -87,7 +87,7 @@
 
       # 検索エンジン
       search = {
-        default = "Google";
+        default = "google";
         force = true;
         engines = {
           "Nix Packages" = {
@@ -115,7 +115,7 @@
             urls = [{ template = "https://github.com/search?q={searchTerms}"; }];
             definedAliases = [ "@gh" ];
           };
-          "YouTube" = {
+          "youtube" = {
             urls = [{ template = "https://www.youtube.com/results?search_query={searchTerms}"; }];
             definedAliases = [ "@yt" ];
           };

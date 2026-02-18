@@ -52,8 +52,8 @@
         nativeBuildInputs = with final; [ pkg-config cmake ];
         buildInputs = with final; [
           cairo
-          xorg.libxcb
-          xorg.libX11
+          libxcb
+          libx11
           fontconfig
           wayland
           libxkbcommon
