@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/wshowkeys.nix
     ../../modules/nixos/thinkpad-p16s.nix
+    ../../modules/nixos/winapps.nix
   ];
 
   # ====================
@@ -23,6 +24,8 @@
   # ====================
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  boot.kernelPackages = pkgs.linuxPackages_6_6;
 
 
   boot.extraModprobeConfig = ''
@@ -131,7 +134,7 @@
   users.users.bido = {
     isNormalUser = true;
     description = "bido nakamura";
-    extraGroups = [ "networkmanager" "wheel" "input" ];
+    extraGroups = [ "networkmanager" "wheel" "input" "kvm" ];
     shell = pkgs.zsh;
   };
 
@@ -162,15 +165,6 @@
   };
 
 
-  # virtual box
-  virtualisation.virtualbox.host = {
-    enable = true;
-    enableExtensionPack = true;
-  };
-
-  users.extraGroups.vboxusers.members = [ "bido" ];
-
-
   # ====================
   # Packages
   # ====================
@@ -184,6 +178,17 @@
     htop
     psmisc  # killall, fuser, pstree等
     # Hyprland関連パッケージはHome Managerで管理
+
+    # QEMU/KVM
+    qemu_kvm          # qemu-system-x86_64 -enable-kvm
+    OVMFFull          # UEFI ファームウェア（Windows 11 必須）
+    swtpm             # ソフトウェア TPM 2.0（Windows 11 必須）
+    virtio-win        # VirtIO ドライバー ISO
+
+    # WinApps 依存
+    freerdp           # xfreerdp バイナリ（RDP クライアント）
+    dialog            # WinApps セットアップ TUI
+    libnotify         # notify-send（WinApps 通知）
   ];
 
   # ====================

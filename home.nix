@@ -30,7 +30,6 @@
     # Phase 2B: WMツール
     ./modules/home/rofi.nix
     ./modules/home/wofi.nix
-    ./modules/home/polybar.nix
     ./modules/home/vicinae.nix
 
     # Phase 3: デスクトップ環境
@@ -49,5 +48,8 @@
     ./modules/home/applications.nix
     ./modules/home/themes.nix
     ./modules/home/xdg.nix
+
+    # WinApps
+    ./modules/home/winapps.nix
   ];
 }

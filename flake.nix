@@ -27,9 +27,14 @@
     nur.url = "github:nix-community/NUR";
 
     weathr.url = "github:Veirt/weathr";
+
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, ... }@inputs: let
     system = "x86_64-linux";
 
     yt-dlpOverlay = final: prev: {
@@ -71,10 +76,12 @@
       };
     };
 
+    overlays = [ yt-dlpOverlay wmfocusOverlay nur.overlays.default ];
+
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
-      overlays = [ yt-dlpOverlay wmfocusOverlay nur.overlays.default ];
+      inherit overlays;
     };
   in {
     # NixOS configuration
@@ -84,6 +91,7 @@
       modules = [
         ./hosts/nixos/configuration.nix
         agenix.nixosModules.default
+        nix-index-database.nixosModules.nix-index
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
@@ -94,9 +102,11 @@
               ./home.nix
               wayland-fcitx5-indicator.homeManagerModules.default
               { programs.wayland-fcitx5-indicator.enable = true; }
+              nix-index-database.homeModules.nix-index
+              { programs.nix-index.enable = true; }
             ];
           };
-          nixpkgs.overlays = [ yt-dlpOverlay wmfocusOverlay nur.overlays.default ];
+          nixpkgs.overlays = overlays;
         }
       ];
     };
@@ -109,6 +119,8 @@
         ./home.nix
         wayland-fcitx5-indicator.homeManagerModules.default
         { programs.wayland-fcitx5-indicator.enable = true; }
+        nix-index-database.homeModules.nix-index
+        { programs.nix-index.enable = true; }
       ];
     };
 
