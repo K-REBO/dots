@@ -76,7 +76,28 @@
       };
     };
 
-    overlays = [ yt-dlpOverlay wmfocusOverlay nur.overlays.default ];
+    claudeOverlay = final: prev: {
+      claude-code = prev.claude-code.overrideAttrs (old: rec {
+        version = "2.1.59";
+
+        src = final.fetchzip {
+          url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
+          hash = "sha256-Dam9aJ0qBdqU40ACfzGQHuytW6ur0fMLm8D5fIKd1TE=";
+        };
+
+        npmDepsHash = "sha256-K+8xoBc3apvxQ9hCpYywqgBcfLxMWSxacgJcMH8mK7E=";
+
+        postPatch = ''
+          cp ${./overlays/claude-code/package-lock.json} package-lock.json
+
+          # https://github.com/anthropics/claude-code/issues/15195
+          substituteInPlace cli.js \
+                --replace-fail '#!/bin/sh' '#!/usr/bin/env sh'
+        '';
+      });
+    };
+
+    overlays = [ yt-dlpOverlay wmfocusOverlay nur.overlays.default ];  # claudeOverlay無効化
 
     pkgs = import nixpkgs {
       inherit system;

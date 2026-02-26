@@ -47,8 +47,11 @@
     mise          # 言語バージョン管理
 
     # LLM agent cliツール
-    claude-code
+    # claude-code  # bun経由でインストール
     gemini-cli
+
+    # Bun (claude-code用)
+    bun
 
     # ウィンドウフォーカス
     wmfocus
@@ -78,5 +81,11 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;  # キャッシュ機能付きのnix統合
+  };
+
+  # bun グローバルパッケージの設定
+  home.sessionPath = [ "$HOME/.bun/bin" ];
+  home.sessionVariables = {
+    BUN_INSTALL = "$HOME/.bun";
   };
 }

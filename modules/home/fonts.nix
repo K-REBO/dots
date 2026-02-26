@@ -29,7 +29,7 @@
 
     # プログラミング用
     source-code-pro              # VSCodeで使用
-    jetbrains-mono               # polybarで使用
+    # jetbrains-mono               # polybarで使用 (nerd-fonts.jetbrains-monoで代替)
 
     # 日本語フォント（追加）
     # IPAフォント（日本語）

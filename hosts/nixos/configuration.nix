@@ -44,6 +44,15 @@
 
     firewall = {
       enable = true;
+      # Tailscale用設定
+      checkReversePath = "loose";
+      trustedInterfaces = [ "tailscale0" ];
+      # SSH用ポート（Moshの初期接続に必須）
+      allowedTCPPorts = [ 22 ];
+      # Mosh用ポート（UDP 60000-61000）
+      allowedUDPPortRanges = [
+        { from = 60000; to = 61000; }
+      ];
     };
   };
   
@@ -144,6 +153,15 @@
   programs.zsh.enable = true;
   programs.firefox.enable = true;
 
+  # nix-ld (動的リンクバイナリサポート)
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc
+    zlib
+    openssl
+    curl
+  ];
+
 
   # Hyprland - Wayland compositor
   programs.hyprland = {
@@ -189,11 +207,33 @@
     freerdp           # xfreerdp バイナリ（RDP クライアント）
     dialog            # WinApps セットアップ TUI
     libnotify         # notify-send（WinApps 通知）
+
+    # Network tools
+    mosh              # モバイルシェル（SSHの代替）
   ];
 
   # ====================
   # Services
   # ====================
+  # Tailscale VPN
+  services.tailscale.enable = true;
+
+  # SSH Server（Mosh用に必須）
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = true;  # パスワード認証を許可
+      PermitRootLogin = "no";         # rootログインは禁止
+    };
+  };
+
+  # 自動サスペンド設定
+  services.logind = {
+    lidSwitch = "suspend";                    # 蓋を閉じたらサスペンド
+    lidSwitchExternalPower = "ignore";        # AC接続時は蓋を閉じてもサスペンドしない
+    powerKey = "poweroff";                    # 電源ボタンでシャットダウン
+  };
+
   services.printing.enable = true;
 
   services.blueman.enable = true;
