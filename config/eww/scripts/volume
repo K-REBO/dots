@@ -26,6 +26,22 @@ get_icon() {
   fi
 }
 
+update_eww() {
+  eww update volume-percent="$(get_volume)" volume-icon="$(get_icon)"
+}
+
+listen() {
+  # Output initial values
+  update_eww
+
+  # Poll every 0.5 seconds for responsive updates
+  # PipeWire monitoring is too verbose and inefficient
+  while true; do
+    sleep 0.5
+    update_eww
+  done
+}
+
 case "$1" in
   icon)
     get_icon
@@ -35,17 +51,24 @@ case "$1" in
     ;;
   toggle)
     wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+    update_eww
     ;;
   up)
     wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+    update_eww
     ;;
   down)
     wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+    update_eww
     ;;
   set)
     # Set volume to specific percentage (from slider)
     vol="${2%.*}"  # Remove decimal part
     wpctl set-volume @DEFAULT_AUDIO_SINK@ "${vol}%"
+    update_eww
+    ;;
+  listen)
+    listen
     ;;
   *)
     # Scroll handling
@@ -54,5 +77,6 @@ case "$1" in
     else
       wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
     fi
+    update_eww
     ;;
 esac

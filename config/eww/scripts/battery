@@ -123,6 +123,31 @@ get_time() {
   fi
 }
 
+update_eww() {
+  eww update battery-icon="$(get_icon)" \
+              battery-percent="$(get_percent)" \
+              battery-status="$(get_status)" \
+              battery-time="$(get_time)"
+}
+
+listen() {
+  # Output initial values
+  update_eww
+
+  # Monitor battery file changes using inotifywait
+  if command -v inotifywait &>/dev/null && [ -d "$BAT_PATH" ]; then
+    inotifywait -m -e modify "$BAT_PATH/capacity" "$BAT_PATH/status" 2>/dev/null | while read -r; do
+      update_eww
+    done
+  else
+    # Fallback: poll every 30 seconds
+    while true; do
+      sleep 30
+      update_eww
+    done
+  fi
+}
+
 case "$1" in
   icon)
     get_icon
@@ -135,6 +160,9 @@ case "$1" in
     ;;
   time)
     get_time
+    ;;
+  listen)
+    listen
     ;;
   *)
     get_icon

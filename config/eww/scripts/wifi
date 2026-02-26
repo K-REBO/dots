@@ -86,6 +86,32 @@ get_gateway() {
   fi
 }
 
+update_eww() {
+  eww update wifi-icon="$(get_icon)" \
+              wifi-ssid="$(get_ssid)" \
+              wifi-signal="$(get_signal)" \
+              wifi-ip="$(get_ip)" \
+              wifi-gateway="$(get_gateway)"
+}
+
+listen() {
+  # Output initial values
+  update_eww
+
+  # Monitor NetworkManager events
+  if command -v nmcli &>/dev/null; then
+    nmcli monitor 2>/dev/null | while read -r; do
+      update_eww
+    done
+  else
+    # Fallback: poll every 5 seconds
+    while true; do
+      sleep 5
+      update_eww
+    done
+  fi
+}
+
 case "$1" in
   icon)
     get_icon
@@ -104,6 +130,9 @@ case "$1" in
     ;;
   gateway)
     get_gateway
+    ;;
+  listen)
+    listen
     ;;
   *)
     get_icon

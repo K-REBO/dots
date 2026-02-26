@@ -40,6 +40,29 @@ menu() {
   esac
 }
 
+update_eww() {
+  eww update ime-icon="$(get_icon)"
+}
+
+listen() {
+  # Output initial value
+  update_eww
+
+  # Monitor fcitx5 D-Bus signals for state changes
+  if command -v dbus-monitor &>/dev/null; then
+    dbus-monitor "type='signal',interface='org.fcitx.Fcitx.InputContext1'" 2>/dev/null | \
+      grep --line-buffered -E 'signal|member' | while read -r; do
+        update_eww
+      done
+  else
+    # Fallback: poll every 2 seconds
+    while true; do
+      sleep 2
+      update_eww
+    done
+  fi
+}
+
 case "$1" in
   icon)
     get_icon
@@ -49,6 +72,9 @@ case "$1" in
     ;;
   menu)
     menu
+    ;;
+  listen)
+    listen
     ;;
   *)
     get_icon

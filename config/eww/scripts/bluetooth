@@ -64,6 +64,29 @@ toggle() {
   fi
 }
 
+update_eww() {
+  eww update bluetooth-icon="$(get_icon)" bluetooth-device="$(get_device)"
+}
+
+listen() {
+  # Output initial values
+  update_eww
+
+  # Monitor bluetoothctl events
+  if command -v bluetoothctl &>/dev/null; then
+    # Use grep to filter relevant events
+    bluetoothctl monitor 2>/dev/null | grep --line-buffered -E 'Connected|Disconnected|Device|Controller' | while read -r; do
+      update_eww
+    done
+  else
+    # Fallback: poll every 5 seconds
+    while true; do
+      sleep 5
+      update_eww
+    done
+  fi
+}
+
 case "$1" in
   icon)
     get_icon
@@ -76,6 +99,9 @@ case "$1" in
     ;;
   toggle)
     toggle
+    ;;
+  listen)
+    listen
     ;;
   *)
     get_icon
