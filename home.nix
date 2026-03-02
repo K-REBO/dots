@@ -42,6 +42,7 @@
 
     # Phase 4: システムサービス（ユーザーレベル）
     ./modules/home/pipewire.nix
+    ./modules/home/taildrop.nix
 
     # Phase 5: 追加設定
     ./modules/home/fonts.nix
