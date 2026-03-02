@@ -38,6 +38,9 @@
 
       # wget without history file
       wget = "wget --no-hsts";
+
+      # claude-code
+      claude = "bunx @anthropic-ai/claude-code";
     };
 
     # ============================================================
