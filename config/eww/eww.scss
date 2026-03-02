@@ -290,6 +290,39 @@ $orange: #ffaa00;
   }
 }
 
+/* Taildrop */
+.taildrop {
+  color: $cyan;
+  background-color: $bg-light;
+  border-radius: 6px;
+  padding: 3px 10px;
+
+  .taildrop-icon {
+    font-size: 18px;
+  }
+
+  .taildrop-filename {
+    color: $fg;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .taildrop-status {
+    color: $fg-dark;
+    font-size: 11px;
+  }
+
+  &.taildrop-receiving .taildrop-icon {
+    animation: taildrop-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes taildrop-pulse {
+  0%   { opacity: 1.0; }
+  50%  { opacity: 0.4; }
+  100% { opacity: 1.0; }
+}
+
 /* Screen Recorder */
 .recorder {
   background-color: $red;

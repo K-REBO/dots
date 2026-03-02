@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Taildrop ファイル受信モニター（ポーリング方式）
+
+IDLE='{"active":false,"filename":"","status":"","size":""}'
+
+echo "$IDLE"
+
+LAST_CHECK=$(date -Iseconds)
+
+while true; do
+    sleep 1
+
+    # 前回チェック以降の新規ログを取得
+    RECENT=$(journalctl --user -u taildrop.service \
+        --since "$LAST_CHECK" --output=cat 2>/dev/null \
+        | grep -E 'wrote .+ as .+ \([0-9]+ bytes\)' | tail -1)
+
+    LAST_CHECK=$(date -Iseconds)
+
+    if [ -n "$RECENT" ]; then
+        fname=$(echo "$RECENT" | grep -oP '(?<=wrote )[^ ]+(?= as )')
+        size_bytes=$(echo "$RECENT" | grep -oP '\((\d+) bytes\)' | grep -oP '\d+')
+
+        human_size=""
+        if [ -n "$size_bytes" ] && [ "$size_bytes" -gt 0 ] 2>/dev/null; then
+            if [ "$size_bytes" -gt 1073741824 ]; then
+                human_size="$(awk "BEGIN {printf \"%.1f GB\", $size_bytes/1073741824}")"
+            elif [ "$size_bytes" -gt 1048576 ]; then
+                human_size="$(awk "BEGIN {printf \"%.1f MB\", $size_bytes/1048576}")"
+            elif [ "$size_bytes" -gt 1024 ]; then
+                human_size="$(awk "BEGIN {printf \"%.1f KB\", $size_bytes/1024}")"
+            else
+                human_size="${size_bytes} B"
+            fi
+        fi
+
+        jq -cn --arg f "$fname" --arg s "$human_size" \
+            '{active:true, filename:$f, status:"受信完了", size:$s}'
+        sleep 5
+        echo "$IDLE"
+    fi
+done

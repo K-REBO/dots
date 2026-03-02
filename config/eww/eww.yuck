@@ -133,6 +133,24 @@
     (label :class "recorder-text" :text recorder-status)))
 (deflisten recorder-status :initial "" "$HOME/.config/eww/scripts/recorder")
 
+;; Taildrop ;;
+(defwidget taildrop []
+  (box :class "taildrop ${taildrop-data.status == '受信中' ? 'taildrop-receiving' : ''}"
+       :visible {taildrop-data.active}
+       :space-evenly false
+       :spacing 8
+    (label :class "taildrop-icon" :text "󰛶")
+    (box :orientation "v" :space-evenly false :spacing 2
+      (label :class "taildrop-filename"
+             :text {taildrop-data.filename}
+             :limit-width 18
+             :truncate true)
+      (label :class "taildrop-status"
+             :text {taildrop-data.size != "" ? "${taildrop-data.status} ${taildrop-data.size}" : taildrop-data.status}))))
+(deflisten taildrop-data
+  :initial '{"active":false,"filename":"","status":"","size":""}'
+  "$HOME/.config/eww/scripts/taildrop")
+
 ;; DateTime ;;
 (defwidget datetime []
   (eventbox :class "datetime"
@@ -172,6 +190,7 @@
        :space-evenly false
        :halign "end"
        :spacing 12
+    (taildrop)
     (volume)
     (wifi)
     (bluetooth)

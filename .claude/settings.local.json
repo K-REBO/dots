@@ -46,7 +46,21 @@
       "Bash(vicinae --version:*)",
       "Bash(vicinae:*)",
       "WebFetch(domain:docs.vicinae.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(eww state 2>&1 | head -20)",
+      "Bash(eww reload 2>&1; sleep 1; eww state 2>&1 | grep -E \"error|Error|warn|taildrop\" || echo \"no errors in state\")",
+      "Bash(journalctl --user -u taildrop.service -n 20 --output=cat 2>&1)",
+      "Bash(journalctl --user -u taildrop.service -n 5 --output=cat 2>&1)",
+      "Bash(journalctl --user -u taildrop.service -n 5 2>&1)",
+      "Bash(journalctl --user -u taildrop.service -n 10 --output=short 2>&1)",
+      "Bash(timeout 5 journalctl --user -u taildrop.service -f -n 0 --output=cat; echo \"exit: $?\")",
+      "Bash(sleep 1 && eww state 2>&1 | grep taildrop)",
+      "Bash(eww state 2>&1 | grep taildrop)",
+      "Bash(journalctl --user -u taildrop.service -n 5 --output=short 2>&1)",
+      "Bash(timeout 5 /home/bido/.config/nix/config/eww/scripts/taildrop 2>&1 || true)",
+      "Bash(sleep 6\neww update taildrop-data='{\"active\":false,\"filename\":\"\",\"status\":\"\",\"size\":\"\"}' 2>&1)",
+      "Bash(eww reload 2>&1 && sleep 0.5 && \\\\\neww update taildrop-data='{\"active\":true,\"filename\":\"test.pdf\",\"status\":\"受信完了\",\"size\":\"1.2 MB\"}' 2>&1)",
+      "Bash(eww reload 2>&1 && sleep 0.5 && eww update taildrop-data='{\"active\":true,\"filename\":\"test.pdf\",\"status\":\"受信完了\",\"size\":\"1.2 MB\"}' 2>&1)"
     ]
   }
 }
