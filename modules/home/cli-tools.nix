@@ -8,7 +8,8 @@
     eza           # lsの代替
     dust          # duの代替（ディスク使用量）
     hexyl         # hexダンプ
-    duf
+    duf           # duの代替 (直感的)
+    fzf           # fuzzy finder
 
     # プロセス・システム情報
     procs         # psの代替
@@ -42,6 +43,7 @@
     # ユーティリティ
     comma         # nixのパッケージを一時的に実行 (, コマンド)
     pastel        # カラーツール
+    imagemagick   # 画像操作ツール
 
     # ツールバージョン管理
     mise          # 言語バージョン管理
