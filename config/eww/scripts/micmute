@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Mic mute toggle with ThinkPad LED sync
+
+LED="/sys/class/leds/platform::micmute/brightness"
+
+sync_led() {
+  if wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null | grep -q MUTED; then
+    echo 1 > "$LED" 2>/dev/null
+  else
+    echo 0 > "$LED" 2>/dev/null
+  fi
+}
+
+case "${1:-toggle}" in
+  toggle)
+    wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+    sync_led
+    ;;
+  sync)
+    sync_led
+    ;;
+esac

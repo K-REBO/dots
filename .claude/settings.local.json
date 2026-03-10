@@ -60,7 +60,16 @@
       "Bash(timeout 5 /home/bido/.config/nix/config/eww/scripts/taildrop 2>&1 || true)",
       "Bash(sleep 6\neww update taildrop-data='{\"active\":false,\"filename\":\"\",\"status\":\"\",\"size\":\"\"}' 2>&1)",
       "Bash(eww reload 2>&1 && sleep 0.5 && \\\\\neww update taildrop-data='{\"active\":true,\"filename\":\"test.pdf\",\"status\":\"受信完了\",\"size\":\"1.2 MB\"}' 2>&1)",
-      "Bash(eww reload 2>&1 && sleep 0.5 && eww update taildrop-data='{\"active\":true,\"filename\":\"test.pdf\",\"status\":\"受信完了\",\"size\":\"1.2 MB\"}' 2>&1)"
+      "Bash(eww reload 2>&1 && sleep 0.5 && eww update taildrop-data='{\"active\":true,\"filename\":\"test.pdf\",\"status\":\"受信完了\",\"size\":\"1.2 MB\"}' 2>&1)",
+      "Bash(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>&1)",
+      "Bash(eww ping 2>&1)",
+      "Bash(eww get volume-icon 2>&1; eww get volume-percent 2>&1)",
+      "Bash(wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>&1)",
+      "Bash(wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && wpctl get-volume @DEFAULT_AUDIO_SOURCE@)",
+      "Bash(xkbcli compile-keymap --layout us 2>/dev/null | grep -A2 \"I256\\\\|AudioMicMute\" | head -20)",
+      "Bash(xkbcli compile-keymap --layout us 2>/dev/null | grep -i \"inet\\\\|include\" | head -10)",
+      "Bash(xkbcli compile-keymap --layout us 2>&1 | wc -l; xkbcli compile-keymap --layout us --rules evdev --model pc105 2>&1 | grep -c \"AudioMicMute\\\\|I256\")",
+      "Bash(sudo chown root:wheel /sys/devices/platform/thinkpad_acpi/leds/platform::micmute/brightness && ls -la /sys/class/leds/platform::micmute/brightness)"
     ]
   }
 }

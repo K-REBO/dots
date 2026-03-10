@@ -11,7 +11,7 @@
       # Basic utilities
       less = "less -Q -R";
       wcopy = "wl-copy";
-      wpaste = "wl-paste --type text/plain;charset=utf-8";
+      wpaste="wl-paste --type 'text/plain;charset=utf-8'"
 
       # eza (ls replacement)
       ls = "eza";

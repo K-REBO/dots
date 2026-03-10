@@ -75,4 +75,9 @@
   boot.extraModprobeConfig = ''
     options thinkpad_acpi fan_control=1
   '';
+
+  # MicMute LED をユーザーが書き込めるようにする
+  services.udev.extraRules = ''
+    SUBSYSTEM=="leds", KERNEL=="platform::micmute", GROUP="wheel", MODE="0664"
+  '';
 }
