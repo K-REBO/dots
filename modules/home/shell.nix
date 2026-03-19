@@ -23,6 +23,8 @@
       cmd_duration.disabled = true;
       git_commit.disabled = true;
       git_branch.disabled = true;
+      gcloud.disabled = true;
+      aws.disabled = true;
     };
   };
 

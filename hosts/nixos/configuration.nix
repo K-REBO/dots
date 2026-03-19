@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -61,7 +61,7 @@
     rtl8821au
   ];
   # wpa_supplicant準備後に遅延ロード
-  boot.blacklistedKernelModules = [ "8821au" ];
+  boot.blacklistedKernelModules = [ "8821au" "ath11k_pci" ];
   systemd.services.rtl8821au-delayed = {
     description = "Delayed load RTL8821AU driver";
     after = [ "wpa_supplicant.service" ];
@@ -97,6 +97,7 @@
     # Wayland用設定
     NIXOS_OZONE_WL = "1";  # Electron/Chromiumアプリ用
     WLR_NO_HARDWARE_CURSORS = "1";  # 一部GPUでのカーソル問題回避
+    NIXPKGS_ALLOW_UNFREE = "1";
   };
 
 
@@ -153,10 +154,16 @@
   programs.zsh.enable = true;
   programs.firefox.enable = true;
 
+  # AppImage サポート
+  programs.appimage = {
+    enable = true;
+    binfmt = true;  # ./app.AppImage で直接実行可能にする
+  };
+
   # nix-ld (動的リンクバイナリサポート)
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-    stdenv.cc.cc
+    stdenv.cc.cc.lib
     zlib
     openssl
     curl
@@ -210,6 +217,11 @@
 
     # Network tools
     mosh              # モバイルシェル（SSHの代替）
+
+    github-copilot-cli
+
+    # deploy-rs: NixOS デプロイツール
+    inputs.deploy-rs.packages.x86_64-linux.default
   ];
 
   # ====================
@@ -222,7 +234,7 @@
   services.openssh = {
     enable = true;
     settings = {
-      PasswordAuthentication = true;  # パスワード認証を許可
+      PasswordAuthentication = false;  # パスワード認証を許可
       PermitRootLogin = "no";         # rootログインは禁止
     };
   };
@@ -298,6 +310,21 @@
       options = "--delete-older-than 7d";
     };
   };
+
+  # ====================
+  # Sudo
+  # ====================
+  security.sudo.extraRules = [
+    {
+      users = [ "bido" ];
+      commands = [
+        { command = "/run/current-system/sw/bin/rmmod"; options = [ "NOPASSWD" ]; }
+        { command = "/run/current-system/sw/bin/insmod"; options = [ "NOPASSWD" ]; }
+        { command = "/run/current-system/sw/bin/ip";     options = [ "NOPASSWD" ]; }
+        { command = "/run/current-system/sw/bin/dmesg";  options = [ "NOPASSWD" ]; }
+      ];
+    }
+  ];
 
   # ====================
   # System

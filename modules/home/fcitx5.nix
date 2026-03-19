@@ -16,4 +16,22 @@
   xdg.configFile."fcitx5/config".source = ../../config/fcitx5/config;
   xdg.configFile."fcitx5/profile".source = ../../config/fcitx5/profile;
   xdg.configFile."fcitx5/conf".source = ../../config/fcitx5/conf;
+
+  # systemd user serviceで管理（起動失敗時に自動再起動）
+  systemd.user.services.fcitx5 = {
+    Unit = {
+      Description = "Fcitx5 Input Method";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Service = {
+      Type = "simple";
+      ExecStart = "fcitx5 -d --replace";
+      Restart = "on-failure";
+      RestartSec = "3";
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+  };
 }

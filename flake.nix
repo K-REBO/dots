@@ -32,9 +32,14 @@
       url = "github:Mic92/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, ... }@inputs: let
     system = "x86_64-linux";
 
     yt-dlpOverlay = final: prev: {
