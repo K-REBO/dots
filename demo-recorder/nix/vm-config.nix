@@ -14,7 +14,7 @@ let
   demoRunner = pkgs.writeShellScriptBin "demo-runner" ''
     set -euo pipefail
     DEMO_SCRIPT="''${DEMO_SCRIPT:-/shared/demo.json}"
-    OUTPUT_FILE="''${OUTPUT_FILE:-/recordings/demo.mp4}"
+    OUTPUT_FILE="''${OUTPUT_FILE:-/recordings/demo.gif}"
 
     LOG=/recordings/demo-runner.log
     log() { echo "[demo-runner] $*" >> "$LOG" 2>/dev/null || true; }
@@ -26,7 +26,7 @@ let
       hyprctl version &>/dev/null && break
       sleep 0.5
     done
-    # eww + swww + wallpaper が起動するまで待機
+    # eww + swaybg + wallpaper が起動するまで待機
     sleep 5
 
     log "Starting wf-recorder -> /tmp/demo.mp4"
@@ -47,7 +47,17 @@ let
     kill -9 "$RECORDER_PID" 2>/dev/null || true
 
     mkdir -p "$(dirname "$OUTPUT_FILE")"
-    cp /tmp/demo.mp4 "$OUTPUT_FILE"
+
+    # GIF 変換 (パレット最適化)
+    log "Converting MP4 -> GIF..."
+    ${pkgs.ffmpeg}/bin/ffmpeg -y -i /tmp/demo.mp4 \
+      -vf "fps=10,scale=1920:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+      -loop 0 "$OUTPUT_FILE" \
+      >> /recordings/ffmpeg.log 2>&1 || {
+        # GIF 変換失敗時は MP4 をフォールバック保存
+        log "GIF conversion failed, saving MP4 as fallback"
+        cp /tmp/demo.mp4 "''${OUTPUT_FILE%.gif}.mp4"
+      }
     log "Saved: $OUTPUT_FILE"
 
     log "Shutting down."
@@ -366,6 +376,10 @@ let
     # bracketed paste 無効化 (paste + \n でコマンド実行)
     unset zle_bracketed_paste
 
+    # ホスト home-manager プロファイルの bin を PATH に追加
+    # (ホストにインストール済みの CLI ツールが VM から自動利用可能になる)
+    export PATH="/host-profile/bin:$PATH"
+
     # nix run nixpkgs#neofetch → fastfetch で代替 (neofetch は nixpkgs から削除済み)
     nix() {
       if [[ "$*" == "run nixpkgs#neofetch" ]]; then
@@ -499,6 +513,12 @@ in
         target        = "/shared";
         securityModel = "none";
       };
+      # ホスト home-manager プロファイル (ホストの CLI ツールを VM から利用可能にする)
+      host-profile = {
+        source        = "$HOME/.local/state/nix/profiles/home-manager/home-path";
+        target        = "/host-profile";
+        securityModel = "none";
+      };
     };
   };
 
@@ -581,24 +601,23 @@ in
   programs.hyprland.enable = true;
 
   environment.systemPackages = with pkgs; [
-    # ターミナル・アプリ
+    # ターミナル・デスクトップアプリ (VM 固有設定が必要なもの)
     alacritty
     eww
     swaybg
     vicinae
     wmfocus
-    fastfetch  # neofetch は削除済み → fastfetch で代替
-    pastel
 
     # Eww ワークスペーススクリプト依存
     jq
     socat
 
-    # 録画・入力
+    # 録画・入力・変換
     wf-recorder
     wtype
     wl-clipboard
     ydotool
+    ffmpeg  # MP4 -> GIF 変換
 
     # フォント確認ツール
     fontconfig
@@ -613,6 +632,8 @@ in
     zsh
     starship
     foot
+
+    # ↑ fastfetch / pastel 等は /host-profile/bin 経由で自動利用可能
   ];
 
   security.polkit.enable = true;

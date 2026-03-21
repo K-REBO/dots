@@ -8,8 +8,9 @@
 
 * ホストと同一のテーマ/壁紙/フォント/設定を使用
 * ステートレスな QEMU VM で毎回クリーンな状態から起動
-* `~/vm-recordings/demo.mp4` にホスト側へ自動保存
+* `~/vm-recordings/demo.gif` にホスト側へ自動保存 (パレット最適化 GIF)
 * ホスト Nix ストアを 9p virtfs で共有 → パッケージ再ダウンロード不要
+* ホスト home-manager プロファイルを自動マウント → **ホストに追加した CLI ツールが vm-config.nix 編集なしで即利用可能**
 
 ---
 
@@ -19,12 +20,16 @@
 # VM ビルド
 nix build .#nixosConfigurations.demo-vm.config.system.build.vm
 
-# 録画実行 (~/vm-recordings/demo.mp4 に保存)
+# GIF 録画実行 (~/vm-recordings/demo.gif に保存)
 rm -f demo-vm.qcow2
 DEMO_DIR="$(pwd)/demo-recorder/demos" ./result/bin/run-demo-vm-vm
 ```
 
 デモスクリプトは `DEMO_DIR` 内の `demo.json` を自動で読み込む。
+
+### ホストプロファイルの自動共有
+
+VM 起動時にホストの home-manager プロファイル (`~/.local/state/nix/profiles/home-manager/home-path`) が `/host-profile` としてマウントされ、`/host-profile/bin` が PATH に追加される。ホスト側で新しい CLI ツールをインストールするだけで VM 内からも使用可能になる (vm-config.nix の変更不要)。
 
 ---
 
@@ -77,6 +82,7 @@ Host (NixOS)
 | `click` | マウスクリック (1=左, 2=中, 3=右) |
 | `key` | キー送信 (例: `SUPER+RETURN`, `CTRL+C`) |
 | `layout` | 事前定義レイアウト適用 |
+| `screenshot` | スクリーンショット保存 (例: `"/recordings/ss.png"`) |
 
 ### テキスト入力の仕組み
 

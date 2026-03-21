@@ -5,15 +5,16 @@ Reads a JSON demo script and executes actions via hyprctl/ydotool.
 Runs inside the demo VM after Hyprland has started.
 
 Action types:
-  { "wait": 0.5 }           - sleep in seconds
-  { "exec": "foot" }       - launch app via hyprctl dispatch exec
-  { "dispatch": "..." }     - arbitrary hyprctl dispatch
-  { "workspace": 2 }        - switch workspace
-  { "layout": "..." }       - predefined layout
-  { "move": [0.4, 0.6] }   - mouse move (relative 0.0-1.0)
-  { "click": 1 }            - 1=left, 2=middle, 3=right
-  { "key": "SUPER+RETURN" } - keyboard shortcut
-  { "type": "hello" }       - type text
+  { "wait": 0.5 }                        - sleep in seconds
+  { "exec": "foot" }                     - launch app via hyprctl dispatch exec
+  { "dispatch": "..." }                  - arbitrary hyprctl dispatch
+  { "workspace": 2 }                     - switch workspace
+  { "layout": "..." }                    - predefined layout
+  { "move": [0.4, 0.6] }                - mouse move (relative 0.0-1.0)
+  { "click": 1 }                         - 1=left, 2=middle, 3=right
+  { "key": "SUPER+RETURN" }             - keyboard shortcut
+  { "type": "hello" }                    - type text
+  { "screenshot": "/recordings/s.png" } - capture screenshot via grim
 """
 
 import json
@@ -262,6 +263,9 @@ def execute_action(action, width, height):
             wlcopy.wait(timeout=3)
         except subprocess.TimeoutExpired:
             wlcopy.kill()
+
+    elif "screenshot" in action:
+        run(["grim", action["screenshot"]])
 
     elif "comment" in action:
         pass  # コメントは無視
