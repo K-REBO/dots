@@ -159,6 +159,13 @@ $orange: #ffaa00;
   color: $fg-dark;
 }
 
+// スペシャルワークスペース（スクラッチパッド）
+.ws-special {
+  border: 1px solid rgba($magenta, 0.4);
+}
+.ws-special.ws-special-active  { color: #000; background-color: $magenta; }
+.ws-special.ws-special-occupied { color: $magenta; background-color: rgba($magenta, 0.2); }
+
 /* Volume */
 .volume {
   color: $green;
