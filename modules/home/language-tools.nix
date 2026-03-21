@@ -43,6 +43,9 @@
      gcc
     #clang
     lldb
+
+    # zig
+    zig
   ];
 
   # mise設定（既にshell.nixで初期化済み）
