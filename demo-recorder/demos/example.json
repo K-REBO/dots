@@ -1,10 +1,11 @@
 [
-  { "comment": "Hyprland 起動後少し待つ" },
+  { "comment": "コンポジター起動後少し待つ" },
   { "wait": 2.0 },
 
-  { "comment": "foot ターミナルを開く (7秒待機で確実に起動)" },
-  { "exec": "foot" },
-  { "wait": 7.0 },
+  { "comment": "foot ターミナルを開く" },
+  { "launch": "foot" },
+  { "wait_window": "foot" },
+  { "wait": 0.5 },
 
   { "comment": "コマンドを実行: \\n を末尾に入れてペーストで実行" },
   { "type": "echo hello, world!\n" },
@@ -12,9 +13,5 @@
 
   { "comment": "マウス操作の例" },
   { "move": [0.5, 0.5] },
-  { "wait": 0.5 },
-
-  { "comment": "デバッグ情報を保存" },
-  { "exec": "sh -c 'hyprctl monitors -j > /recordings/monitors.json && hyprctl clients -j > /recordings/clients.json'" },
-  { "wait": 1.0 }
+  { "wait": 0.5 }
 ]

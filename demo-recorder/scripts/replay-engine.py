@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
-"""Hyprland demo replay engine.
+"""Demo replay engine.
 
-Reads a JSON demo script and executes actions via a wm-driver abstraction.
+Reads a JSON demo script and executes WM-agnostic actions.
 Runs inside the demo VM after the compositor has started.
 
 Action types:
-  { "wait": 0.5 }                        - sleep in seconds
-  { "launch": "alacritty" }              - launch app (WM-agnostic)
-  { "focus_window": "Alacritty" }        - focus window by class/app-id
-  { "wait_window": "Alacritty" }         - wait until window appears
-  { "type": "hello\n" }                  - type text via clipboard
-  { "key": "SUPER+RETURN" }             - keyboard shortcut
-  { "move": [0.4, 0.6] }                - mouse move (relative 0.0-1.0)
-  { "click": 1 }                         - 1=left, 2=middle, 3=right
-  { "workspace": 2 }                     - switch workspace
-  { "screenshot": "/recordings/s.png" } - capture screenshot via grim
-  { "comment": "..." }                   - ignored
-  { "exec": "cmd" }                      - legacy: same as launch
-  { "dispatch": "togglesplit" }          - legacy: raw hyprctl dispatch
+  { "wait": 0.5 }                             - sleep in seconds
+  { "launch": "alacritty" }                   - launch app
+  { "focus_window": "Alacritty" }             - focus window by class/app-id
+  { "wait_window": "Alacritty" }              - wait until window appears
+  { "wait_window": "Alacritty", "count": 2 }  - wait until N windows of class appear
+  { "type": "hello\n" }                        - type text via clipboard
+  { "key": "SUPER+RETURN" }                   - keyboard shortcut
+  { "move": [0.4, 0.6] }                      - mouse move (relative 0.0-1.0)
+  { "click": 1 }                              - 1=left, 2=middle, 3=right
+  { "workspace": 2 }                          - switch workspace
+  { "screenshot": "/recordings/s.png" }       - capture screenshot via grim
+  { "comment": "..." }                        - ignored
 """
 
 import json
@@ -40,10 +39,7 @@ class WmDriver:
     def focus_window(self, window_class: str):
         raise NotImplementedError
 
-    def wait_window(self, window_class: str, timeout: float = 10.0):
-        raise NotImplementedError
-
-    def dispatch(self, cmd: str):
+    def wait_window(self, window_class: str, timeout: float = 10.0, count: int = 1):
         raise NotImplementedError
 
     def workspace(self, num: int):
@@ -57,7 +53,7 @@ class HyprlandDriver(WmDriver):
     def focus_window(self, window_class: str):
         run(["hyprctl", "dispatch", "focuswindow", f"class:^({window_class})$"])
 
-    def wait_window(self, window_class: str, timeout: float = 10.0):
+    def wait_window(self, window_class: str, timeout: float = 10.0, count: int = 1):
         deadline = time.time() + timeout
         while time.time() < deadline:
             result = subprocess.run(
@@ -66,14 +62,15 @@ class HyprlandDriver(WmDriver):
             )
             if result.returncode == 0 and result.stdout.strip():
                 clients = json.loads(result.stdout)
-                if any(c.get("class") == window_class for c in clients):
+                matching = [c for c in clients if c.get("class") == window_class]
+                if len(matching) >= count:
                     return
             time.sleep(0.2)
-        print(f"  Warning: wait_window timeout ({timeout}s) for '{window_class}'",
-              file=sys.stderr)
-
-    def dispatch(self, cmd: str):
-        run(["hyprctl", "dispatch"] + cmd.split())
+        print(
+            f"  Warning: wait_window timeout ({timeout}s) "
+            f"for '{window_class}' x{count}",
+            file=sys.stderr,
+        )
 
     def workspace(self, num: int):
         run(["hyprctl", "dispatch", "workspace", str(num)])
@@ -81,12 +78,13 @@ class HyprlandDriver(WmDriver):
 
 class NiriDriver(WmDriver):
     def launch(self, cmd: str):
-        run(["niri", "msg", "action", "spawn", "--", *cmd.split()])
+        # niri msg spawn は shell を経由しないため sh -c でラップ
+        run(["niri", "msg", "action", "spawn", "--", "sh", "-c", cmd])
 
     def focus_window(self, window_class: str):
         run(["niri", "msg", "action", "focus-window-by-app-id", window_class])
 
-    def wait_window(self, window_class: str, timeout: float = 10.0):
+    def wait_window(self, window_class: str, timeout: float = 10.0, count: int = 1):
         deadline = time.time() + timeout
         while time.time() < deadline:
             result = subprocess.run(
@@ -95,15 +93,15 @@ class NiriDriver(WmDriver):
             )
             if result.returncode == 0 and result.stdout.strip():
                 windows = json.loads(result.stdout)
-                if any(w.get("app_id") == window_class for w in windows):
+                matching = [w for w in windows if w.get("app_id") == window_class]
+                if len(matching) >= count:
                     return
             time.sleep(0.2)
-        print(f"  Warning: wait_window timeout ({timeout}s) for '{window_class}'",
-              file=sys.stderr)
-
-    def dispatch(self, cmd: str):
-        print(f"  Warning: 'dispatch' is Hyprland-specific, ignored on niri: {cmd}",
-              file=sys.stderr)
+        print(
+            f"  Warning: wait_window timeout ({timeout}s) "
+            f"for '{window_class}' x{count}",
+            file=sys.stderr,
+        )
 
     def workspace(self, num: int):
         run(["niri", "msg", "action", "focus-workspace", str(num)])
@@ -116,7 +114,6 @@ def detect_driver() -> WmDriver:
         return NiriDriver()
     if override == "hyprland":
         return HyprlandDriver()
-    # Auto-detect
     if os.environ.get("HYPRLAND_INSTANCE_SIGNATURE"):
         return HyprlandDriver()
     if os.environ.get("NIRI_SOCKET"):
@@ -170,7 +167,9 @@ def build_wtype_key_cmd(key_str: str) -> list:
             key = WTYPE_KEY_MAP.get(part, part.lower())
     if key is None and modifiers:
         key = WTYPE_KEY_MAP.get(parts[-1], parts[-1].lower())
-        modifiers = [WTYPE_MODIFIERS[p] for p in parts[:-1] if p in WTYPE_MODIFIERS]
+        modifiers = [
+            WTYPE_MODIFIERS[p] for p in parts[:-1] if p in WTYPE_MODIFIERS
+        ]
     args = []
     for mod in modifiers:
         args += ["-M", mod]
@@ -217,8 +216,10 @@ def wl_paste(text: str):
         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
     )
     time.sleep(0.2)
-    run(["wtype", "-M", "ctrl", "-M", "shift", "-k", "v", "-m", "shift", "-m", "ctrl"],
-        timeout=10)
+    run(
+        ["wtype", "-M", "ctrl", "-M", "shift", "-k", "v", "-m", "shift", "-m", "ctrl"],
+        timeout=10,
+    )
     time.sleep(0.1)
     try:
         wlcopy.wait(timeout=3)
@@ -255,16 +256,11 @@ def execute_action(action: dict, width: int, height: int, driver: WmDriver):
         driver.focus_window(action["focus_window"])
 
     elif "wait_window" in action:
-        timeout = action.get("timeout", 10.0)
-        driver.wait_window(action["wait_window"], timeout=timeout)
-
-    elif "exec" in action:
-        # 後方互換: launch と同じ
-        driver.launch(action["exec"])
-
-    elif "dispatch" in action:
-        # 後方互換: Hyprland 固有コマンドを直接送る
-        driver.dispatch(action["dispatch"])
+        driver.wait_window(
+            action["wait_window"],
+            timeout=action.get("timeout", 10.0),
+            count=action.get("count", 1),
+        )
 
     elif "workspace" in action:
         driver.workspace(action["workspace"])
@@ -283,8 +279,7 @@ def execute_action(action: dict, width: int, height: int, driver: WmDriver):
         if key in ("RETURN", "ENTER"):
             wl_paste("\n")
         else:
-            wtype_args = build_wtype_key_cmd(action["key"])
-            run(["wtype"] + wtype_args, timeout=30)
+            run(["wtype"] + build_wtype_key_cmd(action["key"]), timeout=30)
 
     elif "type" in action:
         wl_paste(action["type"])
@@ -308,8 +303,7 @@ def main():
         print(f"Usage: {sys.argv[0]} <demo.json>", file=sys.stderr)
         sys.exit(1)
 
-    script_path = sys.argv[1]
-    with open(script_path) as f:
+    with open(sys.argv[1]) as f:
         actions = json.load(f)
 
     driver = detect_driver()
@@ -317,7 +311,7 @@ def main():
 
     width, height = get_monitor_resolution()
     print(f"Monitor: {width}x{height}")
-    print(f"Running {len(actions)} actions from {script_path}")
+    print(f"Running {len(actions)} actions from {sys.argv[1]}")
 
     for i, action in enumerate(actions):
         print(f"  [{i + 1}/{len(actions)}] {action}")

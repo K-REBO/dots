@@ -29,13 +29,14 @@ let
     # eww + swaybg + wallpaper が起動するまで待機
     sleep 5
 
-    log "Starting wf-recorder -> $OUTPUT_FILE"
-    wf-recorder --codec libx264 --framerate 15 -f "$OUTPUT_FILE" &
+    # 9p 経由の書き込みは wf-recorder と相性が悪いため /tmp に録画してからコピー
+    log "Starting wf-recorder -> /tmp/demo.mp4"
+    wf-recorder --codec libx264 --framerate 15 -f /tmp/demo.mp4 &
     RECORDER_PID=$!
     sleep 0.5
 
     log "Running replay engine: $DEMO_SCRIPT"
-    ${replayEngine}/bin/replay-engine "$DEMO_SCRIPT" \
+    PYTHONUNBUFFERED=1 ${replayEngine}/bin/replay-engine "$DEMO_SCRIPT" \
       >> /recordings/replay-engine.log 2>&1 || true
 
     log "Stopping recorder..."
@@ -46,6 +47,7 @@ let
     done
     kill -9 "$RECORDER_PID" 2>/dev/null || true
 
+    cp /tmp/demo.mp4 "$OUTPUT_FILE"
     log "Saved: $OUTPUT_FILE"
     log "Shutting down."
     systemctl poweroff
@@ -532,6 +534,7 @@ in
     swaybg
     vicinae
     wmfocus
+    fastfetch  # ホストプロファイルに含まれないため明示
 
     # Eww ワークスペーススクリプト依存
     jq
