@@ -52,6 +52,9 @@
     # claude-code  # bun経由でインストール
     gemini-cli
 
+    # SNS
+    python3Packages.twitter-cli
+
     # Bun (claude-code用)
     bun
 
