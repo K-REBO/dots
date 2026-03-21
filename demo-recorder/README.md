@@ -1,228 +1,162 @@
 # Hyprland Demo VM
 
-*Reproducible Video Generator*
+*Reproducible Desktop Demo Video Generator*
 
 ## Overview
 
-This project provides a fully reproducible Hyprland demo environment that:
+ホストPCのデスクトップ環境を NixOS QEMU VM 上で再現し、決定論的なデモ動画を生成するシステム。
 
-* Uses the exact same theme/config as the host
-* Runs inside a stateless QEMU VM
-* Generates deterministic demo videos
-* Saves recordings to the host
-* Can optionally update README demo videos via CI
-
-The design prioritizes:
-
-* Reproducibility
-* Determinism
-* Isolation
-* Minimal rebuild cost (leveraging Nix binary cache)
+* ホストと同一のテーマ/壁紙/フォント/設定を使用
+* ステートレスな QEMU VM で毎回クリーンな状態から起動
+* `~/vm-recordings/demo.mp4` にホスト側へ自動保存
+* ホスト Nix ストアを 9p virtfs で共有 → パッケージ再ダウンロード不要
 
 ---
 
-# Architecture
+## Quick Start
+
+```bash
+# VM ビルド
+nix build .#nixosConfigurations.demo-vm.config.system.build.vm
+
+# 録画実行 (~/vm-recordings/demo.mp4 に保存)
+rm -f demo-vm.qcow2
+DEMO_DIR="$(pwd)/demo-recorder/demos" ./result/bin/run-demo-vm-vm
+```
+
+デモスクリプトは `DEMO_DIR` 内の `demo.json` を自動で読み込む。
+
+---
+
+## Architecture
 
 ```
 Host (NixOS)
- ├─ flake (host + demo-vm definitions)
- ├─ /nix/store (shared, read-only)
- ├─ ~/vm-recordings (video output)
- └─ QEMU
-
-Demo VM (NixOS)
- ├─ base.qcow2 (read-only)
- ├─ overlay.qcow2 (ephemeral per run)
- ├─ /nix/store (9p shared, read-only)
- ├─ /recordings (9p shared)
- ├─ Hyprland (auto-login)
- ├─ Demo replay engine
- └─ wf-recorder
+ ├─ flake.nix  (host + demo-vm の両定義)
+ ├─ /nix/store (read-only, 9p でVM共有)
+ ├─ ~/vm-recordings/  (録画出力先)
+ └─ QEMU VM
+     ├─ demo-vm.qcow2  (ephemeral, 実行毎に削除)
+     ├─ Hyprland (headless, WLR_BACKENDS=headless WLR_RENDERER=gles2)
+     ├─ swaybg  (壁紙表示, GPU不要)
+     ├─ eww     (ステータスバー)
+     ├─ alacritty × 3 (zsh + starship, dwindle レイアウト)
+     ├─ demo-runner  (録画制御 systemd exec-once)
+     ├─ replay-engine  (demo.json 実行)
+     └─ wf-recorder  (動画キャプチャ)
 ```
 
 ---
 
-# Reproducibility Strategy
+## Demo Script Format
 
-## 1. Environment Pinning
-
-* `flake.nix` defines both `host` and `demo-vm`
-* Theme, fonts, wallpaper included in flake
-* Pinned `nixpkgs`
-* Optional: fixed timezone and clock
-
-## 2. Stateless VM
-
-* `base.qcow2` generated once
-* Each run creates `overlay.qcow2`
-* Overlay deleted after shutdown
-* `/nix/store` shared from host (read-only)
-
-Result:
-Every run starts from a clean, identical system state.
-
----
-
-# Demo Execution Model
-
-## Why not replay raw input logs?
-
-Wayland restricts global input capture.
-Raw libinput logs are fragile and not resolution-stable.
-
-Instead, we use a deterministic demo script.
-
----
-
-# Demo Script Format
-
-Example:
+`demos/demo.json` に JSON 配列でアクションを記述する。
 
 ```json
 [
-  { "wait": 0.5 },
-  { "layout": "terminal-left-browser-right" },
-  { "move": [0.4, 0.6] },
+  { "comment": "説明文 (スキップされる)" },
+  { "wait": 2.5 },
+  { "exec": "alacritty" },
+  { "type": "nix run nixpkgs#neofetch\n" },
+  { "dispatch": "togglesplit" },
+  { "workspace": 2 },
+  { "move": [0.5, 0.5] },
   { "click": 1 },
   { "key": "SUPER+RETURN" }
 ]
 ```
 
-Rules:
+| アクション | 説明 |
+|-----------|------|
+| `wait` | 秒数待機 |
+| `exec` | `hyprctl dispatch exec` でアプリ起動 |
+| `type` | クリップボード経由でテキスト入力 (`\n` で実行) |
+| `dispatch` | `hyprctl dispatch` 任意コマンド |
+| `workspace` | ワークスペース切替 |
+| `move` | マウス移動 (0.0–1.0 相対座標) |
+| `click` | マウスクリック (1=左, 2=中, 3=右) |
+| `key` | キー送信 (例: `SUPER+RETURN`, `CTRL+C`) |
+| `layout` | 事前定義レイアウト適用 |
 
-* Mouse coordinates are relative (0.0–1.0)
-* Timing is relative
-* Layout is handled via Hyprland dispatch commands
+### テキスト入力の仕組み
+
+Wayland + Hyprland 環境では `wtype` に文字化けバグがあるため、
+クリップボード経由でペーストする方式を採用:
+
+```
+wl-copy -- "text\n"  &
+wtype -M ctrl -M shift -k v -m shift -m ctrl
+```
+
+zsh の bracketed paste は `.zshrc` で `unset zle_bracketed_paste` により無効化済み。
 
 ---
 
-# Layout Control (Deterministic)
+## VM 構成の詳細
 
-Never use mouse to build layouts.
+### シェル & プロンプト
 
-Use Hyprland API:
+* **zsh 5.9** + **starship** (実機と同一の `starship.toml`)
+* `nix run nixpkgs#neofetch` は `.zshrc` のラッパー経由で `fastfetch` を呼び出す
+  (neofetch は nixpkgs から削除済みのため)
 
+### レンダリング
+
+| 設定 | 値 | 理由 |
+|------|-----|------|
+| `WLR_BACKENDS` | `headless` | 物理ディスプレイ不要 |
+| `WLR_RENDERER` | `gles2` | XWayland + wmfocus の EGL 対応 |
+| `LIBGL_ALWAYS_SOFTWARE` | `1` | Mesa ソフトウェアレンダリング |
+| `GALLIUM_DRIVER` | `llvmpipe` | EGL サポートあり (softpipe は不可) |
+| `hardware.graphics.enable` | `true` | VM 内で Mesa/EGL を有効化 |
+
+### wmfocus のビルド
+
+wmfocus は Hyprland の wlr_foreign_toplevel プロトコルを使うため、
+`cargoExtraArgs = "--features hyprland"` でビルドが必要。
+
+```nix
+commonArgs = {
+  src = wmfocus-src;
+  cargoExtraArgs = "--features hyprland";
+  nativeBuildInputs = with final; [ pkg-config cmake autoPatchelfHook ];
+  buildInputs = with final; [ cairo libxcb libx11 fontconfig wayland libxkbcommon expat freetype ];
+};
 ```
-hyprctl dispatch exec kitty
-hyprctl dispatch movewindow l
-hyprctl dispatch workspace 2
-```
 
-This makes layout resolution-independent and stable.
+`buildFeatures = [ "hyprland" ]` は crane では無視されるため不可。
+`autoPatchelfHook` がないと RUNPATH が空になりランタイムエラー発生。
+
+### vicinae
+
+Hyprland 起動時に `exec-once = vicinae server` でデーモン起動が必要。
+その後 `vicinae toggle` でランチャーを開閉できる。
 
 ---
 
-# Replay Engine (Inside VM)
-
-Execution flow:
+## デモシーケンス (demos/demo.json)
 
 ```
-1. VM boot
-2. Auto login
-3. Layout construction
-4. Start wf-recorder
-5. Replay demo JSON
-6. Stop recording
-7. Shutdown
+0s   壁紙 + Ewwバー表示
+5s   alacritty #1 起動 → nix run nixpkgs#neofetch (fastfetch)
+13s  alacritty #2 起動 (右分割)
+16s  alacritty #3 起動 (右下分割)
+18s  pastel list でカラーパレット表示
+22s  wmfocus でウィンドウ選択UI (timeout 4s で自動終了)
+28s  vicinae ランチャーを開く
+33s  vicinae を閉じる
+35s  録画終了
 ```
-
-Replay process:
-
-* Read monitor resolution
-* Convert relative coordinates to absolute
-* Execute via `ydotool`
-* Respect relative timing
 
 ---
 
-# Input Visualization
+## ログファイル
 
-Instead of logging, visualization is integrated into replay:
+VM 実行後、`~/vm-recordings/` に以下が生成される:
 
-* Key presses are displayed in overlay
-* Mouse clicks show animated indicators
-* Visual elements are deterministic
-
-This guarantees reproducible video output.
-
----
-
-# Recording Output
-
-Inside VM:
-
-```
-/recordings/demo.mp4
-```
-
-On host:
-
-```
-~/vm-recordings/demo.mp4
-```
-
-Video persists even though VM state is discarded.
-
----
-
-# CI Integration (Optional)
-
-Goal:
-
-Push → Automatically update README demo video
-
-Constraints on GitHub-hosted runners:
-
-* No GPU
-* No KVM
-
-Solution:
-
-```
-WLR_RENDERER=pixman
-```
-
-CI pipeline:
-
-```
-1. Checkout
-2. Install Nix
-3. Build demo system
-4. Run headless demo
-5. Generate demo.mp4
-6. Deploy to gh-pages
-```
-
-README embeds video from `gh-pages`.
-
----
-
-# Setup Instructions
-
-```
-git clone <repo>
-cd .configs/nix
-sudo nixos-rebuild switch --flake .#host
-./scripts/run-demo-vm.sh
-```
-
-This generates a deterministic `demo.mp4`.
-
----
-
-# Design Principles
-
-* Reproducibility > spontaneity
-* WM-controlled layout
-* Input used only for visual demonstration
-* Stateless VM
-* Binary cache usage to avoid rebuild cost
-
----
-
-# Future Extensions
-
-* Versioned demo videos (per commit SHA)
-* Self-hosted runner with GPU for pixel-perfect CI
-* DSL for demo scripting
-* Improved input visualization overlay
+| ファイル | 内容 |
+|---------|------|
+| `demo.mp4` | 録画動画 |
+| `demo-runner.log` | 録画制御ログ |
+| `replay-engine.log` | デモスクリプト実行ログ |
+| `hyprland.log` | Hyprland ログ |
