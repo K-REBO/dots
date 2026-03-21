@@ -77,7 +77,19 @@
   '';
 
   # MicMute LED をユーザーが書き込めるようにする
-  services.udev.extraRules = ''
-    SUBSYSTEM=="leds", KERNEL=="platform::micmute", GROUP="wheel", MODE="0664"
-  '';
+  # udevのKERNEL/DEVPATHマッチングが "::" を含むデバイス名で機能しないため
+  # systemdサービスで起動時にパーミッションを設定する
+  systemd.services.micmute-led-perms = {
+    description = "Set MicMute LED sysfs permissions";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "systemd-udevd.service" ];
+    script = ''
+      chmod 0664 /sys/class/leds/platform::micmute/brightness
+      chgrp wheel /sys/class/leds/platform::micmute/brightness
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+  };
 }
