@@ -48,10 +48,18 @@ let
 
     mkdir -p "$(dirname "$OUTPUT_FILE")"
 
-    # GIF 変換 (パレット最適化)
-    log "Converting MP4 -> GIF..."
+    # GIF 変換 (2パス方式 - メモリ効率的)
+    # split フィルタは全フレームをメモリにバッファするため OOM になる
+    # 代わりに: パス1でパレット生成、パス2でフレームをストリーミングエンコード
+    log "Converting MP4 -> GIF (pass 1: palette)..."
     ${pkgs.ffmpeg}/bin/ffmpeg -y -i /tmp/demo.mp4 \
-      -vf "fps=10,scale=1920:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+      -vf "fps=8,scale=960:-1:flags=lanczos,palettegen=max_colors=256" \
+      /tmp/palette.png \
+      >> /recordings/ffmpeg.log 2>&1
+
+    log "Converting MP4 -> GIF (pass 2: encode)..."
+    ${pkgs.ffmpeg}/bin/ffmpeg -y -i /tmp/demo.mp4 -i /tmp/palette.png \
+      -lavfi "fps=8,scale=960:-1:flags=lanczos[x];[x][1:v]paletteuse" \
       -loop 0 "$OUTPUT_FILE" \
       >> /recordings/ffmpeg.log 2>&1 || {
         # GIF 変換失敗時は MP4 をフォールバック保存
