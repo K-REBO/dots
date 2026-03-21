@@ -2,6 +2,8 @@
 
 *Reproducible Desktop Demo Video Generator*
 
+![demo](demo.gif)
+
 ## Overview
 
 ホストPCのデスクトップ環境を NixOS QEMU VM 上で再現し、決定論的なデモ動画を生成するシステム。
