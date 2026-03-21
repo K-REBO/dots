@@ -5,7 +5,7 @@ let
   # Replay Engine
   # ===========================================================================
   replayEngine = pkgs.writers.writePython3Bin "replay-engine"
-    { flakeIgnore = [ "E265" "E302" "E303" "W503" ]; }
+    { flakeIgnore = [ "E265" "E302" "E303" "E501" "W503" ]; }
     (builtins.readFile ../scripts/replay-engine.py);
 
   # ===========================================================================
@@ -14,7 +14,7 @@ let
   demoRunner = pkgs.writeShellScriptBin "demo-runner" ''
     set -euo pipefail
     DEMO_SCRIPT="''${DEMO_SCRIPT:-/shared/demo.json}"
-    OUTPUT_FILE="''${OUTPUT_FILE:-/recordings/demo.gif}"
+    OUTPUT_FILE="''${OUTPUT_FILE:-/recordings/demo.mp4}"
 
     LOG=/recordings/demo-runner.log
     log() { echo "[demo-runner] $*" >> "$LOG" 2>/dev/null || true; }
@@ -29,8 +29,8 @@ let
     # eww + swaybg + wallpaper が起動するまで待機
     sleep 5
 
-    log "Starting wf-recorder -> /tmp/demo.mp4"
-    wf-recorder --codec libx264 --framerate 15 -f /tmp/demo.mp4 &
+    log "Starting wf-recorder -> $OUTPUT_FILE"
+    wf-recorder --codec libx264 --framerate 15 -f "$OUTPUT_FILE" &
     RECORDER_PID=$!
     sleep 0.5
 
@@ -46,28 +46,7 @@ let
     done
     kill -9 "$RECORDER_PID" 2>/dev/null || true
 
-    mkdir -p "$(dirname "$OUTPUT_FILE")"
-
-    # GIF 変換 (2パス方式 - メモリ効率的)
-    # split フィルタは全フレームをメモリにバッファするため OOM になる
-    # 代わりに: パス1でパレット生成、パス2でフレームをストリーミングエンコード
-    log "Converting MP4 -> GIF (pass 1: palette)..."
-    ${pkgs.ffmpeg}/bin/ffmpeg -y -i /tmp/demo.mp4 \
-      -vf "fps=8,scale=960:-1:flags=lanczos,palettegen=max_colors=256" \
-      /tmp/palette.png \
-      >> /recordings/ffmpeg.log 2>&1
-
-    log "Converting MP4 -> GIF (pass 2: encode)..."
-    ${pkgs.ffmpeg}/bin/ffmpeg -y -i /tmp/demo.mp4 -i /tmp/palette.png \
-      -lavfi "fps=8,scale=960:-1:flags=lanczos[x];[x][1:v]paletteuse" \
-      -loop 0 "$OUTPUT_FILE" \
-      >> /recordings/ffmpeg.log 2>&1 || {
-        # GIF 変換失敗時は MP4 をフォールバック保存
-        log "GIF conversion failed, saving MP4 as fallback"
-        cp /tmp/demo.mp4 "''${OUTPUT_FILE%.gif}.mp4"
-      }
     log "Saved: $OUTPUT_FILE"
-
     log "Shutting down."
     systemctl poweroff
   '';
@@ -419,75 +398,13 @@ let
   '';
 
   # ===========================================================================
-  # Hyprland 設定 (実機ビジュアル再現)
+  # Hyprland 設定
+  # 静的設定 (monitor/general/decoration/animations/misc/dwindle) は
+  # ../wm/hyprland/hyprland.conf に外出し。
+  # exec-once のみ Nix ストアパスを参照するためここで定義。
   # ===========================================================================
   hyprlandConf = pkgs.writeText "hyprland-demo.conf" ''
-    monitor = ,1920x1080@60,0x0,1
-
-    general {
-      border_size = 1
-      gaps_in = 3
-      gaps_out = 2
-      col.active_border   = rgba(ff6600ee)
-      col.inactive_border = rgba(595959aa)
-      layout = dwindle
-    }
-
-    decoration {
-      rounding = 12
-
-      shadow {
-        enabled      = true
-        range        = 4
-        render_power = 3
-        color        = rgba(1a1a1aee)
-      }
-
-      blur {
-        enabled   = true
-        size      = 3
-        passes    = 1
-        vibrancy  = 0.1696
-      }
-    }
-
-    animations {
-      enabled = true
-
-      bezier = easeOutQuint,    0.23, 1,    0.32, 1
-      bezier = easeInOutCubic,  0.65, 0.05, 0.36, 1
-      bezier = linear,          0,    0,    1,    1
-      bezier = almostLinear,    0.5,  0.5,  0.75, 1.0
-      bezier = quick,           0.15, 0,    0.1,  1
-
-      animation = global,          1, 10,   default
-      animation = border,          1, 5.39, easeOutQuint
-      animation = windows,         1, 4.79, easeOutQuint
-      animation = windowsIn,       1, 4.1,  easeOutQuint, popin 87%
-      animation = windowsOut,      1, 1.49, linear,       popin 87%
-      animation = fadeIn,          1, 1.73, almostLinear
-      animation = fadeOut,         1, 1.46, almostLinear
-      animation = fade,            1, 3.03, quick
-      animation = layers,          1, 3.81, easeOutQuint
-      animation = layersIn,        1, 4,    easeOutQuint, fade
-      animation = layersOut,       1, 1.5,  linear,       fade
-      animation = fadeLayersIn,    1, 1.79, almostLinear
-      animation = fadeLayersOut,   1, 1.39, almostLinear
-      animation = workspaces,      1, 1.94, almostLinear, fade
-      animation = workspacesIn,    1, 1.21, almostLinear, fade
-      animation = workspacesOut,   1, 1.94, almostLinear, fade
-    }
-
-    misc {
-      disable_hyprland_logo    = true
-      disable_splash_rendering = true
-      vfr                      = true
-    }
-
-    dwindle {
-      pseudotile    = true
-      preserve_split = true
-    }
+    source = ${../wm/hyprland/hyprland.conf}
 
     # 壁紙 + eww bar + vicinae daemon + demo runner
     exec-once = swaybg -i /home/demo/.config/hypr/wallpapers/moshi_moshimo_saa.jpg -m fill
@@ -620,12 +537,11 @@ in
     jq
     socat
 
-    # 録画・入力・変換
+    # 録画・入力 (GIF変換はホスト側で実行)
     wf-recorder
     wtype
     wl-clipboard
     ydotool
-    ffmpeg  # MP4 -> GIF 変換
 
     # フォント確認ツール
     fontconfig

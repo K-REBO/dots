@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# デモ VM を実行し、mp4 を録画してからホスト側で GIF に変換する
+# Usage: run-demo [demo-dir]
+#
+# 環境変数:
+#   DEMO_DIR=...      デモスクリプトのディレクトリ (デフォルト: scripts/../demos)
+#   OUTPUT=...        GIF出力先 (デフォルト: ~/vm-recordings/demo.gif)
+#   KEEP_MP4=1        変換後も mp4 を残す場合は KEEP_MP4=1
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+
+DEMO_DIR="${DEMO_DIR:-$SCRIPT_DIR/../demos}"
+RECORDINGS="$HOME/vm-recordings"
+MP4="$RECORDINGS/demo.mp4"
+OUTPUT="${OUTPUT:-$RECORDINGS/demo.gif}"
+VM_BIN="$REPO_ROOT/result/bin/run-demo-vm-vm"
+
+if [ ! -x "$VM_BIN" ]; then
+  echo "[run-demo] VM binary not found: $VM_BIN" >&2
+  echo "[run-demo] Run: nix build .#nixosConfigurations.demo-vm.config.system.build.vm" >&2
+  exit 1
+fi
+
+mkdir -p "$RECORDINGS"
+rm -f "$REPO_ROOT/demo-vm.qcow2"
+
+echo "[run-demo] Starting VM..."
+DEMO_DIR="$DEMO_DIR" "$VM_BIN"
+
+echo "[run-demo] VM finished. Converting MP4 -> GIF..."
+"$SCRIPT_DIR/make-gif" "$MP4" "$OUTPUT"
+
+if [ "${KEEP_MP4:-0}" != "1" ]; then
+  rm -f "$MP4"
+fi

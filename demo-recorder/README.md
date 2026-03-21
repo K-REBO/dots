@@ -17,15 +17,23 @@
 ## Quick Start
 
 ```bash
-# VM ビルド
+# VM ビルド (初回 or vm-config.nix 変更時のみ)
 nix build .#nixosConfigurations.demo-vm.config.system.build.vm
 
 # GIF 録画実行 (~/vm-recordings/demo.gif に保存)
-rm -f demo-vm.qcow2
-DEMO_DIR="$(pwd)/demo-recorder/demos" ./result/bin/run-demo-vm-vm
+./demo-recorder/scripts/run-demo
 ```
 
-デモスクリプトは `DEMO_DIR` 内の `demo.json` を自動で読み込む。
+内部フロー: VM が mp4 を録画 → ホスト側 ffmpeg が GIF 変換。
+
+```bash
+# 個別実行
+DEMO_DIR="$(pwd)/demo-recorder/demos" ./result/bin/run-demo-vm-vm  # → demo.mp4
+./demo-recorder/scripts/make-gif ~/vm-recordings/demo.mp4           # → demo.gif
+
+# GIF パラメータ調整
+GIF_FPS=10 GIF_SCALE=1280 ./demo-recorder/scripts/make-gif demo.mp4
+```
 
 ### ホストプロファイルの自動共有
 

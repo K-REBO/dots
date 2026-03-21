@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# mp4 → GIF 変換 (ホスト側で実行)
+# Usage: make-gif [input.mp4] [output.gif]
+#
+# 環境変数:
+#   GIF_FPS=8         フレームレート (デフォルト: 8)
+#   GIF_SCALE=960     出力幅px (デフォルト: 960, 高さは自動)
+#   GIF_COLORS=256    パレット色数 (デフォルト: 256)
+
+set -euo pipefail
+
+INPUT="${1:-$HOME/vm-recordings/demo.mp4}"
+OUTPUT="${2:-${INPUT%.mp4}.gif}"
+
+FPS="${GIF_FPS:-8}"
+SCALE="${GIF_SCALE:-960}"
+COLORS="${GIF_COLORS:-256}"
+PALETTE="$(mktemp /tmp/demo-palette-XXXXXX.png)"
+
+trap 'rm -f "$PALETTE"' EXIT
+
+if [ ! -f "$INPUT" ]; then
+  echo "Error: input not found: $INPUT" >&2
+  exit 1
+fi
+
+# ffmpeg の解決 (ホストに直接入っていなければ nix run 経由)
+if command -v ffmpeg &>/dev/null; then
+  FFMPEG="ffmpeg"
+else
+  FFMPEG="nix run nixpkgs#ffmpeg --"
+fi
+
+echo "[make-gif] Pass 1: generating palette..."
+$FFMPEG -y -i "$INPUT" \
+  -vf "fps=${FPS},scale=${SCALE}:-1:flags=lanczos,palettegen=max_colors=${COLORS}" \
+  "$PALETTE" 2>/dev/null
+
+echo "[make-gif] Pass 2: encoding GIF..."
+$FFMPEG -y -i "$INPUT" -i "$PALETTE" \
+  -lavfi "fps=${FPS},scale=${SCALE}:-1:flags=lanczos[x];[x][1:v]paletteuse" \
+  -loop 0 "$OUTPUT" 2>/dev/null
+
+echo "[make-gif] Saved: $OUTPUT ($(du -sh "$OUTPUT" | cut -f1))"
