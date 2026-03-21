@@ -9,10 +9,10 @@ let
   # VM内でHyprlandが起動後に自動実行されるランナー
   demoRunner = pkgs.writeShellScriptBin "demo-runner" ''
     set -euo pipefail
-    export DEMO_SCRIPT="''${DEMO_SCRIPT:-/shared/demo.json}"
-    export OUTPUT_FILE="''${OUTPUT_FILE:-/recordings/demo.mp4}"
+    DEMO_SCRIPT="''${DEMO_SCRIPT:-/shared/demo.json}"
+    OUTPUT_FILE="''${OUTPUT_FILE:-/recordings/demo.mp4}"
 
-    log() { echo "[demo-runner] $*"; }
+    log() { echo "[demo-runner] $*" | tee -a /home/demo/demo-runner.log; }
 
     log "Waiting for Hyprland..."
     for i in $(seq 1 60); do
@@ -47,6 +47,7 @@ let
     systemctl poweroff
   '';
 
+  # Hyprland 設定ファイル (Nixストアに配置)
   hyprlandConf = pkgs.writeText "hyprland-demo.conf" ''
     # Demo VM 用 Hyprland 設定 (最小構成)
 
@@ -73,14 +74,21 @@ let
     # 仮想モニター (QEMU headless 環境)
     monitor = ,1920x1080@60,0x0,1
 
-    # 環境変数 (headless + pixman renderer)
-    env = WLR_NO_HARDWARE_CURSORS,1
-    env = WLR_RENDERER,pixman
-    env = WLR_BACKENDS,headless
-    env = WLR_LIBINPUT_NO_DEVICES,1
-
     # 起動後にデモランナーを実行
     exec-once = ${demoRunner}/bin/demo-runner
+  '';
+
+  # .bash_profile (WLR_* 環境変数を設定してから Hyprland を起動)
+  bashProfile = pkgs.writeText "demo-bash-profile" ''
+    if [ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+      export WLR_BACKENDS=headless
+      export WLR_RENDERER=pixman
+      export WLR_NO_HARDWARE_CURSORS=1
+      export WLR_LIBINPUT_NO_DEVICES=1
+      export XDG_RUNTIME_DIR=/run/user/$(id -u)
+      exec ${pkgs.hyprland}/bin/Hyprland -c ${hyprlandConf} \
+        &>/home/demo/hyprland.log
+    fi
   '';
 
 in
@@ -97,7 +105,6 @@ in
     memorySize = 4096;
     diskSize = 8192;
     graphics = false; # ヘッドレス (Waylandコンポジタが仮想出力を管理)
-    # ホストの /nix/store を共有 (リビルドコスト削減)
     writableStoreUseTmpfs = false;
     sharedDirectories = {
       # 録画出力先 (ホスト: ~/vm-recordings)
@@ -136,22 +143,13 @@ in
 
   services.getty.autologinUser = lib.mkForce "demo";
 
-  # 自動ログイン後、tty1 で Hyprland を起動
-  environment.etc."demo-profile".text = ''
-    if [ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-      export HYPRLAND_CONFIG=${hyprlandConf}
-      exec Hyprland &>/home/demo/hyprland.log
-    fi
-  '';
-
-  # ユーザーの .bash_profile に追記
-  system.activationScripts.demoUserProfile = ''
-    install -m 644 -o demo -g users /dev/null /home/demo/.bash_profile 2>/dev/null || true
-    cat > /home/demo/.bash_profile <<'EOF'
-    source /etc/demo-profile
-    EOF
-    chown demo:users /home/demo/.bash_profile
-  '';
+  # systemd-tmpfiles で .bash_profile を Nixストアからコピー
+  # (activation scripts より後に実行されるため home dir が確実に存在する)
+  systemd.tmpfiles.rules = [
+    "C /home/demo/.bash_profile 0644 demo users - ${bashProfile}"
+    "d /recordings 0777 demo users -"
+    "d /shared 0755 demo users -"
+  ];
 
   # ====================
   # Hyprland & パッケージ
@@ -166,14 +164,7 @@ in
     demoRunner
   ];
 
-  # ydotoold はユーザー側から起動するため、デバイスアクセス権を付与
   security.polkit.enable = true;
-
-  # /recordings マウントポイントを事前に作成
-  systemd.tmpfiles.rules = [
-    "d /recordings 0777 demo users -"
-    "d /shared 0755 demo users -"
-  ];
 
   # パスワード認証なしの sudo (シャットダウン用)
   security.sudo.extraRules = [

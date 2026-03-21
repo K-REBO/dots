@@ -37,9 +37,16 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    crane.url = "github:ipetkov/crane";
+
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, ... }@inputs: let
     system = "x86_64-linux";
 
     yt-dlpOverlay = final: prev: {
@@ -55,30 +62,37 @@
     };
 
     wmfocusOverlay = final: prev: {
-      wmfocus = final.rustPlatform.buildRustPackage {
+      wmfocus = let
+        craneLib = (crane.mkLib final).overrideToolchain final.fenix.stable.toolchain;
+        commonArgs = {
+          src = wmfocus-src;
+          strictDeps = true;
+          buildFeatures = [ "hyprland" ];
+          nativeBuildInputs = with final; [ pkg-config cmake ];
+          buildInputs = with final; [
+            cairo
+            libxcb
+            libx11
+            fontconfig
+            wayland
+            libxkbcommon
+            expat
+            freetype
+          ];
+          # テストを無効化（テストコードにコンパイルエラーあり）
+          doCheck = false;
+          # expat-sys cmake互換性問題の回避
+          preBuild = ''
+            export CMAKE_POLICY_VERSION_MINIMUM=3.5
+          '';
+        };
+        # 依存クレートを先にビルド → Nixストアにキャッシュ
+        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+      in craneLib.buildPackage (commonArgs // {
+        inherit cargoArtifacts;
         pname = "wmfocus";
         version = "1.5.0";
-        src = wmfocus-src;
-        cargoLock.lockFile = "${wmfocus-src}/Cargo.lock";
-        buildFeatures = [ "hyprland" ];
-        nativeBuildInputs = with final; [ pkg-config cmake ];
-        buildInputs = with final; [
-          cairo
-          libxcb
-          libx11
-          fontconfig
-          wayland
-          libxkbcommon
-          expat
-          freetype
-        ];
-        # テストを無効化（テストコードにコンパイルエラーあり）
-        doCheck = false;
-        # expat-sys cmake互換性問題の回避
-        preBuild = ''
-          export CMAKE_POLICY_VERSION_MINIMUM=3.5
-        '';
-      };
+      });
     };
 
     twitterCliOverlay = final: prev: {
@@ -142,7 +156,7 @@
       });
     };
 
-    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay nur.overlays.default ];  # claudeOverlay無効化
+    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
 
     pkgs = import nixpkgs {
       inherit system;
