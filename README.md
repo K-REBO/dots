@@ -2,7 +2,7 @@
 
 NixOS + Home Manager で管理する個人用dotfiles
 
-![screenshot](screenshot.png)
+![demo](demo-recorder/demo.gif)
 
 ## Stack
 
