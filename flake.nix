@@ -67,8 +67,8 @@
         commonArgs = {
           src = wmfocus-src;
           strictDeps = true;
-          buildFeatures = [ "hyprland" ];
-          nativeBuildInputs = with final; [ pkg-config cmake ];
+          cargoExtraArgs = "--features hyprland";
+          nativeBuildInputs = with final; [ pkg-config cmake autoPatchelfHook ];
           buildInputs = with final; [
             cairo
             libxcb

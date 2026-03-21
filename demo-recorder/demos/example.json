@@ -1,47 +1,20 @@
 [
-  { "comment": "=== Hyprland Demo: ターミナルとブラウザのレイアウト ===" },
-
-  { "wait": 1.0 },
-
-  { "comment": "ターミナルを左、ブラウザを右に配置" },
-  { "layout": "terminal-left-browser-right" },
-
-  { "wait": 1.5 },
-
-  { "comment": "ターミナルにフォーカス" },
-  { "dispatch": "movefocus l" },
-  { "wait": 0.5 },
-
-  { "comment": "コマンドを入力" },
-  { "type": "neofetch" },
-  { "wait": 0.3 },
-  { "key": "RETURN" },
+  { "comment": "Hyprland 起動後少し待つ" },
   { "wait": 2.0 },
 
-  { "comment": "ワークスペース2に切り替え" },
-  { "key": "SUPER+2" },
-  { "wait": 0.5 },
+  { "comment": "foot ターミナルを開く (7秒待機で確実に起動)" },
+  { "exec": "foot" },
+  { "wait": 7.0 },
 
-  { "comment": "新しいターミナルを起動" },
-  { "key": "SUPER+RETURN" },
-  { "wait": 1.0 },
-
-  { "comment": "ls コマンドを実行" },
-  { "type": "ls -la --color=always" },
-  { "wait": 0.3 },
-  { "key": "RETURN" },
+  { "comment": "コマンドを実行: \\n を末尾に入れてペーストで実行" },
+  { "type": "echo hello, world!\n" },
   { "wait": 1.5 },
 
-  { "comment": "ワークスペース1に戻る" },
-  { "key": "SUPER+1" },
-  { "wait": 1.0 },
-
-  { "comment": "マウスをターミナル中央へ移動してクリック" },
-  { "move": [0.25, 0.5] },
-  { "wait": 0.3 },
-  { "click": 1 },
+  { "comment": "マウス操作の例" },
+  { "move": [0.5, 0.5] },
   { "wait": 0.5 },
 
-  { "comment": "終了" },
+  { "comment": "デバッグ情報を保存" },
+  { "exec": "sh -c 'hyprctl monitors -j > /recordings/monitors.json && hyprctl clients -j > /recordings/clients.json'" },
   { "wait": 1.0 }
 ]

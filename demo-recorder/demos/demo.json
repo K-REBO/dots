@@ -1,47 +1,34 @@
 [
-  { "comment": "=== Hyprland Demo: ターミナルとブラウザのレイアウト ===" },
+  { "comment": "Hyprland + eww + swaybg が落ち着くまで待機" },
+  { "wait": 5.0 },
 
-  { "wait": 1.0 },
+  { "comment": "alacritty #1 を開く (ワークスペース全体)" },
+  { "exec": "alacritty" },
+  { "wait": 3.0 },
 
-  { "comment": "ターミナルを左、ブラウザを右に配置" },
-  { "layout": "terminal-left-browser-right" },
+  { "comment": "nix run nixpkgs#neofetch (ラッパー経由で neofetch を実行)" },
+  { "type": "nix run nixpkgs#neofetch\n" },
+  { "wait": 5.0 },
 
-  { "wait": 1.5 },
+  { "comment": "alacritty #2 を開く (右側に分割・何もしない)" },
+  { "exec": "alacritty" },
+  { "wait": 2.5 },
 
-  { "comment": "ターミナルにフォーカス" },
-  { "dispatch": "movefocus l" },
-  { "wait": 0.5 },
-
-  { "comment": "コマンドを入力" },
-  { "type": "neofetch" },
-  { "wait": 0.3 },
-  { "key": "RETURN" },
+  { "comment": "alacritty #3 を開く (右下に分割)" },
+  { "exec": "alacritty" },
   { "wait": 2.0 },
 
-  { "comment": "ワークスペース2に切り替え" },
-  { "key": "SUPER+2" },
-  { "wait": 0.5 },
+  { "comment": "pastel list でカラーパレットを表示" },
+  { "type": "pastel list\n" },
+  { "wait": 4.0 },
 
-  { "comment": "新しいターミナルを起動" },
-  { "key": "SUPER+RETURN" },
-  { "wait": 1.0 },
+  { "comment": "wmfocus を4秒間表示して自動終了 (timeout使用)" },
+  { "exec": "sh -c 'timeout 4 wmfocus-demo; pkill -9 -f wmfocus 2>/dev/null; true'" },
+  { "wait": 6.0 },
 
-  { "comment": "ls コマンドを実行" },
-  { "type": "ls -la --color=always" },
-  { "wait": 0.3 },
-  { "key": "RETURN" },
-  { "wait": 1.5 },
-
-  { "comment": "ワークスペース1に戻る" },
-  { "key": "SUPER+1" },
-  { "wait": 1.0 },
-
-  { "comment": "マウスをターミナル中央へ移動してクリック" },
-  { "move": [0.25, 0.5] },
-  { "wait": 0.3 },
-  { "click": 1 },
-  { "wait": 0.5 },
-
-  { "comment": "終了" },
-  { "wait": 1.0 }
+  { "comment": "vicinae ランチャーを開く (Super+D 相当)" },
+  { "exec": "vicinae toggle" },
+  { "wait": 5.0 },
+  { "exec": "vicinae toggle" },
+  { "wait": 3.0 }
 ]

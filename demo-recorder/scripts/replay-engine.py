@@ -6,7 +6,7 @@ Runs inside the demo VM after Hyprland has started.
 
 Action types:
   { "wait": 0.5 }           - sleep in seconds
-  { "exec": "kitty" }       - launch app via hyprctl dispatch exec
+  { "exec": "foot" }       - launch app via hyprctl dispatch exec
   { "dispatch": "..." }     - arbitrary hyprctl dispatch
   { "workspace": 2 }        - switch workspace
   { "layout": "..." }       - predefined layout
@@ -23,9 +23,11 @@ import time
 
 
 # Predefined window layouts built via hyprctl dispatch
+FOOT_CMD = "foot --window-size-pixels=1600x900"
+
 LAYOUTS = {
     "terminal-left-browser-right": [
-        ("exec", "kitty"),
+        ("exec", FOOT_CMD),
         ("sleep", 1.5),
         ("exec", "firefox"),
         ("sleep", 2.0),
@@ -33,69 +35,72 @@ LAYOUTS = {
         ("dispatch", "resizeactive exact 960 0"),
     ],
     "terminal-fullscreen": [
-        ("exec", "kitty"),
+        ("exec", FOOT_CMD),
         ("sleep", 1.0),
         ("dispatch", "fullscreen 1"),
     ],
     "two-terminals": [
-        ("exec", "kitty"),
+        ("exec", FOOT_CMD),
         ("sleep", 1.0),
-        ("exec", "kitty"),
+        ("exec", FOOT_CMD),
         ("sleep", 1.0),
         ("dispatch", "togglesplit"),
     ],
     "terminal-only": [
-        ("exec", "kitty"),
+        ("exec", FOOT_CMD),
         ("sleep", 1.0),
     ],
 }
 
-# Human-readable key names to ydotool/Linux key names
-KEY_MAP = {
-    "SUPER": "KEY_LEFTMETA",
-    "META": "KEY_LEFTMETA",
-    "WIN": "KEY_LEFTMETA",
-    "CTRL": "KEY_LEFTCTRL",
-    "CONTROL": "KEY_LEFTCTRL",
-    "ALT": "KEY_LEFTALT",
-    "SHIFT": "KEY_LEFTSHIFT",
-    "RETURN": "KEY_ENTER",
-    "ENTER": "KEY_ENTER",
-    "ESC": "KEY_ESC",
-    "ESCAPE": "KEY_ESC",
-    "TAB": "KEY_TAB",
-    "SPACE": "KEY_SPACE",
-    "UP": "KEY_UP",
-    "DOWN": "KEY_DOWN",
-    "LEFT": "KEY_LEFT",
-    "RIGHT": "KEY_RIGHT",
-    "BACKSPACE": "KEY_BACKSPACE",
-    "DELETE": "KEY_DELETE",
-    "HOME": "KEY_HOME",
-    "END": "KEY_END",
-    "PAGEUP": "KEY_PAGEUP",
-    "PAGEDOWN": "KEY_PAGEDOWN",
-    "F1": "KEY_F1",
-    "F2": "KEY_F2",
-    "F3": "KEY_F3",
-    "F4": "KEY_F4",
-    "F5": "KEY_F5",
-    "F6": "KEY_F6",
-    "F7": "KEY_F7",
-    "F8": "KEY_F8",
-    "F9": "KEY_F9",
-    "F10": "KEY_F10",
-    "F11": "KEY_F11",
-    "F12": "KEY_F12",
-    "MINUS": "KEY_MINUS",
-    "EQUAL": "KEY_EQUAL",
-    "SLASH": "KEY_SLASH",
-    "SEMICOLON": "KEY_SEMICOLON",
-    "APOSTROPHE": "KEY_APOSTROPHE",
-    "GRAVE": "KEY_GRAVE",
-    "COMMA": "KEY_COMMA",
-    "DOT": "KEY_DOT",
-    "PERIOD": "KEY_DOT",
+# Human-readable key names to wtype (XKB) key names
+# wtype uses XKB keysym names (lowercase)
+WTYPE_KEY_MAP = {
+    "SUPER": "super_l",
+    "META": "super_l",
+    "WIN": "super_l",
+    "CTRL": "ctrl_l",
+    "CONTROL": "ctrl_l",
+    "ALT": "alt_l",
+    "SHIFT": "shift_l",
+    "RETURN": "return",
+    "ENTER": "return",
+    "ESC": "escape",
+    "ESCAPE": "escape",
+    "TAB": "tab",
+    "SPACE": "space",
+    "UP": "up",
+    "DOWN": "down",
+    "LEFT": "left",
+    "RIGHT": "right",
+    "BACKSPACE": "backspace",
+    "DELETE": "delete",
+    "HOME": "home",
+    "END": "end",
+    "PAGEUP": "prior",
+    "PAGEDOWN": "next",
+    "F1": "f1", "F2": "f2", "F3": "f3", "F4": "f4",
+    "F5": "f5", "F6": "f6", "F7": "f7", "F8": "f8",
+    "F9": "f9", "F10": "f10", "F11": "f11", "F12": "f12",
+    "MINUS": "minus",
+    "EQUAL": "equal",
+    "SLASH": "slash",
+    "SEMICOLON": "semicolon",
+    "APOSTROPHE": "apostrophe",
+    "GRAVE": "grave",
+    "COMMA": "comma",
+    "DOT": "period",
+    "PERIOD": "period",
+}
+
+# wtype modifier flags: -M presses modifier, -m releases
+WTYPE_MODIFIERS = {
+    "SUPER": "super",
+    "META": "super",
+    "WIN": "super",
+    "CTRL": "ctrl",
+    "CONTROL": "ctrl",
+    "ALT": "alt",
+    "SHIFT": "shift",
 }
 
 MOUSE_BUTTONS = {1: "0x40", 2: "0x60", 3: "0x80"}
@@ -121,30 +126,63 @@ def get_monitor_resolution():
     return mon["width"], mon["height"]
 
 
-def to_ydotool_key(key_str):
-    """Convert 'SUPER+RETURN' to 'KEY_LEFTMETA+KEY_ENTER'."""
+def build_wtype_key_cmd(key_str):
+    """Build wtype command args for 'SUPER+RETURN' etc.
+
+    Returns a list of args to pass to wtype.
+    Example: 'SUPER+RETURN' -> ['-M', 'super', '-k', 'return', '-m', 'super']
+    Example: 'RETURN' -> ['-k', 'return']
+    """
     parts = key_str.upper().split("+")
-    result = []
+    modifiers = []
+    key = None
     for part in parts:
-        if part in KEY_MAP:
-            result.append(KEY_MAP[part])
-        elif len(part) == 1 and part.isalpha():
-            result.append(f"KEY_{part}")
-        elif len(part) == 1 and part.isdigit():
-            result.append(f"KEY_{part}")
+        if part in WTYPE_MODIFIERS:
+            modifiers.append(WTYPE_MODIFIERS[part])
         else:
-            result.append(f"KEY_{part}")
-    return "+".join(result)
+            # The actual key (last non-modifier part)
+            key = WTYPE_KEY_MAP.get(part, part.lower())
+    if key is None and modifiers:
+        # All parts are modifiers; use last as key
+        key = WTYPE_KEY_MAP.get(parts[-1], parts[-1].lower())
+        modifiers = [WTYPE_MODIFIERS[p] for p in parts[:-1]
+                     if p in WTYPE_MODIFIERS]
+    args = []
+    for mod in modifiers:
+        args += ["-M", mod]
+    if key:
+        args += ["-k", key]
+    for mod in reversed(modifiers):
+        args += ["-m", mod]
+    return args
 
 
-def run(cmd):
+def run(cmd, timeout=10):
     """Run a command, logging errors but not crashing."""
     try:
-        subprocess.run(cmd, check=True)
+        result = subprocess.run(
+            cmd, check=True, timeout=timeout,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            text=True,
+        )
+        if result.stdout:
+            print(f"  stdout: {result.stdout.strip()}")
+        if result.stderr:
+            print(f"  stderr: {result.stderr.strip()}")
+    except subprocess.TimeoutExpired:
+        print(f"  Warning: {cmd} timed out after {timeout}s",
+              file=sys.stderr)
     except subprocess.CalledProcessError as e:
-        print(f"  Warning: {cmd[0]} failed: {e}", file=sys.stderr)
+        print(f"  Warning: {cmd[0]} failed (exit {e.returncode})",
+              file=sys.stderr)
+        if e.stdout:
+            print(f"  stdout: {e.stdout.strip()}", file=sys.stderr)
+        if e.stderr:
+            print(f"  stderr: {e.stderr.strip()}", file=sys.stderr)
     except FileNotFoundError:
-        print(f"  Warning: command not found: {cmd[0]}", file=sys.stderr)
+        print(f"  Warning: command not found: {cmd[0]}",
+              file=sys.stderr)
 
 
 def execute_layout(name):
@@ -186,11 +224,44 @@ def execute_action(action, width, height):
         run(["ydotool", "click", btn])
 
     elif "key" in action:
-        ydotool_key = to_ydotool_key(action["key"])
-        run(["ydotool", "key", ydotool_key])
+        key = action["key"].upper()
+        if key in ("RETURN", "ENTER"):
+            # RETURN は wl-copy + paste で送る (wtype の繰り返しバグ回避)
+            # bash は bracketed paste off の場合 \n をそのまま実行する
+            wlcopy = subprocess.Popen(
+                ["wl-copy", "--", "\n"],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            time.sleep(0.1)
+            run(["wtype", "-M", "ctrl", "-M", "shift", "-k", "v",
+                 "-m", "shift", "-m", "ctrl"], timeout=10)
+            time.sleep(0.1)
+            try:
+                wlcopy.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                wlcopy.kill()
+        else:
+            wtype_args = build_wtype_key_cmd(action["key"])
+            run(["wtype"] + wtype_args, timeout=30)
 
     elif "type" in action:
-        run(["ydotool", "type", "--", action["type"]])
+        # wl-copy をバックグラウンドで起動しクリップボードを保持させ、
+        # Ctrl+Shift+V でペースト後に終了させる
+        # (wtype 文字注入の繰り返しバグを回避)
+        wlcopy = subprocess.Popen(
+            ["wl-copy", "--", action["type"]],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+        time.sleep(0.2)
+        run(["wtype", "-M", "ctrl", "-M", "shift", "-k", "v",
+             "-m", "shift", "-m", "ctrl"], timeout=10)
+        time.sleep(0.1)
+        try:
+            wlcopy.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            wlcopy.kill()
 
     elif "comment" in action:
         pass  # コメントは無視
