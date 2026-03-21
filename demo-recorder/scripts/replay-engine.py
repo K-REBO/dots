@@ -36,10 +36,10 @@ class WmDriver:
     def launch(self, cmd: str):
         raise NotImplementedError
 
-    def focus_window(self, window_class: str):
+    def focus_window(self, identifier: str, by: str = "class"):
         raise NotImplementedError
 
-    def wait_window(self, window_class: str, timeout: float = 10.0, count: int = 1):
+    def wait_window(self, identifier: str, timeout: float = 10.0, count: int = 1, by: str = "class"):
         raise NotImplementedError
 
     def workspace(self, num: int):
@@ -50,11 +50,15 @@ class HyprlandDriver(WmDriver):
     def launch(self, cmd: str):
         run(["hyprctl", "dispatch", "exec", cmd])
 
-    def focus_window(self, window_class: str):
-        run(["hyprctl", "dispatch", "focuswindow", f"class:^({window_class})$"])
+    def focus_window(self, identifier: str, by: str = "class"):
+        if by == "title":
+            run(["hyprctl", "dispatch", "focuswindow", f"title:^({identifier})$"])
+        else:
+            run(["hyprctl", "dispatch", "focuswindow", f"class:^({identifier})$"])
 
-    def wait_window(self, window_class: str, timeout: float = 10.0, count: int = 1):
+    def wait_window(self, identifier: str, timeout: float = 10.0, count: int = 1, by: str = "class"):
         deadline = time.time() + timeout
+        field = "title" if by == "title" else "class"
         while time.time() < deadline:
             result = subprocess.run(
                 ["hyprctl", "clients", "-j"],
@@ -62,13 +66,13 @@ class HyprlandDriver(WmDriver):
             )
             if result.returncode == 0 and result.stdout.strip():
                 clients = json.loads(result.stdout)
-                matching = [c for c in clients if c.get("class") == window_class]
+                matching = [c for c in clients if c.get(field) == identifier]
                 if len(matching) >= count:
                     return
             time.sleep(0.2)
         print(
             f"  Warning: wait_window timeout ({timeout}s) "
-            f"for '{window_class}' x{count}",
+            f"for '{identifier}' (by={by}) x{count}",
             file=sys.stderr,
         )
 
@@ -81,11 +85,26 @@ class NiriDriver(WmDriver):
         # niri msg spawn は shell を経由しないため sh -c でラップ
         run(["niri", "msg", "action", "spawn", "--", "sh", "-c", cmd])
 
-    def focus_window(self, window_class: str):
-        run(["niri", "msg", "action", "focus-window-by-app-id", window_class])
+    def focus_window(self, identifier: str, by: str = "class"):
+        if by == "title":
+            # niri: タイトルでフォーカスするには IPC で window id を取得してから
+            result = subprocess.run(
+                ["niri", "msg", "-j", "windows"],
+                capture_output=True, text=True,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                windows = json.loads(result.stdout)
+                match = next((w for w in windows if w.get("title") == identifier), None)
+                if match:
+                    run(["niri", "msg", "action", "focus-window", "--id", str(match["id"])])
+                    return
+            print(f"  Warning: window '{identifier}' not found", file=sys.stderr)
+        else:
+            run(["niri", "msg", "action", "focus-window-by-app-id", identifier])
 
-    def wait_window(self, window_class: str, timeout: float = 10.0, count: int = 1):
+    def wait_window(self, identifier: str, timeout: float = 10.0, count: int = 1, by: str = "class"):
         deadline = time.time() + timeout
+        field = "title" if by == "title" else "app_id"
         while time.time() < deadline:
             result = subprocess.run(
                 ["niri", "msg", "-j", "windows"],
@@ -93,13 +112,13 @@ class NiriDriver(WmDriver):
             )
             if result.returncode == 0 and result.stdout.strip():
                 windows = json.loads(result.stdout)
-                matching = [w for w in windows if w.get("app_id") == window_class]
+                matching = [w for w in windows if w.get(field) == identifier]
                 if len(matching) >= count:
                     return
             time.sleep(0.2)
         print(
             f"  Warning: wait_window timeout ({timeout}s) "
-            f"for '{window_class}' x{count}",
+            f"for '{identifier}' (by={by}) x{count}",
             file=sys.stderr,
         )
 
@@ -253,13 +272,14 @@ def execute_action(action: dict, width: int, height: int, driver: WmDriver):
         driver.launch(action["launch"])
 
     elif "focus_window" in action:
-        driver.focus_window(action["focus_window"])
+        driver.focus_window(action["focus_window"], by=action.get("by", "class"))
 
     elif "wait_window" in action:
         driver.wait_window(
             action["wait_window"],
             timeout=action.get("timeout", 10.0),
             count=action.get("count", 1),
+            by=action.get("by", "class"),
         )
 
     elif "workspace" in action:

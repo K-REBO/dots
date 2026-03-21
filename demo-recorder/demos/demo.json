@@ -1,28 +1,30 @@
 [
   { "comment": "Hyprland + eww + swaybg が落ち着くまで待機" },
-  { "wait": 5.0 },
+  { "wait": 2.0 },
 
   { "comment": "alacritty #1 を開く (ワークスペース全体)" },
-  { "launch": "alacritty" },
-  { "wait_window": "Alacritty" },
+  { "launch": "alacritty --title term1" },
+  { "wait_window": "term1", "by": "title" },
   { "wait": 0.5 },
 
-  { "comment": "nix run nixpkgs#neofetch (ラッパー経由で neofetch を実行)" },
-  { "type": "nix run nixpkgs#neofetch\n" },
-  { "wait": 5.0 },
-
-  { "comment": "alacritty #2 を開く (右側に分割・何もしない)" },
-  { "launch": "alacritty" },
-  { "wait_window": "Alacritty", "count": 2 },
+  { "comment": "alacritty #2 を開く (右側に分割)" },
+  { "launch": "alacritty --title term2" },
+  { "wait_window": "term2", "by": "title" },
   { "wait": 0.5 },
 
   { "comment": "alacritty #3 を開く (右下に分割)" },
-  { "launch": "alacritty" },
-  { "wait_window": "Alacritty", "count": 3 },
+  { "launch": "alacritty --title term3" },
+  { "wait_window": "term3", "by": "title" },
   { "wait": 0.5 },
 
-  { "comment": "pastel list でカラーパレットを表示" },
-  { "type": "pastel list\n" },
+  { "comment": "term1 にフォーカスして neofetch" },
+  { "focus_window": "term1", "by": "title" },
+  { "type": "nix run nixpkgs#neofetch\n" },
+  { "wait": 5.0 },
+
+  { "comment": "term3 にフォーカスして pastel random" },
+  { "focus_window": "term3", "by": "title" },
+  { "type": "pastel random\n" },
   { "wait": 4.0 },
 
   { "comment": "wmfocus を4秒間表示して自動終了" },
