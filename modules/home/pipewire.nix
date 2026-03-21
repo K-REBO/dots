@@ -10,7 +10,7 @@
     # GUIツール
     pavucontrol    # PulseAudio Volume Control
     qpwgraph       # Pipewire グラフエディタ
-    helvum         # Pipewire パッチベイ
+    crosspipe      # Pipewire パッチベイ (helvumの代替)
 
     # CLIツール
     pulsemixer     # CLI audio mixer

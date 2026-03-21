@@ -134,7 +134,7 @@
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = true;
+    alsa.support32Bit = false;
     pulse.enable = true;
   };
 
@@ -240,10 +240,10 @@
   };
 
   # 自動サスペンド設定
-  services.logind = {
-    lidSwitch = "suspend";                    # 蓋を閉じたらサスペンド
-    lidSwitchExternalPower = "ignore";        # AC接続時は蓋を閉じてもサスペンドしない
-    powerKey = "poweroff";                    # 電源ボタンでシャットダウン
+  services.logind.settings.Login = {
+    HandleLidSwitch = "suspend";              # 蓋を閉じたらサスペンド
+    HandleLidSwitchExternalPower = "ignore";  # AC接続時は蓋を閉じてもサスペンドしない
+    HandlePowerKey = "poweroff";              # 電源ボタンでシャットダウン
   };
 
   services.printing.enable = true;
@@ -269,7 +269,7 @@
     # 新形式: hardware.graphics
     graphics = {
       enable = true;
-      enable32Bit = true;
+      enable32Bit = false;
       #extraPackages = with pkgs; [
        # amdvlk
        # rocm-opencl-icd
