@@ -26,7 +26,8 @@ NixOS + Home Manager で管理する個人用dotfiles
 │   ├── fcitx5/            # Fcitx5 settings
 │   ├── hypr/              # Hyprland config, wallpapers & scripts
 │   ├── vicinae/           # vicinae launcher config
-│   └── xremap/            # Key remapping
+│   ├── xremap/            # Key remapping
+│   └── quickshell/        # quickshell widgets
 ├── modules/
 │   ├── home/              # Home Manager modules
 │   │   ├── alacritty.nix
