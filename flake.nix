@@ -191,6 +191,15 @@
       ];
     };
 
+    # Demo VM configuration (録画生成用 QEMU VM)
+    nixosConfigurations.demo-vm = nixpkgs.lib.nixosSystem {
+      inherit system;
+      modules = [
+        ./demo-recorder/nix/vm-config.nix
+        { nixpkgs.overlays = overlays; }
+      ];
+    };
+
     # Home-Manager configuration (standalone - for testing without rebuild)
     homeConfigurations."bido" = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
