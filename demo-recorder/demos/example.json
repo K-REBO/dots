@@ -1,0 +1,47 @@
+[
+  { "comment": "=== Hyprland Demo: ターミナルとブラウザのレイアウト ===" },
+
+  { "wait": 1.0 },
+
+  { "comment": "ターミナルを左、ブラウザを右に配置" },
+  { "layout": "terminal-left-browser-right" },
+
+  { "wait": 1.5 },
+
+  { "comment": "ターミナルにフォーカス" },
+  { "dispatch": "movefocus l" },
+  { "wait": 0.5 },
+
+  { "comment": "コマンドを入力" },
+  { "type": "neofetch" },
+  { "wait": 0.3 },
+  { "key": "RETURN" },
+  { "wait": 2.0 },
+
+  { "comment": "ワークスペース2に切り替え" },
+  { "key": "SUPER+2" },
+  { "wait": 0.5 },
+
+  { "comment": "新しいターミナルを起動" },
+  { "key": "SUPER+RETURN" },
+  { "wait": 1.0 },
+
+  { "comment": "ls コマンドを実行" },
+  { "type": "ls -la --color=always" },
+  { "wait": 0.3 },
+  { "key": "RETURN" },
+  { "wait": 1.5 },
+
+  { "comment": "ワークスペース1に戻る" },
+  { "key": "SUPER+1" },
+  { "wait": 1.0 },
+
+  { "comment": "マウスをターミナル中央へ移動してクリック" },
+  { "move": [0.25, 0.5] },
+  { "wait": 0.3 },
+  { "click": 1 },
+  { "wait": 0.5 },
+
+  { "comment": "終了" },
+  { "wait": 1.0 }
+]
