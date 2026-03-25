@@ -120,6 +120,14 @@
       bindkey '^I' menu-complete              # TAB
       bindkey '^[[Z' reverse-menu-complete    # Shift-TAB
 
+      # mcfly・Claude CodeなどのTUIアプリがkitty keyboard protocolを有効化したまま
+      # 終了することがある（Ctrl+C等で異常終了した場合）。その状態ではCtrl+J等が
+      # 生のCSI uシーケンスとして表示されるため、各プロンプト表示前にリセットする。
+      _reset_kitty_keyboard() {
+        printf '\e[<u'  # スタックからpop（有効化前の状態に戻す）
+      }
+      add-zsh-hook precmd _reset_kitty_keyboard
+
       # ============================================================
       # mise (runtime manager) - Home Managerにmiseモジュールがないため手動
       # ============================================================

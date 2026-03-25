@@ -302,6 +302,7 @@
       experimental-features = [ "nix-command" "flakes" ];
       auto-optimise-store = true;
       trusted-users = [ "root" "bido" ];
+      download-buffer-size = 524288000; # 500MB
     };
 
     gc = {
