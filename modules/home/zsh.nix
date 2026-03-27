@@ -12,6 +12,7 @@
       less = "less -Q -R";
       wcopy = "wl-copy";
       wpaste="wl-paste --type 'text/plain;charset=utf-8'";
+      beep="play -n synth 0.3 sine 1000 > /dev/null 2>&1";
 
       # eza (ls replacement)
       ls = "eza";
@@ -28,6 +29,7 @@
       oc = "obsidian-cli";
 
       # Directory navigation
+      ".." = "cd ..";
       "..." = "cd ../..";
       "...." = "cd ../../..";
       "....." = "cd ../../../..";
@@ -254,6 +256,7 @@
     fortune   # For greeting
     cowsay    # For greeting
     figlet    # For greeting
+    sox       # for beep
   ];
   # zoxide, mcfly, gh は programs.* で管理されるため削除
 }
