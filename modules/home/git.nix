@@ -3,6 +3,11 @@
 {
   programs.git = {
     enable = true;
+    signing = {
+      format = "ssh";
+      key = "~/.ssh/id_ed25519.pub";
+    };
+    settings.commit.gpgsign = true;
 
     # 新形式: settings
     settings = {

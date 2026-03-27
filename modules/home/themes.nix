@@ -54,7 +54,8 @@ in
       gtk-application-prefer-dark-theme = true;
     };
 
-    # GTK4/libadwaita: TahoeテーマのCSSをインポート
+    # GTK4/libadwaita: TahoeテーマのCSSをインポート（テーマ名はlibadwaitaでは無効なのでnull）
+    gtk4.theme = null;
     gtk4.extraCss = builtins.readFile "${gnome-macos-tahoe}/share/gtk-4.0/gtk.css";
   };
 

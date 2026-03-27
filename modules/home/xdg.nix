@@ -12,6 +12,7 @@
   xdg.userDirs = {
     enable = true;
     createDirectories = false;  # 自動作成しない
+    setSessionVariables = true;  # XDG環境変数をセッションにエクスポート（26.05以降のデフォルト変更を明示）
 
     # 既存のフォルダを使用
     download = "${config.home.homeDirectory}/downloads";
