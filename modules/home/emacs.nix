@@ -3,9 +3,15 @@
 {
   programs.emacs = {
     enable = true;
-    package = pkgs.emacs30;
+    # emacs30-pgtk: ネイティブ Wayland 対応 + tree-sitter 有効
+    package = pkgs.emacs30-pgtk;
 
     extraPackages = epkgs: with epkgs; [
+      # tree-sitter grammars（全言語分を一括提供）
+      treesit-grammars.with-all-grammars
+      # typst は with-all-grammars に含まれない場合があるため明示的に追加
+      (treesit-grammars.with-grammars (g: [ g.tree-sitter-typst ]))
+
       use-package
       magit
       which-key

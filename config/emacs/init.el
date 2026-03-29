@@ -72,7 +72,8 @@
 ;; ============================================================
 (use-package nyan-mode
   :config
-  (nyan-mode t))
+  (when (display-graphic-p)
+    (nyan-mode t)))
 
 ;; ============================================================
 ;; doom-modeline: リッチなモードライン
@@ -218,7 +219,8 @@
    (yaml-ts-mode       . eglot-ensure) ; yaml-language-server
    (markdown-mode      . eglot-ensure) ; marksman
    (css-ts-mode        . eglot-ensure) ; vscode-css-language-server
-   (css-mode           . eglot-ensure)) ; vscode-css-language-server
+   (css-mode           . eglot-ensure)  ; vscode-css-language-server
+   (typst-ts-mode      . eglot-ensure)) ; tinymist
   :config
   ;; nix-ts-mode → nil LSP サーバー
   (add-to-list 'eglot-server-programs '(nix-ts-mode . ("nil")))
@@ -254,7 +256,12 @@
 ;; ============================================================
 (use-package orderless
   :custom
-  (completion-styles '(orderless basic)))
+  ;; orderless: スペース区切りで絞り込み
+  ;; orderless-flex: 文字順が合えばハイフンや区切りを無視してマッチ
+  (completion-styles '(orderless basic))
+  (orderless-matching-styles '(orderless-literal
+                                orderless-prefixes
+                                orderless-flex)))
 
 ;; ============================================================
 ;; Consult: バッファ・ファイル・行の検索・ナビゲーション
@@ -307,6 +314,13 @@
   :mode "\\.zig\\'")
 
 ;; ============================================================
+;; yaml-ts-mode: .yaml / .yml 両方に適用（treesit-auto の補完）
+;; ============================================================
+(use-package yaml-ts-mode
+  :mode (("\\.yaml\\'" . yaml-ts-mode)
+         ("\\.yml\\'"  . yaml-ts-mode)))
+
+;; ============================================================
 ;; svelte-mode: Svelte ファイルのシンタックスハイライト
 ;; ============================================================
 (use-package svelte-mode
@@ -316,7 +330,38 @@
 ;; typst-ts-mode: Typst ファイルのシンタックスハイライト・LSP
 ;; ============================================================
 (use-package typst-ts-mode
-  :mode "\\.typ\\'")
+  :mode "\\.typ\\'"
+  :config
+  (defun my/typst-apply-overlays ()
+    "treesit クエリで heading/strong を overlay で強調（font-lock を回避）"
+    (when (treesit-available-p)
+      (remove-overlays (point-min) (point-max) 'my-typst t)
+      (let ((root (treesit-buffer-root-node 'typst)))
+        (dolist (capture (treesit-query-capture
+                          root
+                          '((heading)  @heading
+                            (strong)   @strong
+                            (raw_blck) @raw
+                            (raw_span) @raw)))
+          (let* ((type (car capture))
+                 (node (cdr capture))
+                 (face (pcase type
+                         ('heading 'font-lock-keyword-face)
+                         ('strong  'bold)
+                         ('raw     'font-lock-string-face)))
+                 (ov (make-overlay (treesit-node-start node)
+                                   (treesit-node-end node))))
+            (overlay-put ov 'my-typst t)
+            (overlay-put ov 'face face))))))
+
+  (add-hook 'typst-ts-mode-hook
+            (lambda ()
+              (my/typst-apply-overlays)
+              ;; バッファ変更後に再適用
+              (add-hook 'after-change-functions
+                        (lambda (&rest _)
+                          (my/typst-apply-overlays))
+                        nil t))))
 
 ;; ============================================================
 ;; markdown-mode: Markdown ファイルのシンタックスハイライト
@@ -327,6 +372,11 @@
   :custom
   ;; コードブロック内を対応するメジャーモードでハイライト
   (markdown-fontify-code-blocks-natively t)
+  ;; $...$ / $$...$$ の数式をハイライト
+  (markdown-enable-math t)
+  ;; 見出し・太字・斜体などのフォントを強調表示
+  (markdown-header-scaling t)
+  (markdown-hide-markup nil)
   :config
   ;; ``` 入力時に閉じブロックを自動挿入してカーソルを中に置く
   (defun my/markdown-electric-code-block ()
