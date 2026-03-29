@@ -24,6 +24,7 @@
     ./modules/home/vim.nix
 
     # Phase 2A: 開発環境
+    ./modules/home/emacs.nix
     ./modules/home/vscode.nix
     ./modules/home/language-tools.nix
 

@@ -43,6 +43,9 @@
 
       # claude-code
       claude = "bunx @anthropic-ai/claude-code";
+
+      # Emacs: ターミナルから起動した場合は -nw（TUI）モード
+      emacs = "emacs -nw";
     };
 
     # ============================================================
