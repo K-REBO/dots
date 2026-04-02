@@ -78,10 +78,6 @@ in
     satty         # スクリーンショット注釈
     ocrScript     # OCR screenshot (manga-ocr daemon 経由)
 
-    # 通知
-    dunst
-    libnotify
-
     # その他ユーティリティ
     wl-clipboard  # Wayland clipboard
     brightnessctl # 輝度制御

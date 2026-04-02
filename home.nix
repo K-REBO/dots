@@ -42,6 +42,7 @@
     ./modules/home/eww.nix
 
     # Phase 4: システムサービス（ユーザーレベル）
+    ./modules/home/dunst.nix
     ./modules/home/pipewire.nix
     ./modules/home/taildrop.nix
 

@@ -99,9 +99,6 @@
     // fcitx5
     spawn-at-startup "fcitx5" "-d" "--replace"
 
-    // 通知デーモン
-    spawn-at-startup "dunst"
-
     // ステータスバー (eww)
     spawn-at-startup "sh" "-c" "sleep 1 && eww open bar"
 
