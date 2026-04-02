@@ -1,5 +1,38 @@
 { config, pkgs, lib, ... }:
 
+let
+  ocrPython = pkgs.python312.withPackages (ps: [ ps.manga-ocr ]);
+  ocrDaemon = pkgs.writeText "ocr-daemon.py" ''
+    import subprocess, tempfile, time, unicodedata, os
+    from manga_ocr import MangaOcr
+
+    mocr = MangaOcr()
+    last_image = None
+
+    while True:
+        result = subprocess.run(
+            ['${pkgs.wl-clipboard}/bin/wl-paste', '--type', 'image/png', '--no-newline'],
+            capture_output=True
+        )
+        if result.returncode == 0 and result.stdout and result.stdout != last_image:
+            last_image = result.stdout
+            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
+                f.write(result.stdout)
+                tmppath = f.name
+            try:
+                text = mocr(tmppath)
+                text = unicodedata.normalize('NFKC', text)
+                subprocess.run(['${pkgs.wl-clipboard}/bin/wl-copy'], input=text.encode(), check=True)
+                subprocess.run(['${pkgs.libnotify}/bin/notify-send', 'OCR', text, '--expire-time=3000'])
+            finally:
+                os.unlink(tmppath)
+        time.sleep(0.3)
+  '';
+  ocrScript = pkgs.writeShellScriptBin "ocr-screenshot" ''
+    ${pkgs.grimblast}/bin/grimblast save area - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png
+  '';
+in
+
 {
   wayland.windowManager.hyprland = {
     enable = true;
@@ -18,6 +51,10 @@
       bind = $mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --textcolorcurrent lightseagreen --font "UbuntuMono Nerd Font":120 --offset 5,5 --margin 0.1,0.2,0.2,0
       # wayland_fcitx5_indicator (IME mode indicator)
       exec-once = ${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator
+      # manga-ocr daemon (clipboard モード、NFKC正規化付き)
+      exec-once = ${ocrPython}/bin/python3 ${ocrDaemon}
+      # OCR screenshot
+      bind = CTRL, Print, exec, ${ocrScript}/bin/ocr-screenshot
     '';
   };
 
@@ -39,6 +76,7 @@
     grim
     slurp
     satty         # スクリーンショット注釈
+    ocrScript     # OCR screenshot (manga-ocr daemon 経由)
 
     # 通知
     dunst

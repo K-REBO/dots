@@ -252,6 +252,415 @@
   };
 
   # ============================================================
+  # Zsh completions (custom CLI tools)
+  # ============================================================
+  home.file.".zfunc/_twitter" = {
+    text = ''
+      #compdef twitter
+
+      _twitter() {
+        local -a commands
+        commands=(
+          'article:Fetch a Twitter Article'
+          'bookmark:Bookmark a tweet'
+          'bookmarks:Fetch bookmarked tweets, or manage bookmark folders'
+          'delete:Delete a tweet'
+          'favorite:Bookmark (favorite) a tweet'
+          'favorites:Fetch bookmarked (favorite) tweets'
+          'feed:Fetch home timeline with optional filtering'
+          'follow:Follow a user'
+          'followers:List followers of a user'
+          'following:List accounts a user is following'
+          'like:Like a tweet'
+          'likes:Show tweets liked by a user'
+          'list:Fetch tweets from a Twitter List'
+          'post:Post a new tweet'
+          'quote:Quote-tweet a tweet'
+          'reply:Reply to a tweet'
+          'retweet:Retweet a tweet'
+          'search:Search tweets by QUERY string with optional advanced filters'
+          'show:View tweet from last feed/search results'
+          'status:Check whether the current Twitter/X session is authenticated'
+          'tweet:View a tweet and its replies'
+          'unbookmark:Remove a tweet from bookmarks'
+          'unfavorite:Remove a tweet from bookmarks (unfavorite)'
+          'unfollow:Unfollow a user'
+          'unlike:Unlike a tweet'
+          'unretweet:Undo a retweet'
+          'user:View a user profile'
+          'user-posts:List a user tweets'
+          'whoami:Show the currently authenticated user profile'
+        )
+
+        local curcontext="$curcontext" state line
+        typeset -A opt_args
+
+        _arguments -C \
+          '(-v --verbose)'{-v,--verbose}'[Enable debug logging]' \
+          '(-c --compact)'{-c,--compact}'[Compact output (minimal fields, LLM-friendly)]' \
+          '--version[Show the version and exit]' \
+          '--help[Show this message and exit]' \
+          '1: :->command' \
+          '*:: :->args' && return 0
+
+        case $state in
+          command)
+            _describe 'twitter command' commands
+            ;;
+          args)
+            case $line[1] in
+              article)    _twitter_article ;;
+              bookmark)   _twitter_bookmark ;;
+              bookmarks)  _twitter_bookmarks ;;
+              delete)     _twitter_delete ;;
+              favorite)   _twitter_favorite ;;
+              favorites)  _twitter_favorites ;;
+              feed)       _twitter_feed ;;
+              follow)     _twitter_follow ;;
+              followers)  _twitter_followers ;;
+              following)  _twitter_following ;;
+              like)       _twitter_like ;;
+              likes)      _twitter_likes ;;
+              list)       _twitter_list ;;
+              post)       _twitter_post ;;
+              quote)      _twitter_quote ;;
+              reply)      _twitter_reply ;;
+              retweet)    _twitter_retweet ;;
+              search)     _twitter_search ;;
+              show)       _twitter_show ;;
+              status)     _twitter_status ;;
+              tweet)      _twitter_tweet ;;
+              unbookmark) _twitter_unbookmark ;;
+              unfavorite) _twitter_unfavorite ;;
+              unfollow)   _twitter_unfollow ;;
+              unlike)     _twitter_unlike ;;
+              unretweet)  _twitter_unretweet ;;
+              user)       _twitter_user ;;
+              user-posts) _twitter_user_posts ;;
+              whoami)     _twitter_whoami ;;
+            esac
+            ;;
+        esac
+      }
+
+      _twitter_article() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-m --markdown)'{-m,--markdown}'[Output article as Markdown]' \
+          '(-o --output)'{-o,--output}'[Save article Markdown to file]:file:_files' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_bookmark() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_bookmarks() {
+        local -a subcmds
+        subcmds=('folders:List bookmark folders, or fetch tweets from a folder')
+
+        local curcontext="$curcontext" state line
+        typeset -A opt_args
+
+        _arguments -C \
+          '(-n --max)'{-n,--max}'[Max number of tweets to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-o --output)'{-o,--output}'[Save tweets to JSON file]:file:_files' \
+          '--filter[Enable score-based filtering]' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]' \
+          '1: :->subcmd' \
+          '*:: :->args' && return 0
+
+        case $state in
+          subcmd)
+            _describe 'bookmarks subcommand' subcmds
+            ;;
+          args)
+            case $line[1] in
+              folders) _twitter_bookmarks_folders ;;
+            esac
+            ;;
+        esac
+      }
+
+      _twitter_bookmarks_folders() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max tweets to fetch from folder]:number: ' \
+          '--since[Only show tweets after this date (YYYY-MM-DD)]:date: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-o --output)'{-o,--output}'[Save tweets to JSON file]:file:_files' \
+          '--filter[Enable score-based filtering]' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]' \
+          '1:FOLDER_ID: '
+      }
+
+      _twitter_delete() {
+        _arguments \
+          '--yes[Confirm the action without prompting]' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_favorite() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_favorites() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max number of tweets to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-o --output)'{-o,--output}'[Save tweets to JSON file]:file:_files' \
+          '--filter[Enable score-based filtering]' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]'
+      }
+
+      _twitter_feed() {
+        _arguments \
+          '(-t --type)'{-t,--type}'[Feed type (for-you\: algorithmic, following\: chronological)]:type:(for-you following)' \
+          '(-n --max)'{-n,--max}'[Max number of tweets to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-i --input)'{-i,--input}'[Load tweets from JSON file]:file:_files' \
+          '(-o --output)'{-o,--output}'[Save filtered tweets to JSON file]:file:_files' \
+          '--filter[Enable score-based filtering]' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]'
+      }
+
+      _twitter_follow() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:SCREEN_NAME: '
+      }
+
+      _twitter_followers() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max users to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:SCREEN_NAME: '
+      }
+
+      _twitter_following() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max users to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:SCREEN_NAME: '
+      }
+
+      _twitter_like() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_likes() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max number of tweets to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-o --output)'{-o,--output}'[Save tweets to JSON file]:file:_files' \
+          '--filter[Enable score-based filtering]' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]' \
+          '1:SCREEN_NAME: '
+      }
+
+      _twitter_list() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max tweets to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--filter[Enable score-based filtering]' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]' \
+          '1:LIST_ID: '
+      }
+
+      _twitter_post() {
+        _arguments \
+          '(-r --reply-to)'{-r,--reply-to}'[Reply to this tweet ID]:tweet_id: ' \
+          '*'{-i,--image}'[Attach image (up to 4, repeatable)]:image:_files -g "*.{jpg,jpeg,png,gif,webp}"' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TEXT: '
+      }
+
+      _twitter_quote() {
+        _arguments \
+          '*'{-i,--image}'[Attach image (up to 4, repeatable)]:image:_files -g "*.{jpg,jpeg,png,gif,webp}"' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: ' \
+          '2:TEXT: '
+      }
+
+      _twitter_reply() {
+        _arguments \
+          '*'{-i,--image}'[Attach image (up to 4, repeatable)]:image:_files -g "*.{jpg,jpeg,png,gif,webp}"' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: ' \
+          '2:TEXT: '
+      }
+
+      _twitter_retweet() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_search() {
+        _arguments \
+          '(-t --type)'{-t,--type}'[Search tab]:type:(top latest photos videos)' \
+          '--from[Only tweets from this user]:screen_name: ' \
+          '--to[Only tweets directed at this user]:screen_name: ' \
+          '--lang[Filter by language ISO code (e.g. en, fr, ja)]:lang: ' \
+          '--since[Tweets since date (YYYY-MM-DD)]:date: ' \
+          '--until[Tweets until date (YYYY-MM-DD)]:date: ' \
+          '*--has[Require content type (repeatable)]:content_type:(links images videos media)' \
+          '*--exclude[Exclude content type (repeatable)]:content_type:(retweets replies links)' \
+          '--min-likes[Minimum number of likes]:number: ' \
+          '--min-retweets[Minimum number of retweets]:number: ' \
+          '(-n --max)'{-n,--max}'[Max number of tweets to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-o --output)'{-o,--output}'[Save tweets to JSON file]:file:_files' \
+          '--filter[Enable score-based filtering]' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]' \
+          '1:QUERY: '
+      }
+
+      _twitter_show() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max replies to fetch]:number: ' \
+          '--full-text[Show full reply text in table output]' \
+          '(-o --output)'{-o,--output}'[Save tweet detail as JSON to file]:file:_files' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:INDEX: '
+      }
+
+      _twitter_status() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]'
+      }
+
+      _twitter_tweet() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max replies to fetch]:number: ' \
+          '--full-text[Show full reply text in table output]' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_unbookmark() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_unfavorite() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_unfollow() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:SCREEN_NAME: '
+      }
+
+      _twitter_unlike() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_unretweet() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:TWEET_ID: '
+      }
+
+      _twitter_user() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]' \
+          '1:SCREEN_NAME: '
+      }
+
+      _twitter_user_posts() {
+        _arguments \
+          '(-n --max)'{-n,--max}'[Max number of tweets to fetch]:number: ' \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '(-o --output)'{-o,--output}'[Save tweets to JSON file]:file:_files' \
+          '--full-text[Show full tweet text in table output]' \
+          '--help[Show this message and exit]' \
+          '1:SCREEN_NAME: '
+      }
+
+      _twitter_whoami() {
+        _arguments \
+          '--json[Output as JSON]' \
+          '--yaml[Output as YAML]' \
+          '--help[Show this message and exit]'
+      }
+
+      _twitter "$@"
+    '';
+  };
+
+  # ============================================================
   # Additional packages needed for zsh setup
   # ============================================================
   home.packages = with pkgs; [

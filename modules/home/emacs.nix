@@ -38,6 +38,7 @@
       drag-stuff
       typst-ts-mode
       nyan-mode
+      dimmer
     ];
   };
 

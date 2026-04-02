@@ -87,6 +87,16 @@
   (doom-modeline-buffer-file-name-style 'truncate-upto-project))
 
 ;; ============================================================
+;; dimmer: 非アクティブウィンドウを薄暗く表示してフォーカスを明確化
+;; ============================================================
+(use-package dimmer
+  :config
+  (dimmer-configure-which-key)   ; which-key ポップアップは除外
+  (dimmer-configure-magit)       ; magit バッファは除外
+  (setq dimmer-fraction 0.4)     ; 0.0（変化なし）〜1.0（完全に暗く）、0.4 が自然
+  (dimmer-mode t))
+
+;; ============================================================
 ;; Rainbow Delimiters: 対応する括弧を深さごとに色分け
 ;; ============================================================
 (use-package rainbow-delimiters
@@ -177,24 +187,26 @@
 
 ;; ============================================================
 ;; multiple-cursors: 複数カーソル編集
-;; C-S-c C-S-c : 選択行に複数カーソル
-;; C->          : 次の同一単語にカーソル追加
-;; C-<          : 前の同一単語にカーソル追加
-;; C-c C-<      : バッファ内の全同一単語にカーソル追加
+;; C-c m l : 選択行に複数カーソル
+;; C-c m n : 次の同一単語にカーソル追加
+;; C-c m p : 前の同一単語にカーソル追加
+;; C-c m a : バッファ内の全同一単語にカーソル追加
 ;; ============================================================
 (use-package multiple-cursors
-  :bind (("C-S-c C-S-c" . mc/edit-lines)
-         ("C->"         . mc/mark-next-like-this)
-         ("C-<"         . mc/mark-previous-like-this)
-         ("C-c C-<"     . mc/mark-all-like-this)))
+  :bind (("C-c m l" . mc/edit-lines)
+         ("C-c m n" . mc/mark-next-like-this)
+         ("C-c m p" . mc/mark-previous-like-this)
+         ("C-c m a" . mc/mark-all-like-this)))
 
 ;; ============================================================
 ;; drag-stuff: 行・選択範囲を M-up / M-down で入れ替え
 ;; ============================================================
 (use-package drag-stuff
+  :demand t
   :config
   (drag-stuff-global-mode t)
-  (drag-stuff-define-keys)) ; M-up / M-down / M-left / M-right を自動設定
+  (define-key drag-stuff-mode-map (kbd "M-p") #'drag-stuff-up)
+  (define-key drag-stuff-mode-map (kbd "M-n") #'drag-stuff-down))
 
 ;; ============================================================
 ;; Eglot: LSP クライアント（Emacs 29+ 組み込み）
@@ -364,6 +376,16 @@
                         nil t))))
 
 ;; ============================================================
+;; image-mode: 画像ビューア（組み込み）
+;; PNG / JPG / GIF / SVG / WebP 等を直接表示
+;; n / p で次・前の画像、+ / - でズーム、r で回転
+;; ============================================================
+(use-package image-mode
+  :ensure nil
+  :custom
+  (image-use-external-converter t)) ; ImageMagick で未対応フォーマットも表示
+
+;; ============================================================
 ;; markdown-mode: Markdown ファイルのシンタックスハイライト
 ;; ============================================================
 (use-package markdown-mode
@@ -377,6 +399,8 @@
   ;; 見出し・太字・斜体などのフォントを強調表示
   (markdown-header-scaling t)
   (markdown-hide-markup nil)
+  ;; M-RET で箇条書き・チェックボックスを継続（RET は通常改行）
+  (markdown-indent-on-enter t)
   :config
   ;; ``` 入力時に閉じブロックを自動挿入してカーソルを中に置く
   (defun my/markdown-electric-code-block ()
