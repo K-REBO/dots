@@ -42,6 +42,16 @@
 (global-set-key (kbd "C-h") 'backward-kill-word)
 (global-set-key (kbd "<f1>") 'help-command)
 
+;; C-a: スマートな行頭移動
+;; - 行頭（列0）にいる場合 → インデント先頭（最初の非空白文字）へ
+;; - それ以外 → 行頭（列0）へ
+(defun my/smart-beginning-of-line ()
+  (interactive)
+  (if (bolp)
+      (back-to-indentation)
+    (beginning-of-line)))
+(global-set-key (kbd "C-a") #'my/smart-beginning-of-line)
+
 ;; ============================================================
 ;; 入力メソッド
 ;; C-\ で Emacs 組み込み IME が起動するのを無効化
