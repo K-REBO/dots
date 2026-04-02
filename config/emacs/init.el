@@ -31,8 +31,24 @@
 ;; ============================================================
 ;; インデント
 ;; ============================================================
-(setq-default indent-tabs-mode nil) ; タブの代わりにスペースを使用
+(setq-default indent-tabs-mode t)   ; タブ文字を使用
 (setq-default tab-width 4)          ; タブ幅を4に設定
+
+;; ============================================================
+;; whitespace-mode: 空白文字の可視化
+;; スペース → · タブ → » 行末空白 → _ 長すぎる行 → 赤ハイライト
+;; ============================================================
+(use-package whitespace
+  :ensure nil
+  :hook (prog-mode . whitespace-mode)
+  :custom
+  (whitespace-style '(face tabs tab-mark spaces space-mark trailing))
+  (whitespace-space-regexp "\\(\u3000+\\|[[:space:]]+\\)")
+  (whitespace-display-mappings
+   '((space-mark   ?\   [?\u00b7])      ; スペース → ·
+     (space-mark   ?\u3000 [?\u25a1])   ; 全角スペース → □
+     (tab-mark     ?\t  [?\u00bb ?\t])  ; タブ → »
+     (newline-mark ?\n  [?$ ?\n]))))
 
 ;; ============================================================
 ;; キーバインド調整
