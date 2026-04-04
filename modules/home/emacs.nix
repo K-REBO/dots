@@ -39,6 +39,9 @@
       typst-ts-mode
       nyan-mode
       dimmer
+      beacon
+      swiper
+      ace-window
     ];
   };
 

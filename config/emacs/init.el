@@ -124,9 +124,44 @@
 
 ;; ============================================================
 ;; Rainbow Delimiters: 対応する括弧を深さごとに色分け
+;; truecolor ターミナルでも機能するよう after-init で明示的に色を設定
 ;; ============================================================
 (use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
+  :hook (prog-mode . rainbow-delimiters-mode)
+  :config
+  (add-hook 'after-init-hook
+            (lambda ()
+              (set-face-foreground 'rainbow-delimiters-depth-1-face "#ff79c6")
+              (set-face-foreground 'rainbow-delimiters-depth-2-face "#ffb86c")
+              (set-face-foreground 'rainbow-delimiters-depth-3-face "#f1fa8c")
+              (set-face-foreground 'rainbow-delimiters-depth-4-face "#50fa7b")
+              (set-face-foreground 'rainbow-delimiters-depth-5-face "#8be9fd")
+              (set-face-foreground 'rainbow-delimiters-depth-6-face "#bd93f9")
+              (set-face-foreground 'rainbow-delimiters-depth-7-face "#ff5555"))))
+
+;; ============================================================
+;; Beacon: スクロール後にカーソル位置をフラッシュで強調
+;; ============================================================
+(use-package beacon
+  :config
+  (beacon-mode t))
+
+;; ============================================================
+;; Swiper: isearch をリッチな候補一覧で置き換え
+;; ============================================================
+(use-package swiper
+  :bind ("C-r" . swiper))
+
+;; ============================================================
+;; ace-window: ウィンドウ切り替えをキー一発で選択
+;; C-x o でウィンドウ選択オーバーレイを表示（3枚以上で表示）
+;; ============================================================
+(use-package ace-window
+  :bind ("C-x o" . ace-window)
+  :custom
+  (aw-keys '(?j ?k ?l ?i ?o ?h ?y ?u ?p))
+  :custom-face
+  (aw-leading-char-face ((t (:height 10.0 :foreground "#f1fa8c" :weight bold)))))
 
 ;; ============================================================
 ;; ターミナル（-nw）起動時の設定
