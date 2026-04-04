@@ -425,8 +425,8 @@
   ;; 見出し・太字・斜体などのフォントを強調表示
   (markdown-header-scaling t)
   (markdown-hide-markup nil)
-  ;; M-RET で箇条書き・チェックボックスを継続（RET は通常改行）
-  (markdown-indent-on-enter t)
+  ;; RET でリストを継続（indent-and-new-item が必要）
+  (markdown-indent-on-enter 'indent-and-new-item)
   :config
   ;; ``` 入力時に閉じブロックを自動挿入してカーソルを中に置く
   (defun my/markdown-electric-code-block ()
@@ -435,6 +435,10 @@
         (insert "\n\n```"))))
   (add-hook 'markdown-mode-hook
             (lambda ()
+              ;; Markdown はスペースインデントが前提のため tabs を無効化
+              (setq-local indent-tabs-mode nil)
+              ;; electric-indent-mode が markdown-enter-key と干渉して二重改行になるため無効化
+              (electric-indent-local-mode -1)
               ;; ` の自動ペア補完（インラインコード用）
               (setq-local electric-pair-pairs
                           (append electric-pair-pairs '((?` . ?`))))
