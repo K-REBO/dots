@@ -8,6 +8,7 @@
     # ブラウザ
     # ============
     # firefox  # programs.firefox.enableで管理
+    chromium                     # Chromium (Google Chrome はAVX-512非対応CPUでクラッシュするため)
 
     # ============
     # 生産性
