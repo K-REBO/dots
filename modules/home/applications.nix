@@ -8,7 +8,7 @@
     # ブラウザ
     # ============
     # firefox  # programs.firefox.enableで管理
-    chromium                     # Chromium (Google Chrome はAVX-512非対応CPUでクラッシュするため)
+    # chromium                     # Chromium (Google Chrome はAVX-512非対応CPUでクラッシュするため)
 
     # ============
     # 生産性
@@ -125,6 +125,9 @@
 
       # about:config設定
       settings = {
+        # IME（誤って about:config で設定されると IME が無効になるため明示）
+        "focusmanager.testmode" = false;
+
         # プライバシー
         "privacy.trackingprotection.enabled" = true;
         "privacy.trackingprotection.socialtracking.enabled" = true;

@@ -92,7 +92,7 @@
     ];
   };
   environment.sessionVariables = {
-    #GTK_IM_MODULE = "fcitx";
+    # GTK_IM_MODULE はWayland環境では設定しない（zwp_text_input_v3を使用するため）
     QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
     # Wayland用設定

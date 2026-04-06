@@ -112,7 +112,7 @@ in
     HYPRCURSOR_SIZE = "24";
     XCURSOR_THEME = "Bibata-Modern-Classic";
 
-    # fcitx5用（GTK_IM_MODULE は Wayland では不要）
+    # fcitx5用
     QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
     SDL_IM_MODULE = "fcitx";
