@@ -65,6 +65,9 @@
     # キー入力表示（Wayland）
     wshowkeys
 
+    # Obsidian Templater CLIレンダラー
+    tp-render
+
 
   ] ++ [
     # Nix関連 (flake inputsから取得して競合を回避)

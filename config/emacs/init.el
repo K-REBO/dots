@@ -246,6 +246,11 @@
 (use-package flycheck
   :hook (after-init . global-flycheck-mode))
 
+;; flycheck-rust: 親ディレクトリを遡って Cargo.toml を探す
+(use-package flycheck-rust
+  :after flycheck
+  :hook (rust-ts-mode . flycheck-rust-setup))
+
 ;; ============================================================
 ;; multiple-cursors: 複数カーソル編集
 ;; C-c m l : 選択行に複数カーソル

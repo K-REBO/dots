@@ -45,9 +45,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    tp-render-src = {
+      url = "github:K-REBO/tp-render";
+      flake = false;
+    };
+
   };
 
-  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, ... }@inputs: let
     system = "x86_64-linux";
 
     yt-dlpOverlay = final: prev: {
@@ -157,7 +162,22 @@
       });
     };
 
-    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
+    tpRenderOverlay = final: prev: {
+      tp-render = final.stdenv.mkDerivation {
+        pname = "tp-render";
+        version = "0.1.0";
+        src = tp-render-src;
+        nativeBuildInputs = [ final.makeWrapper ];
+        installPhase = ''
+          mkdir -p $out/lib $out/bin
+          cp dist/cli.js $out/lib/tp-render.js
+          makeWrapper ${final.nodejs}/bin/node $out/bin/tp-render \
+            --add-flags "$out/lib/tp-render.js"
+        '';
+      };
+    };
+
+    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay tpRenderOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
 
     pkgs = import nixpkgs {
       inherit system;

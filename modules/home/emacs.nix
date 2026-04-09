@@ -34,6 +34,7 @@
       yasnippet-snippets
       undo-tree
       flycheck
+      flycheck-rust
       multiple-cursors
       drag-stuff
       typst-ts-mode

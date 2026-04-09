@@ -327,6 +327,7 @@
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
+        "tp-render-src": "tp-render-src",
         "wayland-fcitx5-indicator": "wayland-fcitx5-indicator",
         "weathr": "weathr",
         "wmfocus-src": "wmfocus-src"
@@ -391,6 +392,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tp-render-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775720324,
+        "narHash": "sha256-nqsayByfLwC73dgUo20ml6Lm4eN9USAhpyNimVcGzUg=",
+        "owner": "K-REBO",
+        "repo": "tp-render",
+        "rev": "debf05b690aa226e1c77297a7d9e31931f4b014b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "K-REBO",
+        "repo": "tp-render",
         "type": "github"
       }
     },
