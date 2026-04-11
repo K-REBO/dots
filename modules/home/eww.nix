@@ -10,11 +10,9 @@
 
   # 依存パッケージ
   home.packages = with pkgs; [
-    jq                # JSON processing
     socat             # Hyprland IPC
-    brightnessctl     # Brightness control
-    playerctl         # Media player control
     bluez             # Bluetooth
     networkmanager    # WiFi (nmcli)
+    # jq, brightnessctl, playerctl は cli-tools.nix / hyprland.nix で定義済み
   ];
 }

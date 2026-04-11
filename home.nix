@@ -5,8 +5,7 @@
   home.username = "bido";
   home.homeDirectory = "/home/bido";
 
-  # Home-Managerのバージョン（このままにしてください）
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.11";
 
   # Home-Managerに管理を任せる
   programs.home-manager.enable = true;

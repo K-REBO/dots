@@ -235,7 +235,7 @@
   services.openssh = {
     enable = true;
     settings = {
-      PasswordAuthentication = false;  # パスワード認証を許可
+      PasswordAuthentication = false;  # パスワード認証を禁止
       PermitRootLogin = "no";         # rootログインは禁止
     };
   };
@@ -312,21 +312,6 @@
       options = "--delete-older-than 7d";
     };
   };
-
-  # ====================
-  # Sudo
-  # ====================
-  security.sudo.extraRules = [
-    {
-      users = [ "bido" ];
-      commands = [
-        { command = "/run/current-system/sw/bin/rmmod"; options = [ "NOPASSWD" ]; }
-        { command = "/run/current-system/sw/bin/insmod"; options = [ "NOPASSWD" ]; }
-        { command = "/run/current-system/sw/bin/ip";     options = [ "NOPASSWD" ]; }
-        { command = "/run/current-system/sw/bin/dmesg";  options = [ "NOPASSWD" ]; }
-      ];
-    }
-  ];
 
   # ====================
   # System

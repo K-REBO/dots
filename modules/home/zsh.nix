@@ -80,12 +80,9 @@
       export PATH="$HOME/.moon/bin:$PATH"
       export PATH="$GO_HOME/bin:$PATH"
 
-      # LD_LIBRARY_PATH
-      export LD_LIBRARY_PATH="/usr/lib:$LD_LIBRARY_PATH"
-
-      # Set LD_LIBRARY_PATH for Playwright
-      if [[ ":$LD_LIBRARY_PATH:" != *":/home/bido/.local/lib/playwright:"* ]]; then
-          export LD_LIBRARY_PATH="/home/bido/.local/lib/playwright:''${LD_LIBRARY_PATH}"
+      # Playwright ライブラリパス（配置されている場合のみ追加）
+      if [[ -d "$HOME/.local/lib/playwright" && ":$LD_LIBRARY_PATH:" != *":$HOME/.local/lib/playwright:"* ]]; then
+          export LD_LIBRARY_PATH="$HOME/.local/lib/playwright''${LD_LIBRARY_PATH:+:''${LD_LIBRARY_PATH}}"
       fi
 
       # .envファイルがあればsource（秘密情報用）
