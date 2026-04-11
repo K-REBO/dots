@@ -105,6 +105,21 @@ in
   # スクリプトディレクトリをコピー
   xdg.configFile."hypr/scripts".source = ../../config/hypr/scripts;
 
+  # xdg-desktop-portal-hyprland の起動改善
+  # 問題: GDM greeter セッションで起動した後、ログイン時の Hyprland 切り替えで
+  #       Wayland 接続が切断され SIGSEGV する（毎ブートの既知パターン）
+  # 対策: HYPRLAND_INSTANCE_SIGNATURE がない環境では起動しない +
+  #       クラッシュ後の回復タイミングを調整
+  xdg.configFile."systemd/user/xdg-desktop-portal-hyprland.service.d/recovery.conf".text = ''
+    [Unit]
+    ConditionEnvironment=HYPRLAND_INSTANCE_SIGNATURE
+
+    [Service]
+    RestartSec=2
+    StartLimitIntervalSec=30
+    StartLimitBurst=3
+  '';
+
   # 環境変数（fcitx5用など）
   home.sessionVariables = {
     # Hyprland用

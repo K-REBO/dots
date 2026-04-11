@@ -21,7 +21,9 @@
   systemd.user.services.fcitx5 = {
     Unit = {
       Description = "Fcitx5 Input Method";
-      After = [ "graphical-session.target" ];
+      # xdg-desktop-portal-hyprland が安定してから起動することで
+      # portal 再起動のタイミングと fcitx5 セッション初期化の衝突を防ぐ
+      After = [ "graphical-session.target" "xdg-desktop-portal-hyprland.service" ];
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
