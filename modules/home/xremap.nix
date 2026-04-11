@@ -21,9 +21,12 @@
 
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.xremap}/bin/xremap ${config.xdg.configHome}/xremap/config.yaml";
+      ExecStart = "${pkgs.xremap}/bin/xremap --ignore vicinae-snippet-virtual-keyboard ${config.xdg.configHome}/xremap/config.yaml";
       Restart = "on-failure";
       RestartSec = 3;
+      # 起動時レース対策: デバイスが未準備でも十分リトライできるよう上限を緩和
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 10;
 
       # xremapはinputデバイスへのアクセスが必要
       # ユーザーがinputグループに所属している必要があります
