@@ -27,6 +27,9 @@
 
   boot.kernelPackages = pkgs.linuxPackages_6_6;
 
+  # rd.break でinitramfsシェルに入るために必要
+  boot.initrd.systemd.enable = true;
+
 
   boot.extraModprobeConfig = ''
     options 8821au rtw_power_mgnt=0 rtw_enusbss=0
@@ -316,6 +319,12 @@
   # ====================
   # System
   # ====================
+
+  # 時刻同期（サスペンド復帰後の時刻ずれを修正）
+  services.timesyncd = {
+    enable = true;
+    servers = [ "ntp.nict.jp" "0.jp.pool.ntp.org" "1.jp.pool.ntp.org" ];
+  };
 
   # ====================
   # xremap用 udev設定
