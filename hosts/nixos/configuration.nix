@@ -27,10 +27,6 @@
 
   boot.kernelPackages = pkgs.linuxPackages_6_6;
 
-  # rd.break でinitramfsシェルに入るために必要
-  boot.initrd.systemd.enable = true;
-
-
   boot.extraModprobeConfig = ''
     options 8821au rtw_power_mgnt=0 rtw_enusbss=0
   '';
