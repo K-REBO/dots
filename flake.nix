@@ -2,7 +2,7 @@
   description = "NixOS + Home-Manager configuration";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/DeterminateSystems/nixpkgs-weekly/0.1.*.tar.gz";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     home-manager = {
       url = "github:nix-community/home-manager";
