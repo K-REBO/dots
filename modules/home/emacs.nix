@@ -75,7 +75,7 @@
     gopls
 
     # Svelte
-    nodePackages.svelte-language-server
+    svelte-language-server
 
     # TOML
     taplo
