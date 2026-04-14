@@ -17,16 +17,19 @@
       Description = "xremap - Key remapper for X11 and Wayland";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      # 起動時レース対策: デバイスが未準備でも十分リトライできるよう上限を緩和
+      # (StartLimitIntervalSec/Burst は [Unit] セクションに置く必要がある)
+      StartLimitIntervalSec = 60;
+      StartLimitBurst = 10;
     };
 
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.xremap}/bin/xremap --ignore vicinae-snippet-virtual-keyboard ${config.xdg.configHome}/xremap/config.yaml";
+      # --ignore xremap: 自分が作った仮想デバイスをgrabしないようにする
+      # vicinae消滅後のデバイス再選択時に xremap 自身が候補に現れるため必須
+      ExecStart = "${pkgs.xremap}/bin/xremap --ignore vicinae-snippet-virtual-keyboard --ignore xremap ${config.xdg.configHome}/xremap/config.yaml";
       Restart = "on-failure";
       RestartSec = 3;
-      # 起動時レース対策: デバイスが未準備でも十分リトライできるよう上限を緩和
-      StartLimitIntervalSec = 60;
-      StartLimitBurst = 10;
 
       # xremapはinputデバイスへのアクセスが必要
       # ユーザーがinputグループに所属している必要があります
