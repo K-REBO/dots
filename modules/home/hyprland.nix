@@ -66,10 +66,10 @@ in
     # Hyprlandエコシステム
     hyprlock      # スクリーンロッカー
     hypridle      # アイドル管理
-    hyprpaper     # 壁紙管理（またはswww）
+    hyprpaper     # 壁紙管理（またはawww）
 
-    # 壁紙 (swww)
-    swww
+    # 壁紙 (awww)
+    awww
 
     # スクリーンショット
     grimblast

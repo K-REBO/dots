@@ -93,8 +93,8 @@
     // Autostart (Hyprland exec-once から移行)
     // ====================
     // 壁紙
-    spawn-at-startup "swww-daemon"
-    spawn-at-startup "sh" "-c" "sleep 1 && swww img ~/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg"
+    spawn-at-startup "awww-daemon"
+    spawn-at-startup "sh" "-c" "sleep 1 && awww img ~/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg"
 
     // fcitx5
     spawn-at-startup "fcitx5" "-d" "--replace"
