@@ -317,9 +317,17 @@
   # ====================
 
   # 時刻同期（サスペンド復帰後の時刻ずれを修正）
-  services.timesyncd = {
+  # timesyncd はステップ補正が弱いため chrony に変更
+  services.timesyncd.enable = false;
+  services.chrony = {
     enable = true;
     servers = [ "ntp.nict.jp" "0.jp.pool.ntp.org" "1.jp.pool.ntp.org" ];
+    extraConfig = ''
+      # 初回3回まで 1 秒超のズレはスラブではなくステップ補正（逆行防止）
+      makestep 1.0 3
+      # システム時刻を RTC に定期同期（次回起動時のズレを抑制）
+      rtcsync
+    '';
   };
 
   # ====================
