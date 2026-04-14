@@ -27,6 +27,10 @@
 
   boot.kernelPackages = pkgs.linuxPackages_6_6;
 
+  # NixOS の kmod ラッパー経由でロードすることで
+  # systemd modprobe@.service の PATH 問題を回避
+  boot.kernelModules = [ "configfs" "fuse" "efi_pstore" ];
+
   boot.extraModprobeConfig = ''
     options 8821au rtw_power_mgnt=0 rtw_enusbss=0
   '';
