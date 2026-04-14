@@ -25,15 +25,16 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_6_12;
+  # linuxPackages_latest = 6.13 以降で rtw88_8821au がカーネル標準搭載
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # NixOS の kmod ラッパー経由でロードすることで
   # systemd modprobe@.service の PATH 問題を回避
   boot.kernelModules = [ "configfs" "fuse" "efi_pstore" ];
 
-  boot.extraModprobeConfig = ''
-    options 8821au rtw_power_mgnt=0 rtw_enusbss=0
-  '';
+  # 内蔵 Wi-Fi (ath11k_pci) は wmi_pci エラーで接続不可のため無効化
+  # TP-LINK T2U nano (RTL8821AU) は rtw88_8821au (mainline) が自動ロード
+  boot.blacklistedKernelModules = [ "ath11k_pci" ];
 
   # aarch64クロスビルド用（Raspberry Pi等）
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
@@ -56,24 +57,6 @@
       allowedUDPPortRanges = [
         { from = 60000; to = 61000; }
       ];
-    };
-  };
-  
-  ## for wifi card TP-LINK T2U nano
-  boot.extraModulePackages = with config.boot.kernelPackages; [
-    rtl8821au
-  ];
-  # wpa_supplicant準備後に遅延ロード
-  boot.blacklistedKernelModules = [ "8821au" "ath11k_pci" ];
-  systemd.services.rtl8821au-delayed = {
-    description = "Delayed load RTL8821AU driver";
-    after = [ "wpa_supplicant.service" ];
-    wants = [ "wpa_supplicant.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.kmod}/bin/modprobe 8821au";
-      RemainAfterExit = true;
     };
   };
 
