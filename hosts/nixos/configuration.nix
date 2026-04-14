@@ -25,7 +25,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_6_6;
+  boot.kernelPackages = pkgs.linuxPackages_6_12;
 
   # NixOS の kmod ラッパー経由でロードすることで
   # systemd modprobe@.service の PATH 問題を回避
