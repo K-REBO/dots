@@ -6,7 +6,11 @@
 
     # nix-shell用の最小限PATH（スクリプト実行専用のため対話設定は持たない）
     bashrcExtra = ''
-      export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.deno/bin:$HOME/.moon/bin:$HOME/.go/bin:$PATH"
+      export PATH="$HOME/.cargo/bin:$PATH"
+      export PATH="$HOME/.local/bin:$PATH"
+      export PATH="$HOME/.deno/bin:$PATH"
+      export PATH="$HOME/.moon/bin:$PATH"
+      export PATH="$HOME/.go/bin:$PATH"
     '';
   };
 }
