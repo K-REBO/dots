@@ -93,8 +93,6 @@
   (setq doom-themes-enable-bold t
         doom-themes-enable-italic t)
   (load-theme 'doom-dracula t)
-  ;; ビープ音の代わりにモードラインをフラッシュ
-  (doom-themes-visual-bell-config)
   ;; org-mode のフォント設定を最適化
   (doom-themes-org-config))
 
@@ -363,6 +361,7 @@
   :config
   ;; ターミナル（-nw）では child frame が使えないため corfu-terminal で代替
   (unless (display-graphic-p)
+    (require 'corfu-terminal)
     (corfu-terminal-mode +1)))
 
 ;; ============================================================

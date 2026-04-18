@@ -164,7 +164,7 @@ in
 
       bind = [
         # 基本操作
-        "$mainMod, Return, exec, $HOME/.cargo/bin/alacritty"
+        "$mainMod, Return, exec, ${pkgs.alacritty}/bin/alacritty"
         "$mainMod, Q, killactive,"
         "$mainMod, E, exec, ${pkgs.kdePackages.dolphin}/bin/dolphin"
         "$mainMod, space, togglefloating,"
@@ -248,14 +248,27 @@ in
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      windowrule = [
-        "suppressevent maximize, class:.*"
-        "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
-      ];
     };
 
-    # submap は sequential state machine のため extraConfig に残す
+    # submap と新形式 windowrule ブロックは extraConfig に記述
     extraConfig = ''
+      windowrule {
+        name = suppress-maximize-events
+        match:class = .*
+        suppress_event = maximize
+      }
+
+      windowrule {
+        name = fix-xwayland-drags
+        match:class = ^$
+        match:title = ^$
+        match:xwayland = true
+        match:float = true
+        match:fullscreen = false
+        match:pin = false
+        no_focus = true
+      }
+
       submap = resize
       binde = , b, resizeactive, -10 0
       binde = , n, resizeactive, 0 10
