@@ -63,7 +63,7 @@
     # ============================================================
     # Completion system
     # ============================================================
-    enableCompletion = true;
+    enableCompletion = false; # compinit を initContent で手動管理（fpath順序制御・キャッシュ化のため）
 
     # ============================================================
     # Shell options and initialization
@@ -92,12 +92,14 @@
       # ============================================================
       # Completion system
       # ============================================================
-      # Add custom completion directory to fpath
+      # Completion system（fpath追加→compinit の順序を保証、24h キャッシュ）
       fpath+=~/.zfunc
-
-      # Enable zsh completion system
       autoload -Uz compinit
-      compinit
+      if [[ -n "$(find ~/.zcompdump -mmin -1440 2>/dev/null)" ]]; then
+        compinit -C
+      else
+        compinit
+      fi
 
       # Fish-like completion behavior
       # Menu completion: TAB cycles through candidates immediately
@@ -132,7 +134,6 @@
       # ============================================================
       # mise (runtime manager) - Home Managerにmiseモジュールがないため手動
       # ============================================================
-      eval "$(mise activate zsh)"
       eval "$(mise activate zsh --shims)"
 
       # ============================================================
