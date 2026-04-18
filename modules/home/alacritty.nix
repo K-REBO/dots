@@ -69,6 +69,36 @@
             args = [ "-r" ":ACTIVE:" "-b" "toggle,fullscreen" ];
           };
         }
+        {
+          key = "N";
+          mods = "Control";
+          action = "ScrollLineDown";
+        }
+        {
+          key = "P";
+          mods = "Control";
+          action = "ScrollLineUp";
+        }
+        {
+          key = "V";
+          mods = "Control";
+          action = "ScrollPageDown";
+        }
+        {
+          key = "V";
+          mods = "Alt";
+          action = "ScrollPageUp";
+        }
+        {
+          key = "Home";
+          mods = "Alt";
+          action = "ScrollToTop";
+        }
+        {
+          key = "End";
+          mods = "Alt";
+          action = "ScrollToBottom";
+        }
       ];
     };
   };
