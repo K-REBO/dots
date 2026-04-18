@@ -91,6 +91,7 @@
   ];
 
   home.file.".emacs.d/init.el".source = ../../config/emacs/init.el;
+  home.file.".emacs.d/early-init.el".source = ../../config/emacs/early-init.el;
 
   xdg.desktopEntries.emacs = {
     name = "Emacs";
