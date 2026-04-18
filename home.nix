@@ -34,7 +34,6 @@
 
     # Phase 3: デスクトップ環境
     ./modules/home/hyprland.nix
-    ./modules/home/niri.nix
     ./modules/home/fcitx5.nix
     ./modules/home/xremap.nix
     # ./modules/home/hyprpanel.nix  # ewwに移行のため無効化
