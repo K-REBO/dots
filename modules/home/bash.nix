@@ -4,26 +4,9 @@
   programs.bash = {
     enable = true;
 
-    # 最小限のPATH設定（nix-shell用）
+    # nix-shell用の最小限PATH（スクリプト実行専用のため対話設定は持たない）
     bashrcExtra = ''
-      # PATH設定
-      export PATH="$HOME/.cargo/bin:$PATH"
-      export PATH="$HOME/.local/bin:$PATH"
-      export PATH="$HOME/.deno/bin:$PATH"
-      export PATH="$HOME/.moon/bin:$PATH"
-      export GO_HOME="$HOME/.go"
-      export PATH="$GO_HOME/bin:$PATH"
-
-      # LD_LIBRARY_PATH
-      export LD_LIBRARY_PATH="/usr/lib:$LD_LIBRARY_PATH"
+      export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$HOME/.deno/bin:$HOME/.moon/bin:$HOME/.go/bin:$PATH"
     '';
-
-    shellAliases = {
-      ls = "ls --color=auto";
-    };
-
-    historySize = 10000;
-    historyFileSize = 20000;
-    historyControl = [ "ignoredups" "ignorespace" ];
   };
 }
