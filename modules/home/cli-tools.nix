@@ -50,13 +50,13 @@
     mise          # 言語バージョン管理
 
     # LLM agent cliツール
-    # claude-code  # bun経由でインストール
+    # claude-code  # curlでnativeでインストール
     gemini-cli
 
     # SNS
     python3Packages.twitter-cli
 
-    # Bun (claude-code用)
+    # Bun
     bun
 
     # ウィンドウフォーカス

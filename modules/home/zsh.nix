@@ -41,8 +41,7 @@
       # wget without history file
       wget = "wget --no-hsts";
 
-      # claude-code
-      claude = "bunx @anthropic-ai/claude-code";
+      # claude-codeはnative-installerを使用
 
       # Emacs: ターミナルから起動した場合は -nw（TUI）モード
       emacs = "emacs -nw";
