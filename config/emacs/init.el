@@ -31,8 +31,19 @@
 ;; ============================================================
 ;; インデント
 ;; ============================================================
-(setq-default indent-tabs-mode t)   ; タブ文字を使用
+(setq-default indent-tabs-mode t)   ; タブ文字を使用（デフォルト）
 (setq-default tab-width 4)          ; タブ幅を4に設定
+
+;; スペースインデントが仕様上必須な言語ではタブを無効化
+(defun my/disable-tabs ()
+  (setq-local indent-tabs-mode nil))
+
+(dolist (hook '(yaml-ts-mode-hook
+                yaml-mode-hook
+                python-mode-hook
+                python-ts-mode-hook
+                markdown-mode-hook))
+  (add-hook hook #'my/disable-tabs))
 
 ;; ============================================================
 ;; whitespace-mode: 空白文字の可視化
@@ -474,8 +485,6 @@
         (insert "\n\n```"))))
   (add-hook 'markdown-mode-hook
             (lambda ()
-              ;; Markdown はスペースインデントが前提のため tabs を無効化
-              (setq-local indent-tabs-mode nil)
               ;; electric-indent-mode が markdown-enter-key と干渉して二重改行になるため無効化
               (electric-indent-local-mode -1)
               ;; ` の自動ペア補完（インラインコード用）
