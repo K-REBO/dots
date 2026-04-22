@@ -51,6 +51,10 @@
             (setq-local indent-tabs-mode t)
             (setq c-basic-offset 4)))
 
+;; rust-ts-mode は indent-tabs-mode を無視するため明示的に設定
+(dolist (hook '(rust-mode-hook rust-ts-mode-hook))
+  (add-hook hook (lambda () (setq-local indent-tabs-mode t))))
+
 ;; ============================================================
 ;; whitespace-mode: 空白文字の可視化
 ;; スペース → · タブ → » 行末空白 → _ 長すぎる行 → 赤ハイライト
