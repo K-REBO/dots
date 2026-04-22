@@ -37,7 +37,7 @@
 ;; after-change-major-mode-hook で全モード起動後にタブを強制。
 ;; スペースが仕様必須な言語のみ除外リストに入れる。
 (defvar my/space-indent-modes
-  '(yaml-mode yaml-ts-mode python-mode python-ts-mode markdown-mode)
+  '(yaml-mode yaml-ts-mode python-mode python-ts-mode)
   "スペースインデントが仕様上必須なモードのリスト。")
 
 (defun my/enforce-tab-indent ()
