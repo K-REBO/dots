@@ -496,3 +496,81 @@
                           (append electric-pair-pairs '((?` . ?`))))
               (add-hook 'post-self-insert-hook
                         #'my/markdown-electric-code-block nil t))))
+
+;; ============================================================
+;; obsidian: Obsidian vault を Emacs から操作
+;; ============================================================
+
+;; 日本語曜日名を返す（%A はロケール依存のため独自実装）
+(defun my/japanese-weekday ()
+  (nth (string-to-number (format-time-string "%u"))
+       '("" "月曜日" "火曜日" "水曜日" "木曜日" "金曜日" "土曜日" "日曜日")))
+
+;; moment.js 形式 (YYYY/MM/DD/HH/mm) を実際の値に展開
+(defun my/obsidian-moment-expand (fmt)
+  (let ((result fmt))
+    (setq result (replace-regexp-in-string "YYYY" (format-time-string "%Y") result))
+    (setq result (replace-regexp-in-string "MM"   (format-time-string "%m") result))
+    (setq result (replace-regexp-in-string "DD"   (format-time-string "%d") result))
+    (setq result (replace-regexp-in-string "HH"   (format-time-string "%H") result))
+    (setq result (replace-regexp-in-string "mm"   (format-time-string "%M") result))
+    result))
+
+;; {{date:FORMAT}} を含む Obsidian テンプレートを展開してバッファに挿入
+(defun my/obsidian-apply-template (template-path title)
+  (let ((content (with-temp-buffer
+                   (insert-file-contents template-path)
+                   (buffer-string))))
+    (with-temp-buffer
+      (insert content)
+      (goto-char (point-min))
+      (while (re-search-forward "{{date:\\([^}]+\\)}}" nil t)
+        (replace-match (my/obsidian-moment-expand (match-string 1)) t t))
+      (setq content (buffer-string)))
+    (setq content (replace-regexp-in-string "{{title}}" title content))
+    (setq content (replace-regexp-in-string "{{date}}"  (format-time-string "%Y-%m-%d") content))
+    (setq content (replace-regexp-in-string "{{time}}"  (format-time-string "%H:%M:%S") content))
+    (goto-char (point-min))
+    (insert content)
+    (save-buffer)))
+
+;; デイリーノートをカスタムファイル名形式で作成
+;; ファイル名例: 2026_04_3(金曜日).md
+(defun my/obsidian-daily-note ()
+  (interactive)
+  (let* ((title (format "%s_%s(%s)"
+                        (format-time-string "%Y_%m")
+                        (string-to-number (format-time-string "%d"))
+                        (my/japanese-weekday)))
+         (dir (expand-file-name
+               obsidian-daily-notes-directory
+               (file-name-as-directory obsidian-directory)))
+         (filepath (expand-file-name (concat title ".md") dir)))
+    (make-directory dir t)
+    (find-file filepath)
+    (save-buffer)
+    (when (eq (buffer-size) 0)
+      (my/obsidian-apply-template
+       (expand-file-name "daily_base.md"
+                         (expand-file-name obsidian-templates-directory obsidian-directory))
+       title))))
+
+(use-package obsidian
+  :demand t
+  :custom
+  (obsidian-directory             "~/.obsidian/")
+  (obsidian-daily-notes-directory "daily")
+  (obsidian-templates-directory   "template")
+  (obsidian-daily-note-template   "daily_base.md")
+  (obsidian-inbox-directory       "default")
+  :config
+  (global-obsidian-mode t)
+  :bind (:map obsidian-mode-map
+    ("C-c o d" . my/obsidian-daily-note)
+    ("C-c o j" . obsidian-jump)
+    ("C-c o l" . obsidian-insert-wikilink)
+    ("C-c o t" . obsidian-insert-tag)
+    ("C-c o T" . obsidian-tag-find)
+    ("C-c o s" . obsidian-search)
+    ("C-c o b" . obsidian-backlink-jump)
+    ("C-c o f" . obsidian-follow-link-at-point)))

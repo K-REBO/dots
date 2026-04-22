@@ -30,6 +30,7 @@
       zig-mode
       svelte-mode
       markdown-mode
+      obsidian
       yasnippet
       yasnippet-snippets
       undo-tree
