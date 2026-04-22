@@ -15,6 +15,7 @@
     # Phase 1: CLIツール
     ./modules/home/cli-tools.nix
     ./modules/home/cowsay.nix
+    ./modules/home/fortune.nix
     ./modules/home/shell.nix
     ./modules/home/alacritty.nix
     ./modules/home/bash.nix

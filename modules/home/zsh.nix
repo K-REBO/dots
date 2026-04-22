@@ -667,7 +667,6 @@
   # ============================================================
   home.packages = with pkgs; [
     mise      # Runtime manager (Home Managerモジュールがないため)
-    fortune   # For greeting
     cowsay    # For greeting
     figlet    # For greeting
     sox       # for beep
