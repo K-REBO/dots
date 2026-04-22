@@ -34,26 +34,20 @@
 (setq-default indent-tabs-mode t)   ; タブ文字を使用（デフォルト）
 (setq-default tab-width 4)          ; タブ幅を4に設定
 
-;; スペースインデントが仕様上必須な言語ではタブを無効化
-(defun my/disable-tabs ()
-  (setq-local indent-tabs-mode nil))
+;; after-change-major-mode-hook で全モード起動後にタブを強制。
+;; スペースが仕様必須な言語のみ除外リストに入れる。
+(defvar my/space-indent-modes
+  '(yaml-mode yaml-ts-mode python-mode python-ts-mode markdown-mode)
+  "スペースインデントが仕様上必須なモードのリスト。")
 
-(dolist (hook '(yaml-ts-mode-hook
-                yaml-mode-hook
-                python-mode-hook
-                python-ts-mode-hook
-                markdown-mode-hook))
-  (add-hook hook #'my/disable-tabs))
+(defun my/enforce-tab-indent ()
+  (unless (apply #'derived-mode-p my/space-indent-modes)
+    (setq-local indent-tabs-mode t)))
 
-;; CC Mode（C/C++/Java等）は独自インデントエンジンのため明示的に設定
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (setq-local indent-tabs-mode t)
-            (setq c-basic-offset 4)))
+(add-hook 'after-change-major-mode-hook #'my/enforce-tab-indent)
 
-;; rust-ts-mode は indent-tabs-mode を無視するため明示的に設定
-(dolist (hook '(rust-mode-hook rust-ts-mode-hook))
-  (add-hook hook (lambda () (setq-local indent-tabs-mode t))))
+;; CC Mode の indent offset を統一（タブ幅に合わせる）
+(setq c-basic-offset 4)
 
 ;; ============================================================
 ;; whitespace-mode: 空白文字の可視化
