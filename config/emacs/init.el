@@ -660,6 +660,16 @@
 (use-package calfw
   :commands calfw-open-calendar-buffer
   :config
+  ;; ターミナルモードで (face-background 'default) が nil になると
+  ;; (append nil '(2)) → (2) となり color-rgb-to-hex を1引数で呼んでクラッシュする
+  ;; どちらかの色が解決できない場合は非 nil の方を返すだけにする
+  (advice-add 'calfw-composite-color :around
+              (lambda (orig clr1 alpha clr2)
+                (if (and clr1 clr2
+                         (color-name-to-rgb clr1)
+                         (color-name-to-rgb clr2))
+                    (funcall orig clr1 alpha clr2)
+                  (or clr1 clr2 "gray50"))))
   (define-key calfw-calendar-mode-map (kbd "RET")      #'my/obsidian-calendar-open-or-create)
   (define-key calfw-calendar-mode-map (kbd "<return>")  #'my/obsidian-calendar-open-or-create)
   (define-key calfw-calendar-mode-map (kbd "<mouse-1>") #'my/obsidian-calendar-open-or-create))
