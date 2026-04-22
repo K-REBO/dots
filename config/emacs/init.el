@@ -527,9 +527,9 @@
       (while (re-search-forward "{{date:\\([^}]+\\)}}" nil t)
         (replace-match (my/obsidian-moment-expand (match-string 1)) t t))
       (setq content (buffer-string)))
-    (setq content (replace-regexp-in-string "{{title}}" title content))
-    (setq content (replace-regexp-in-string "{{date}}"  (format-time-string "%Y-%m-%d") content))
-    (setq content (replace-regexp-in-string "{{time}}"  (format-time-string "%H:%M:%S") content))
+    (setq content (replace-regexp-in-string "{{title}}" title content nil t))
+    (setq content (replace-regexp-in-string "{{date}}"  (format-time-string "%Y-%m-%d") content nil t))
+    (setq content (replace-regexp-in-string "{{time}}"  (format-time-string "%H:%M:%S") content nil t))
     (goto-char (point-min))
     (insert content)
     (save-buffer)))
@@ -565,12 +565,15 @@
   (obsidian-inbox-directory       "default")
   :config
   (global-obsidian-mode t)
-  :bind (:map obsidian-mode-map
-    ("C-c o d" . my/obsidian-daily-note)
-    ("C-c o j" . obsidian-jump)
-    ("C-c o l" . obsidian-insert-wikilink)
-    ("C-c o t" . obsidian-insert-tag)
-    ("C-c o T" . obsidian-tag-find)
-    ("C-c o s" . obsidian-search)
-    ("C-c o b" . obsidian-backlink-jump)
-    ("C-c o f" . obsidian-follow-link-at-point)))
+  ;; どのバッファからでも使えるようグローバル登録
+  ;; obsidian-mode-map に入れると vault の .md 内でしか機能しない
+  :bind (("C-c o d" . my/obsidian-daily-note)
+         ("C-c o j" . obsidian-jump)
+         ("C-c o l" . obsidian-insert-wikilink)
+         ("C-c o t" . obsidian-insert-tag)
+         ("C-c o T" . obsidian-tag-find)
+         ("C-c o s" . obsidian-search)
+         ;; リンク操作は obsidian バッファ内のみ有効
+         (:map obsidian-mode-map
+          ("C-c o b" . obsidian-backlink-jump)
+          ("C-c o f" . obsidian-follow-link-at-point))))
