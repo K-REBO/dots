@@ -241,6 +241,7 @@ $orange: #ffaa00;
 
   &.charging {
     color: $green;
+    border: 2px solid $red;
   }
 
   &.low {
