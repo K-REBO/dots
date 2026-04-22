@@ -43,8 +43,7 @@
 
       # claude-codeはnative-installerを使用
 
-      # Emacs: ターミナルから起動した場合は -nw（TUI）モード
-      emacs = "emacs -nw";
+      # em は initContent の関数で定義（server 有無で切り替え）
     };
 
     # ============================================================
@@ -139,6 +138,12 @@
       # ============================================================
       # Custom functions
       # ============================================================
+
+      # Emacs: server が動いていれば emacsclient -t、なければ通常起動
+      em() {
+        emacsclient -t "$@" 2>/dev/null || emacs -nw "$@"
+      }
+
       greet() {
           gh grass --animate
       }
