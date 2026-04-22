@@ -634,10 +634,11 @@
                 (push (list (list month day year) marker) result)))))))
     result))
 
-;; calfw バッファでフォーカス日付のノートを開くか作成する
+;; calfw v2 (haji-ali fork): cfw: → calfw- にプレフィックス変更
+;; cursor-to-date は calfw--cursor-to-date (内部関数) を使用
 (defun my/obsidian-calendar-open-or-create ()
   (interactive)
-  (when-let* ((date  (cfw:cursor-to-date))
+  (when-let* ((date  (get-text-property (point) 'cfw:date))
               (month (car   date))
               (day   (cadr  date))
               (year  (caddr date)))
@@ -649,16 +650,16 @@
 ;; Obsidian デイリーノートカレンダーを開く（C-c o c）
 (defun my/obsidian-calendar ()
   (interactive)
-  (cfw:open-calendar-buffer
+  (calfw-open-calendar-buffer
    :contents-sources
-   (list (cfw:make-source
+   (list (make-calfw-source
           :name  "Obsidian"
           :color "DodgerBlue"
           :data  #'my/obsidian-cfw-data))))
 
 (use-package calfw
-  :commands (cfw:open-calendar-buffer cfw:make-source)
+  :commands calfw-open-calendar-buffer
   :config
-  (define-key cfw:calendar-mode-map (kbd "RET")      #'my/obsidian-calendar-open-or-create)
-  (define-key cfw:calendar-mode-map (kbd "<return>")  #'my/obsidian-calendar-open-or-create)
-  (define-key cfw:calendar-mode-map (kbd "<mouse-1>") #'my/obsidian-calendar-open-or-create))
+  (define-key calfw-calendar-mode-map (kbd "RET")      #'my/obsidian-calendar-open-or-create)
+  (define-key calfw-calendar-mode-map (kbd "<return>")  #'my/obsidian-calendar-open-or-create)
+  (define-key calfw-calendar-mode-map (kbd "<mouse-1>") #'my/obsidian-calendar-open-or-create))
