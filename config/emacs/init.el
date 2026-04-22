@@ -33,10 +33,28 @@
 ;; ============================================================
 (tab-bar-mode 1)
 (setq tab-bar-show              1)    ; タブが2つ以上のときだけ表示
-(setq tab-bar-tab-hints         t)    ; タブ番号を表示（M-1〜9 でジャンプ）
+(setq tab-bar-tab-hints         nil)  ; 番号は format 関数で付与
 (setq tab-bar-close-button-show nil)  ; [x] ボタン非表示（TUI 向け）
 (setq tab-bar-new-button-show   nil)  ; [+] ボタン非表示（TUI 向け）
 (setq tab-bar-new-tab-choice    t)    ; 新タブはカレントバッファを複製
+(setq tab-bar-separator         "")   ; タブ間の区切りはフェイスで表現
+
+;; " N:name " 形式で余白付き表示
+(defun my/tab-bar-tab-format (tab i)
+  (let ((name   (alist-get 'name tab))
+        (active (eq (car tab) 'current-tab)))
+    (propertize (format " %d:%s " i name)
+                'face (if active 'tab-bar-tab 'tab-bar-tab-inactive))))
+(setq tab-bar-tab-name-format-function #'my/tab-bar-tab-format)
+
+;; doom-dracula に合わせた配色（テーマ読み込み後に適用）
+(with-eval-after-load 'doom-themes
+  (set-face-attribute 'tab-bar nil
+                      :background "#282a36" :foreground "#6272a4" :box nil)
+  (set-face-attribute 'tab-bar-tab nil
+                      :background "#bd93f9" :foreground "#282a36" :weight 'bold :box nil)
+  (set-face-attribute 'tab-bar-tab-inactive nil
+                      :background "#44475a" :foreground "#6272a4" :weight 'normal :box nil))
 
 ;; ============================================================
 ;; インデント
