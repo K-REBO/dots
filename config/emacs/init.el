@@ -546,6 +546,45 @@
       (goto-char (point-min))
       (my/obsidian-apply-template template-path title))))
 
+;; 新規ノートを inbox に作成して base.md テンプレートを適用（C-c o n）
+;; 同名ファイルが既存の場合はそのまま開く（テンプレート未適用）
+(defun my/obsidian-new-note ()
+  (interactive)
+  (let* ((title    (read-string "Note title: "))
+         (dir      (expand-file-name obsidian-inbox-directory
+                                     (file-name-as-directory obsidian-directory)))
+         (filepath (expand-file-name (concat title ".md") dir)))
+    (make-directory dir t)
+    (find-file filepath)
+    (save-buffer)
+    (when (zerop (buffer-size))
+      (my/obsidian-apply-template
+       (expand-file-name "base.md"
+                         (expand-file-name obsidian-templates-directory obsidian-directory))
+       title))))
+
+;; ユニークノートを unique/ に作成して unique_base.md を適用（C-c o u）
+;; ファイル名は YYYYMMDDHHmm 形式のタイムスタンプ（Obsidian コアプラグイン仕様）
+;; 同タイムスタンプが既存の場合は -1, -2 … とサフィックスを付与
+(defun my/obsidian-unique-note ()
+  (interactive)
+  (let* ((ts   (format-time-string "%Y%m%d%H%M"))
+         (dir  (expand-file-name "unique"
+                                 (file-name-as-directory obsidian-directory)))
+         (path (expand-file-name (concat ts ".md") dir))
+         (n    1))
+    (while (file-exists-p path)
+      (setq path (expand-file-name (format "%s-%d.md" ts n) dir))
+      (cl-incf n))
+    (make-directory dir t)
+    (find-file path)
+    (save-buffer)
+    (when (zerop (buffer-size))
+      (my/obsidian-apply-template
+       (expand-file-name "unique_base.md"
+                         (expand-file-name obsidian-templates-directory obsidian-directory))
+       (file-name-sans-extension (file-name-nondirectory path))))))
+
 ;; 指定日の Obsidian デイリーノートパスを返す（存在しなければ nil）
 (defun my/obsidian-note-path-for-date (month day year)
   (let* ((time     (encode-time 0 0 12 day month year))
@@ -606,6 +645,8 @@
   :bind (("C-c o d" . my/obsidian-daily-note)
          ("C-c o c" . my/obsidian-calendar)
          ("C-c o i" . my/obsidian-insert-base-template)
+         ("C-c o n" . my/obsidian-new-note)
+         ("C-c o u" . my/obsidian-unique-note)
          ("C-c o j" . obsidian-jump)
          ("C-c o l" . obsidian-insert-wikilink)
          ("C-c o t" . obsidian-insert-tag)
