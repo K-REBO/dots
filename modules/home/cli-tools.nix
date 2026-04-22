@@ -51,6 +51,8 @@
 
     # LLM agent cliツール
     # claude-code  # curlでnativeでインストール
+	## rtk is CLI proxy to reduces LLM token cost
+	rtk
     gemini-cli
 
     # SNS
