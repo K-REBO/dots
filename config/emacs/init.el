@@ -534,6 +534,18 @@
     (insert content)
     (save-buffer)))
 
+;; base.md テンプレートをバッファ先頭に挿入する（C-c o i）
+;; タイトルはファイル名（拡張子なし）、日時は現在時刻
+(defun my/obsidian-insert-base-template ()
+  (interactive)
+  (let ((template-path (expand-file-name "base.md"
+                                         (expand-file-name obsidian-templates-directory
+                                                           obsidian-directory)))
+        (title (file-name-sans-extension (buffer-name))))
+    (save-excursion
+      (goto-char (point-min))
+      (my/obsidian-apply-template template-path title))))
+
 ;; 指定日の Obsidian デイリーノートパスを返す（存在しなければ nil）
 (defun my/obsidian-note-path-for-date (month day year)
   (let* ((time     (encode-time 0 0 12 day month year))
@@ -593,6 +605,7 @@
   (global-obsidian-mode t)
   :bind (("C-c o d" . my/obsidian-daily-note)
          ("C-c o c" . my/obsidian-calendar)
+         ("C-c o i" . my/obsidian-insert-base-template)
          ("C-c o j" . obsidian-jump)
          ("C-c o l" . obsidian-insert-wikilink)
          ("C-c o t" . obsidian-insert-tag)
