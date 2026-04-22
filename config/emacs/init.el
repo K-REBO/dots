@@ -501,23 +501,23 @@
 ;; obsidian: Obsidian vault を Emacs から操作
 ;; ============================================================
 
-;; 日本語曜日名を返す（%A はロケール依存のため独自実装）
-(defun my/japanese-weekday ()
-  (nth (string-to-number (format-time-string "%u"))
+;; 日本語曜日名を返す（TIME 省略時は現在時刻）
+(defun my/japanese-weekday (&optional time)
+  (nth (string-to-number (format-time-string "%u" time))
        '("" "月曜日" "火曜日" "水曜日" "木曜日" "金曜日" "土曜日" "日曜日")))
 
-;; moment.js 形式 (YYYY/MM/DD/HH/mm) を実際の値に展開
-(defun my/obsidian-moment-expand (fmt)
+;; moment.js 形式 (YYYY/MM/DD/HH/mm) を実際の値に展開（TIME 省略時は現在時刻）
+(defun my/obsidian-moment-expand (fmt &optional time)
   (let ((result fmt))
-    (setq result (replace-regexp-in-string "YYYY" (format-time-string "%Y") result))
-    (setq result (replace-regexp-in-string "MM"   (format-time-string "%m") result))
-    (setq result (replace-regexp-in-string "DD"   (format-time-string "%d") result))
-    (setq result (replace-regexp-in-string "HH"   (format-time-string "%H") result))
-    (setq result (replace-regexp-in-string "mm"   (format-time-string "%M") result))
+    (setq result (replace-regexp-in-string "YYYY" (format-time-string "%Y" time) result))
+    (setq result (replace-regexp-in-string "MM"   (format-time-string "%m" time) result))
+    (setq result (replace-regexp-in-string "DD"   (format-time-string "%d" time) result))
+    (setq result (replace-regexp-in-string "HH"   (format-time-string "%H" time) result))
+    (setq result (replace-regexp-in-string "mm"   (format-time-string "%M" time) result))
     result))
 
-;; {{date:FORMAT}} を含む Obsidian テンプレートを展開してバッファに挿入
-(defun my/obsidian-apply-template (template-path title)
+;; {{date:FORMAT}} を含む Obsidian テンプレートを展開してバッファに挿入（TIME 省略時は現在時刻）
+(defun my/obsidian-apply-template (template-path title &optional time)
   (let ((content (with-temp-buffer
                    (insert-file-contents template-path)
                    (buffer-string))))
@@ -525,26 +525,43 @@
       (insert content)
       (goto-char (point-min))
       (while (re-search-forward "{{date:\\([^}]+\\)}}" nil t)
-        (replace-match (my/obsidian-moment-expand (match-string 1)) t t))
+        (replace-match (my/obsidian-moment-expand (match-string 1) time) t t))
       (setq content (buffer-string)))
     (setq content (replace-regexp-in-string "{{title}}" title content nil t))
-    (setq content (replace-regexp-in-string "{{date}}"  (format-time-string "%Y-%m-%d") content nil t))
-    (setq content (replace-regexp-in-string "{{time}}"  (format-time-string "%H:%M:%S") content nil t))
+    (setq content (replace-regexp-in-string "{{date}}"  (format-time-string "%Y-%m-%d" time) content nil t))
+    (setq content (replace-regexp-in-string "{{time}}"  (format-time-string "%H:%M:%S" time) content nil t))
     (goto-char (point-min))
     (insert content)
     (save-buffer)))
 
-;; デイリーノートをカスタムファイル名形式で作成
+;; 指定日の Obsidian デイリーノートパスを返す（存在しなければ nil）
+(defun my/obsidian-note-path-for-date (month day year)
+  (let* ((time     (encode-time 0 0 12 day month year))
+         (weekday  (my/japanese-weekday time))
+         (filename (format "%d_%02d_%d(%s).md" year month day weekday))
+         (path     (expand-file-name filename
+                                     (expand-file-name obsidian-daily-notes-directory
+                                                       obsidian-directory))))
+    (when (file-exists-p path) path)))
+
+;; ノートのタスク状態: 'pending (未完了あり) / 'done (全完了) / 'none (タスクなし)
+(defun my/obsidian-note-task-status (path)
+  (with-temp-buffer
+    (insert-file-contents path)
+    (let ((pending (count-matches "- \\[ \\]" (point-min) (point-max)))
+          (done    (count-matches "- \\[x\\]" (point-min) (point-max))))
+      (cond ((= (+ pending done) 0) 'none)
+            ((= pending 0)          'done)
+            (t                      'pending)))))
+
+;; 指定日のデイリーノートを作成して開く（テンプレート展開付き）
 ;; ファイル名例: 2026_04_3(金曜日).md
-(defun my/obsidian-daily-note ()
-  (interactive)
-  (let* ((title (format "%s_%s(%s)"
-                        (format-time-string "%Y_%m")
-                        (string-to-number (format-time-string "%d"))
-                        (my/japanese-weekday)))
-         (dir (expand-file-name
-               obsidian-daily-notes-directory
-               (file-name-as-directory obsidian-directory)))
+(defun my/obsidian-daily-note-for-date (month day year)
+  (let* ((time     (encode-time 0 0 12 day month year))
+         (weekday  (my/japanese-weekday time))
+         (title    (format "%d_%02d_%d(%s)" year month day weekday))
+         (dir      (expand-file-name obsidian-daily-notes-directory
+                                     (file-name-as-directory obsidian-directory)))
          (filepath (expand-file-name (concat title ".md") dir)))
     (make-directory dir t)
     (find-file filepath)
@@ -553,7 +570,16 @@
       (my/obsidian-apply-template
        (expand-file-name "daily_base.md"
                          (expand-file-name obsidian-templates-directory obsidian-directory))
-       title))))
+       title time))))
+
+;; 今日のデイリーノートを開く（C-c o d）
+(defun my/obsidian-daily-note ()
+  (interactive)
+  (let* ((now   (current-time))
+         (month (string-to-number (format-time-string "%m" now)))
+         (day   (string-to-number (format-time-string "%d" now)))
+         (year  (string-to-number (format-time-string "%Y" now))))
+    (my/obsidian-daily-note-for-date month day year)))
 
 (use-package obsidian
   :demand t
@@ -565,15 +591,74 @@
   (obsidian-inbox-directory       "default")
   :config
   (global-obsidian-mode t)
-  ;; どのバッファからでも使えるようグローバル登録
-  ;; obsidian-mode-map に入れると vault の .md 内でしか機能しない
   :bind (("C-c o d" . my/obsidian-daily-note)
+         ("C-c o c" . my/obsidian-calendar)
          ("C-c o j" . obsidian-jump)
          ("C-c o l" . obsidian-insert-wikilink)
          ("C-c o t" . obsidian-insert-tag)
          ("C-c o T" . obsidian-tag-find)
          ("C-c o s" . obsidian-search)
-         ;; リンク操作は obsidian バッファ内のみ有効
          (:map obsidian-mode-map
           ("C-c o b" . obsidian-backlink-jump)
           ("C-c o f" . obsidian-follow-link-at-point))))
+
+;; ============================================================
+;; calfw: Obsidian デイリーノートカレンダー
+;; ============================================================
+
+;; calfw の (month day year) を YYYYMMDD 整数に変換して比較
+(defun my/cfw-date-to-int (date)
+  (+ (* (caddr date) 10000) (* (car date) 100) (cadr date)))
+
+;; calfw データ関数: daily/ をスキャンしてノートマーカーを返す
+(defun my/obsidian-cfw-data (begin end)
+  (let (result
+        (b (my/cfw-date-to-int begin))
+        (e (my/cfw-date-to-int end))
+        (dir (expand-file-name obsidian-daily-notes-directory obsidian-directory)))
+    (when (file-directory-p dir)
+      (dolist (file (directory-files dir nil "^[0-9].*\\.md$"))
+        (when (string-match
+               "^\\([0-9]\\{4\\}\\)_\\([0-9]\\{2\\}\\)_\\([0-9]+\\)(.+)\\.md$"
+               file)
+          (let* ((year  (string-to-number (match-string 1 file)))
+                 (month (string-to-number (match-string 2 file)))
+                 (day   (string-to-number (match-string 3 file)))
+                 (n     (+ (* year 10000) (* month 100) day)))
+            (when (and (>= n b) (<= n e))
+              (let* ((path   (expand-file-name file dir))
+                     (marker (pcase (my/obsidian-note-task-status path)
+                               ('pending (propertize "◉" 'face '(:foreground "#ff6b6b" :weight bold)))
+                               ('done    (propertize "◉" 'face '(:foreground "#a8ff60")))
+                               (_        (propertize "◉" 'face '(:foreground "#82aaff"))))))
+                (push (list (list month day year) marker) result)))))))
+    result))
+
+;; calfw バッファでフォーカス日付のノートを開くか作成する
+(defun my/obsidian-calendar-open-or-create ()
+  (interactive)
+  (when-let* ((date  (cfw:cursor-to-date))
+              (month (car   date))
+              (day   (cadr  date))
+              (year  (caddr date)))
+    (let ((path (my/obsidian-note-path-for-date month day year)))
+      (if path
+          (find-file path)
+        (my/obsidian-daily-note-for-date month day year)))))
+
+;; Obsidian デイリーノートカレンダーを開く（C-c o c）
+(defun my/obsidian-calendar ()
+  (interactive)
+  (cfw:open-calendar-buffer
+   :contents-sources
+   (list (cfw:make-source
+          :name  "Obsidian"
+          :color "DodgerBlue"
+          :data  #'my/obsidian-cfw-data))))
+
+(use-package calfw
+  :commands (cfw:open-calendar-buffer cfw:make-source)
+  :config
+  (define-key cfw:calendar-mode-map (kbd "RET")      #'my/obsidian-calendar-open-or-create)
+  (define-key cfw:calendar-mode-map (kbd "<return>")  #'my/obsidian-calendar-open-or-create)
+  (define-key cfw:calendar-mode-map (kbd "<mouse-1>") #'my/obsidian-calendar-open-or-create))

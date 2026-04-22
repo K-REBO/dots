@@ -31,6 +31,7 @@
       svelte-mode
       markdown-mode
       obsidian
+      calfw
       yasnippet
       yasnippet-snippets
       undo-tree
