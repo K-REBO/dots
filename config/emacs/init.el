@@ -45,6 +45,12 @@
                 markdown-mode-hook))
   (add-hook hook #'my/disable-tabs))
 
+;; CC Mode（C/C++/Java等）は独自インデントエンジンのため明示的に設定
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (setq-local indent-tabs-mode t)
+            (setq c-basic-offset 4)))
+
 ;; ============================================================
 ;; whitespace-mode: 空白文字の可視化
 ;; スペース → · タブ → » 行末空白 → _ 長すぎる行 → 赤ハイライト
