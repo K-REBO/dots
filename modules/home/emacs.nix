@@ -97,7 +97,7 @@
     enable = true;
     package = config.programs.emacs.finalPackage;
     defaultEditor = true;          # EDITOR=emacsclient（git 等で使用）
-    startWithUserSession = "graphical";
+    startWithUserSession = true;  # default.target 依存（graphical-session.target は Hyprland で未起動）
   };
 
   home.file.".emacs.d/init.el".source = ../../config/emacs/init.el;
