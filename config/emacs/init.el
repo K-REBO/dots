@@ -1,13 +1,6 @@
 ;; ============================================================
 ;; 基本設定
 ;; ============================================================
-
-;; 起動後に GC を適切な値に戻す（early-init.el で最大化済み）
-(add-hook 'after-init-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 16 1024 1024)
-                  gc-cons-percentage 0.1)))
-
 (setq inhibit-startup-message t) ; スタートアップ画面を非表示
 (setq make-backup-files nil)     ; バックアップファイル（~）を作らない
 (setq auto-save-default nil)     ; 自動保存ファイルを作らない
@@ -28,7 +21,9 @@
 ;; ============================================================
 ;; UI
 ;; ============================================================
-;; menu-bar / tool-bar / scroll-bar は early-init.el で無効化済み
+(menu-bar-mode -1)               ; メニューバーを非表示
+(tool-bar-mode -1)               ; ツールバーを非表示
+(scroll-bar-mode -1)             ; スクロールバーを非表示
 (column-number-mode t)           ; モードラインに列番号を表示
 (show-paren-mode t)              ; 対応する括弧をハイライト
 (global-display-line-numbers-mode t) ; 全バッファで行番号を表示
@@ -119,12 +114,11 @@
 ;; dimmer: 非アクティブウィンドウを薄暗く表示してフォーカスを明確化
 ;; ============================================================
 (use-package dimmer
-  :hook (after-init . dimmer-mode)
-  :custom
-  (dimmer-fraction 0.4)
   :config
-  (dimmer-configure-which-key)
-  (dimmer-configure-magit))
+  (dimmer-configure-which-key)   ; which-key ポップアップは除外
+  (dimmer-configure-magit)       ; magit バッファは除外
+  (setq dimmer-fraction 0.4)     ; 0.0（変化なし）〜1.0（完全に暗く）、0.4 が自然
+  (dimmer-mode t))
 
 ;; ============================================================
 ;; Rainbow Delimiters: 対応する括弧を深さごとに色分け
@@ -147,7 +141,8 @@
 ;; Beacon: スクロール後にカーソル位置をフラッシュで強調
 ;; ============================================================
 (use-package beacon
-  :hook (after-init . beacon-mode))
+  :config
+  (beacon-mode t))
 
 ;; ============================================================
 ;; Swiper: isearch をリッチな候補一覧で置き換え
@@ -227,20 +222,21 @@
 ;; yasnippet: スニペット展開（TAB で展開）
 ;; ============================================================
 (use-package yasnippet
-  :hook (prog-mode . yas-minor-mode))
+  :config
+  (yas-global-mode t))
 
 ;; yasnippet-snippets: 各言語の公式スニペット集
-(use-package yasnippet-snippets
-  :after yasnippet)
+(use-package yasnippet-snippets)
 
 ;; ============================================================
 ;; undo-tree: undo 履歴をツリー構造で管理・可視化
 ;; C-x u でツリー表示、分岐した編集履歴を復元可能
 ;; ============================================================
 (use-package undo-tree
-  :hook (after-init . global-undo-tree-mode)
-  :custom
-  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree"))))
+  :config
+  (global-undo-tree-mode)
+  ;; undo-tree の履歴ファイルを一箇所にまとめる
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree"))))
 
 ;; ============================================================
 ;; flycheck: リアルタイムのエラー・警告表示
@@ -321,13 +317,15 @@
 ;; which-key: キーバインドのヒントをポップアップ表示
 ;; ============================================================
 (use-package which-key
-  :hook (after-init . which-key-mode))
+  :config
+  (which-key-mode))
 
 ;; ============================================================
 ;; Vertico: ミニバッファの補完 UI
 ;; ============================================================
 (use-package vertico
-  :hook (after-init . vertico-mode))
+  :config
+  (vertico-mode))
 
 ;; ============================================================
 ;; Orderless: スペース区切りで絞り込める補完スタイル
@@ -357,8 +355,8 @@
   (corfu-auto-delay 0.2)   ; 入力から表示までの遅延（秒）
   (corfu-auto-prefix 2)    ; 何文字入力で候補を出すか
   (corfu-cycle t)          ; 候補リストを循環
-  :hook (after-init . global-corfu-mode)
   :config
+  (global-corfu-mode)
   ;; ターミナル（-nw）では child frame が使えないため corfu-terminal で代替
   (unless (display-graphic-p)
     (require 'corfu-terminal)
@@ -377,7 +375,8 @@
 ;; rust / markdown は treesit-auto に含まれる
 ;; ============================================================
 (use-package treesit-auto
-  :hook (after-init . global-treesit-auto-mode))
+  :config
+  (global-treesit-auto-mode))
 
 ;; ============================================================
 ;; nix-ts-mode: Nix ファイルのシンタックスハイライト
