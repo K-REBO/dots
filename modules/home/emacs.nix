@@ -92,13 +92,22 @@
     tinymist
   ];
 
+  # Emacs daemon（systemd user service）
+  services.emacs = {
+    enable = true;
+    package = config.programs.emacs.finalPackage;
+    defaultEditor = true;          # EDITOR=emacsclient（git 等で使用）
+    startWithUserSession = "graphical";
+  };
+
   home.file.".emacs.d/init.el".source = ../../config/emacs/init.el;
 
   xdg.desktopEntries.emacs = {
     name = "Emacs";
     genericName = "Text Editor";
     comment = "Edit text";
-    exec = "${config.programs.emacs.finalPackage}/bin/emacs %F";
+    # daemon が起動済みならそこに接続、未起動なら daemon を立ち上げて接続
+    exec = "${config.programs.emacs.finalPackage}/bin/emacsclient -c -a \"\" %F";
     icon = "emacs";
     categories = [ "Development" "TextEditor" ];
     mimeType = [
