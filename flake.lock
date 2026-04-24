@@ -176,6 +176,22 @@
         "type": "github"
       }
     },
+    "gh-grass-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1684497363,
+        "narHash": "sha256-8jTIv+gvyn/53IW5o312gdvYg7XTLxx5YYyCpgmLDDI=",
+        "owner": "koki-develop",
+        "repo": "gh-grass",
+        "rev": "308b55004731bc2ed958e14439e4926b424788f3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "koki-develop",
+        "repo": "gh-grass",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -325,6 +341,7 @@
         "crane": "crane",
         "deploy-rs": "deploy-rs",
         "fenix": "fenix",
+        "gh-grass-src": "gh-grass-src",
         "home-manager": "home-manager_2",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",

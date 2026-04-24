@@ -41,5 +41,8 @@
   };
 
   # GitHub CLI
-  programs.gh.enable = true;
+  programs.gh = {
+    enable = true;
+    extensions = [ pkgs.gh-grass ];
+  };
 }

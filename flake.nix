@@ -50,9 +50,14 @@
       flake = false;
     };
 
+    gh-grass-src = {
+      url = "github:koki-develop/gh-grass";
+      flake = false;
+    };
+
   };
 
-  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, gh-grass-src, ... }@inputs: let
     system = "x86_64-linux";
 
     yt-dlpOverlay = final: prev: {
@@ -162,6 +167,15 @@
       });
     };
 
+    ghGrassOverlay = final: prev: {
+      gh-grass = final.buildGoModule {
+        pname = "gh-grass";
+        version = "unstable-2025";
+        src = gh-grass-src;
+        vendorHash = "sha256-lvSdQ09zg8PfVSkKoZ49VwXRVmxI1J8IAONAHBXwmEg=";
+      };
+    };
+
     tpRenderOverlay = final: prev: {
       tp-render = final.stdenv.mkDerivation {
         pname = "tp-render";
@@ -177,7 +191,7 @@
       };
     };
 
-    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay tpRenderOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
+    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
 
     pkgs = import nixpkgs {
       inherit system;
