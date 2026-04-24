@@ -16,9 +16,7 @@
     Unit = {
       Description = "xremap - Key remapper for X11 and Wayland";
       After = [ "graphical-session.target" ];
-      PartOf = [ "graphical-session.target" ];
-      # 起動時レース対策: デバイスが未準備でも十分リトライできるよう上限を緩和
-      # (StartLimitIntervalSec/Burst は [Unit] セクションに置く必要がある)
+      # StartLimitIntervalSec/Burst は [Unit] セクションに置く必要がある
       StartLimitIntervalSec = 60;
       StartLimitBurst = 10;
     };
@@ -36,7 +34,7 @@
     };
 
     Install = {
-      WantedBy = [ "graphical-session.target" ];
+      WantedBy = [ "default.target" ];
     };
   };
 }

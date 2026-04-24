@@ -58,7 +58,6 @@ in
         "~/.config/eww/scripts/bluetooth listen"
         "~/.config/eww/scripts/battery listen"
         "~/.config/eww/scripts/ime listen"
-        "${pkgs.xremap}/bin/xremap ~/.config/xremap/config.yaml"
         "${pkgs.vicinae}/bin/vicinae server"
         "${pkgs.hypridle}/bin/hypridle"
         "${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator"
