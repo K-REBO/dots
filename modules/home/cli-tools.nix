@@ -51,9 +51,9 @@
 
     # LLM agent cliツール
     # claude-code  # curlでnativeでインストール
-	## rtk is CLI proxy to reduces LLM token cost
-	rtk
+	rtk           # rtk is CLI proxy to reduces LLM token cost
     gemini-cli
+	github-copilot-cli
 
     # SNS
     python3Packages.twitter-cli
@@ -63,6 +63,7 @@
 
     # ウィンドウフォーカス
     wmfocus
+	
 
     # キー入力表示（Wayland）
     wshowkeys

@@ -200,8 +200,9 @@
 
     # Network tools
     mosh              # モバイルシェル（SSHの代替）
+	lsusb             # lsusb
 
-    github-copilot-cli
+
 
     # deploy-rs: NixOS デプロイツール
     inputs.deploy-rs.packages.x86_64-linux.default
