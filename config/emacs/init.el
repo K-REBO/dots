@@ -62,20 +62,25 @@
 (setq-default indent-tabs-mode t)   ; タブ文字を使用（デフォルト）
 (setq-default tab-width 4)          ; タブ幅を4に設定
 
-;; after-change-major-mode-hook で全モード起動後にタブを強制。
-;; スペースが仕様必須な言語のみ除外リストに入れる。
+;; CC Mode (classic) の indent offset を統一
+(setq c-basic-offset 4)
+
+;; c++-ts-mode / c-ts-mode のオフセットを tab-width に統一
+;; c-ts-mode-indent-offset のデフォルトが 2 のためスペース挿入になる
+(setq-default c-ts-mode-indent-offset 4)
+
+;; スペースインデントが仕様上必須なモード
 (defvar my/space-indent-modes
   '(yaml-mode yaml-ts-mode python-mode python-ts-mode)
   "スペースインデントが仕様上必須なモードのリスト。")
 
+;; hack-local-variables-hook で適用：.dir-locals.el より後に実行されるため
+;; editorconfig 等による上書きを防げる
 (defun my/enforce-tab-indent ()
   (unless (apply #'derived-mode-p my/space-indent-modes)
     (setq-local indent-tabs-mode t)))
 
-(add-hook 'after-change-major-mode-hook #'my/enforce-tab-indent)
-
-;; CC Mode の indent offset を統一（タブ幅に合わせる）
-(setq c-basic-offset 4)
+(add-hook 'hack-local-variables-hook #'my/enforce-tab-indent)
 
 ;; ============================================================
 ;; whitespace-mode: 空白文字の可視化
@@ -612,6 +617,9 @@
        (expand-file-name "unique_base.md"
                          (expand-file-name obsidian-templates-directory obsidian-directory))
        (file-name-sans-extension (file-name-nondirectory path))))))
+
+
+;; obsidian GUIで開く
 
 ;; 指定日の Obsidian デイリーノートパスを返す（存在しなければ nil）
 (defun my/obsidian-note-path-for-date (month day year)
