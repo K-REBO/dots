@@ -200,7 +200,7 @@
 
     # Network tools
     mosh              # モバイルシェル（SSHの代替）
-	lsusb             # lsusb
+    usbutils          # lsusb
 
 
 
