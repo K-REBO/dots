@@ -9,5 +9,5 @@ if pgrep -x "wf-recorder" > /dev/null; then
 else
     # 開始（タイムスタンプ付きファイル名）
     FILENAME="$SAVE_DIR/recording_$(date +%Y%m%d_%H%M%S).mp4"
-    wf-recorder -f "$FILENAME" &
+    wf-recorder --audio=alsa_output.pci-0000_04_00.6.HiFi__Speaker__sink.monitor -f "$FILENAME" &
 fi
