@@ -58,6 +58,7 @@
     "amd_pstate=active"       # AMD P-State EPPドライバーを有効化
     "mem_sleep_default=deep"  # S3スリープを優先
     "noresume"                # スワップ上の古いハイバネーションイメージを無視
+    "pcie_aspm=off"           # WCN6855 WMIタイムアウト対策
   ];
 
   # ====================

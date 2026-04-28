@@ -32,9 +32,14 @@
   # systemd modprobe@.service の PATH 問題を回避
   boot.kernelModules = [ "configfs" "fuse" "efi_pstore" ];
 
-  # 内蔵 Wi-Fi (ath11k_pci) は wmi_pci エラーで接続不可のため無効化
   # TP-LINK T2U nano (RTL8821AU) は rtw88_8821au (mainline) が自動ロード
-  boot.blacklistedKernelModules = [ "ath11k_pci" ];
+  # ath11k_pci: WMIタイムアウト対策として pcie_aspm=off を使用
+  boot.blacklistedKernelModules = [];
+
+  # cfg80211 国コード事前設定: WMI_11D_SCAN_START_CMDID タイムアウト連鎖を回避
+  boot.extraModprobeConfig = ''
+    options cfg80211 ieee80211_regdom=JP
+  '';
 
   # aarch64クロスビルド用（Raspberry Pi等）
   boot.binfmt.emulatedSystems = [ "aarch64-linux" ];

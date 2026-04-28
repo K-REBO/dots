@@ -62,6 +62,8 @@
   (eventbox :onhover "${EWW_CMD} update wifi-reveal=true"
             :onhoverlost "${EWW_CMD} update wifi-reveal=false"
     (box :class "wifi" :space-evenly false :spacing 4
+      (label :class "ethernet-indicator ${ethernet-connected == 'true' ? 'ethernet-on' : 'ethernet-off'}"
+             :text {ethernet-connected == "true" ? "󰈀" : "󰈂"})
       (label :text wifi-icon)
       (label :text wifi-ssid)
       (revealer :transition "slideright" :reveal wifi-reveal :duration "300ms"
@@ -75,6 +77,7 @@
 (defpoll wifi-signal :interval "999999s" "$HOME/.config/eww/scripts/wifi signal")
 (defpoll wifi-ip :interval "999999s" "$HOME/.config/eww/scripts/wifi ip")
 (defpoll wifi-gateway :interval "999999s" "$HOME/.config/eww/scripts/wifi gateway")
+(defpoll ethernet-connected :interval "5s" "$HOME/.config/eww/scripts/wifi ethernet-connected")
 
 ;; Bluetooth ;;
 (defwidget bluetooth []

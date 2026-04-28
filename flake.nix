@@ -191,7 +191,23 @@
       };
     };
 
-    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
+    # ThinkPad P16s (WCN6855 hw2.1 / NFA725, 17aa:9309)
+    # Lenovo公式Windowsドライバーから抽出したfirmware (WLAN.HSP.1.1.c5-00433-LITE)
+    # r22ac18w.exe (ds555859) → QcWlan_LE_NFA725_2_1 → wlanfw20.mbn + m320.bin
+    linuxFirmwareOverlay = final: prev: {
+      linux-firmware = prev.linux-firmware.overrideAttrs (old: {
+        postInstall = (old.postInstall or "") + ''
+          rm -f $out/lib/firmware/ath11k/WCN6855/hw2.1/amss.bin{,.zst}
+          rm -f $out/lib/firmware/ath11k/WCN6855/hw2.1/m3.bin{,.zst}
+          cp ${./firmware/ath11k/wcn6855_hw2.1_amss.bin} \
+             $out/lib/firmware/ath11k/WCN6855/hw2.1/amss.bin
+          cp ${./firmware/ath11k/wcn6855_hw2.1_m3.bin} \
+             $out/lib/firmware/ath11k/WCN6855/hw2.1/m3.bin
+        '';
+      });
+    };
+
+    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay linuxFirmwareOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
 
     pkgs = import nixpkgs {
       inherit system;

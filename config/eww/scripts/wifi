@@ -86,12 +86,22 @@ get_gateway() {
   fi
 }
 
+get_ethernet_connected() {
+  connection=$(nmcli -t -f TYPE,STATE connection show --active 2>/dev/null | grep "^ethernet")
+  if [ -n "$connection" ]; then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
+
 update_eww() {
   eww update wifi-icon="$(get_icon)" \
               wifi-ssid="$(get_ssid)" \
               wifi-signal="$(get_signal)" \
               wifi-ip="$(get_ip)" \
-              wifi-gateway="$(get_gateway)"
+              wifi-gateway="$(get_gateway)" \
+              ethernet-connected="$(get_ethernet_connected)"
 }
 
 listen() {
@@ -130,6 +140,9 @@ case "$1" in
     ;;
   gateway)
     get_gateway
+    ;;
+  ethernet-connected)
+    get_ethernet_connected
     ;;
   listen)
     listen

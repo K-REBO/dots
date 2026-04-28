@@ -221,6 +221,16 @@ $orange: #ffaa00;
   }
 }
 
+.ethernet-indicator {
+  margin-right: 2px;
+  &.ethernet-on {
+    color: $orange;
+  }
+  &.ethernet-off {
+    color: rgba($fg-dark, 0.4);
+  }
+}
+
 /* Bluetooth */
 .bluetooth {
   color: $blue;
