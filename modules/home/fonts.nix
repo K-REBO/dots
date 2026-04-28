@@ -5,12 +5,10 @@
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [
-    # Noto フォントファミリー（Google）
-    noto-fonts                    # 基本
-    noto-fonts-cjk-sans          # 日本語・中国語・韓国語（Sans）
+    # Noto フォントファミリーは configuration.nix (fonts.packages) で管理
+
+    # noto-fonts-cjk-serif は configuration.nix に含まれていないため Home Manager で追加
     noto-fonts-cjk-serif         # 日本語・中国語・韓国語（Serif）
-    noto-fonts-color-emoji       # 絵文字
-    # noto-fonts-extra           # noto-fontsに統合済み
 
     # DejaVu フォント
     dejavu_fonts                 # プログラミング・汎用

@@ -50,7 +50,7 @@
       };
 
       credential = {
-        helper = "/usr/libexec/git-core/git-credential-libsecret";
+        helper = "${pkgs.gitFull}/libexec/git-core/git-credential-libsecret";
       };
     };
 

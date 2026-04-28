@@ -186,15 +186,6 @@
           sha256 = "sha256-KLUYpUu4DHRumQZ3w59m9aTW6TBKMCXl2UcKi4uMd7w=";
         };
       }
-      {
-        name = "zsh-syntax-highlighting";
-        src = pkgs.fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-syntax-highlighting";
-          rev = "0.8.0";
-          sha256 = "sha256-iJdWopZwHpSyYl5/FQXEW7gl/SrKaYDEtTH9cGP7iPo=";
-        };
-      }
     ];
 
     # ============================================================
@@ -666,7 +657,6 @@
   # Additional packages needed for zsh setup
   # ============================================================
   home.packages = with pkgs; [
-    mise      # Runtime manager (Home Managerモジュールがないため)
     cowsay    # For greeting
     figlet    # For greeting
     sox       # for beep

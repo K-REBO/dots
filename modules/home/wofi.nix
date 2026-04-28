@@ -73,9 +73,5 @@
     '';
   };
 
-  # 依存パッケージ
-  home.packages = with pkgs; [
-    papirus-icon-theme
-    font-awesome
-  ];
+  # papirus-icon-theme と font-awesome は themes.nix / fonts.nix で管理
 }

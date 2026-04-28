@@ -144,7 +144,7 @@ in
       master.new_status = "master";
 
       misc = {
-        force_default_wallpaper = -1;
+        force_default_wallpaper = 0;
         disable_hyprland_logo = true;
       };
 
@@ -305,7 +305,6 @@ in
     brightnessctl
     playerctl
     wireplumber
-    kdePackages.dolphin
     hyprpanel
   ];
 
@@ -329,12 +328,4 @@ in
     StartLimitBurst=3
   '';
 
-  home.sessionVariables = {
-    XCURSOR_SIZE = "24";
-    HYPRCURSOR_SIZE = "24";
-    XCURSOR_THEME = "Bibata-Modern-Classic";
-    QT_IM_MODULE = "fcitx";
-    XMODIFIERS = "@im=fcitx";
-    SDL_IM_MODULE = "fcitx";
-  };
 }

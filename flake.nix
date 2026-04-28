@@ -60,17 +60,18 @@
   outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, gh-grass-src, ... }@inputs: let
     system = "x86_64-linux";
 
-    yt-dlpOverlay = final: prev: {
-      yt-dlp = prev.yt-dlp.overrideAttrs (old: rec {
-        version = "2026.02.04";
-        src = final.fetchFromGitHub {
-          owner = "yt-dlp";
-          repo = "yt-dlp";
-          tag = version;
-          hash = "sha256-KXnz/ocHBftenDUkCiFoBRBxi6yWt0fNuRX+vKFWDQw=";
-        };
-      });
-    };
+    # nixpkgs-unstable より新しいバージョンを使いたい場合はコメントを外してバージョンとhashを更新する
+    # yt-dlpOverlay = final: prev: {
+    #   yt-dlp = prev.yt-dlp.overrideAttrs (old: rec {
+    #     version = "2026.02.04";
+    #     src = final.fetchFromGitHub {
+    #       owner = "yt-dlp";
+    #       repo = "yt-dlp";
+    #       tag = version;
+    #       hash = "sha256-KXnz/ocHBftenDUkCiFoBRBxi6yWt0fNuRX+vKFWDQw=";
+    #     };
+    #   });
+    # };
 
     wmfocusOverlay = final: prev: {
       wmfocus = let
@@ -146,27 +147,6 @@
       python3Packages = final.python3.pkgs;
     };
 
-    claudeOverlay = final: prev: {
-      claude-code = prev.claude-code.overrideAttrs (old: rec {
-        version = "2.1.59";
-
-        src = final.fetchzip {
-          url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${version}.tgz";
-          hash = "sha256-Dam9aJ0qBdqU40ACfzGQHuytW6ur0fMLm8D5fIKd1TE=";
-        };
-
-        npmDepsHash = "sha256-K+8xoBc3apvxQ9hCpYywqgBcfLxMWSxacgJcMH8mK7E=";
-
-        postPatch = ''
-          cp ${./overlays/claude-code/package-lock.json} package-lock.json
-
-          # https://github.com/anthropics/claude-code/issues/15195
-          substituteInPlace cli.js \
-                --replace-fail '#!/bin/sh' '#!/usr/bin/env sh'
-        '';
-      });
-    };
-
     ghGrassOverlay = final: prev: {
       gh-grass = final.buildGoModule {
         pname = "gh-grass";
@@ -191,7 +171,7 @@
       };
     };
 
-    overlays = [ yt-dlpOverlay wmfocusOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
+    overlays = [ wmfocusOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
 
     pkgs = import nixpkgs {
       inherit system;

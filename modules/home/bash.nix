@@ -12,8 +12,6 @@
       export PATH="$HOME/.moon/bin:$PATH"
       export GO_HOME="$HOME/.go"
       export PATH="$GO_HOME/bin:$PATH"
-
-      export LD_LIBRARY_PATH="/usr/lib:$LD_LIBRARY_PATH"
     '';
   };
 }

@@ -81,10 +81,10 @@
     # GTK_IM_MODULE はWayland環境では設定しない（zwp_text_input_v3を使用するため）
     QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
+    SDL_IM_MODULE = "fcitx";
     # Wayland用設定
     NIXOS_OZONE_WL = "1";  # Electron/Chromiumアプリ用
     WLR_NO_HARDWARE_CURSORS = "1";  # 一部GPUでのカーソル問題回避
-    NIXPKGS_ALLOW_UNFREE = "1";
   };
 
 
@@ -292,7 +292,7 @@
     gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 7d";
+      options = "--delete-older-than 14d";
     };
   };
 
