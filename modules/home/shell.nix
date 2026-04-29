@@ -4,7 +4,7 @@
   # Starship (プロンプト)
   programs.starship = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false; # キャッシュ経由で手動管理（zsh.nix参照）
     settings = {
       format = "$directory$all\n";
       add_newline = true;
@@ -31,13 +31,13 @@
   # Zoxide (ディレクトリジャンプ)
   programs.zoxide = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false; # キャッシュ経由で手動管理（zsh.nix参照）
   };
 
   # mcfly (シェル履歴検索)
   programs.mcfly = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false; # キャッシュ経由で手動管理（zsh.nix参照）
   };
 
   # GitHub CLI

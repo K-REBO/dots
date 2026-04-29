@@ -95,6 +95,7 @@
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;  # キャッシュ機能付きのnix統合
+    enableZshIntegration = false; # キャッシュ経由で手動管理（zsh.nix参照）
   };
 
   # bun グローバルパッケージの設定
