@@ -91,14 +91,16 @@
       # ============================================================
       # Completion system
       # ============================================================
-      # Completion system（fpath追加→compinit の順序を保証、24h キャッシュ）
+      # compinit を最初のコマンド実行直前（preexec）まで遅延させて起動時間を短縮。
+      # nixプロファイル更新時は tool_init キャッシュ再生成時に zcompdump を削除し、
+      # 次の preexec で強制的にフル compinit が走る。
       fpath+=~/.zfunc
       autoload -Uz compinit
-      if [[ -n "$(find ~/.zcompdump -mmin -1440 2>/dev/null)" ]]; then
+      _deferred_compinit() {
         compinit -C
-      else
-        compinit
-      fi
+        add-zsh-hook -D preexec _deferred_compinit
+      }
+      add-zsh-hook preexec _deferred_compinit
 
       # Fish-like completion behavior
       # Menu completion: TAB cycles through candidates immediately
@@ -131,9 +133,30 @@
       add-zsh-hook precmd _reset_kitty_keyboard
 
       # ============================================================
-      # mise (runtime manager) - Home Managerにmiseモジュールがないため手動
+      # Tool init cache
+      # home-manager switch (NIX_PROFILES末尾) または nixos-rebuild (/run/current-system)
+      # で更新されたときにキャッシュを再生成する
       # ============================================================
-      eval "$(mise activate zsh --shims)"
+      () {
+        local cache="$HOME/.cache/zsh/tool_init.zsh"
+        local user_profile="''${NIX_PROFILES##* }"
+        local system_profile="/run/current-system"
+        if [[ ! -f "$cache" \
+            || "$user_profile"   -nt "$cache" \
+            || "$system_profile" -nt "$cache" ]]; then
+          mkdir -p "''${cache:h}"
+          {
+            zoxide init zsh
+            starship init zsh
+            mcfly init zsh
+            direnv hook zsh
+            mise activate zsh --shims
+            [[ $TERM != "dumb" ]] && eww shell-completions --shell zsh 2>/dev/null || true
+          } > "$cache"
+          rm -f ~/.zcompdump  # completion cache を強制更新（次回起動でフル compinit）
+        fi
+        source "$cache"
+      }
 
       # ============================================================
       # Custom functions
@@ -162,9 +185,9 @@
       fi
 
       # ============================================================
-      # Display greeting on shell start
+      # Display greeting on shell start (インタラクティブシェルのみ)
       # ============================================================
-      fortune | cowsay -f ghostbusters
+      [[ -o interactive ]] && fortune | cowsay -f ghostbusters
 
       # ============================================================
       # Zsh plugins - autosuggestions color configuration
