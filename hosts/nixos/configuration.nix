@@ -297,6 +297,13 @@
   };
 
   # ====================
+  # Boot performance
+  # ====================
+  # NetworkManager-wait-online はネットワーク完全確立まで待機するため起動を遅延させる
+  # tailscaled等は独自の再接続ロジックを持つため不要
+  systemd.services.NetworkManager-wait-online.enable = false;
+
+  # ====================
   # System
   # ====================
 
