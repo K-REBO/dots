@@ -49,6 +49,9 @@ in
       ];
 
       "exec-once" = [
+        # Emacsデーモンはdefault.target起動時にWAYLAND_DISPLAYが未設定のため、
+        # Hyprland起動後に再起動してWayland環境を引き継がせる
+        "systemctl --user restart emacs.service"
         "${pkgs.awww}/bin/awww-daemon"
         "${pkgs.awww}/bin/awww img $HOME/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg"
         "${config.programs.eww.package}/bin/eww open bar"
