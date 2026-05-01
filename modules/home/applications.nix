@@ -71,6 +71,17 @@
     wf-recorder                 # Waylandスクリーン録画（Shift+Print）
 
     # ============
+    # TeX / 文書作成
+    # ============
+    texstudio                        # TeXエディタ
+    (texlive.combine {
+      inherit (texlive)
+        scheme-medium                # 一般的なパッケージ一式
+        collection-langjapanese      # 日本語サポート
+        latexmk;                     # 自動ビルドツール
+    })
+
+    # ============
     # その他ツール
     # ============
     # obsidian-cli              # Obsidian CLI（Nixpkgsに存在しない）
@@ -79,6 +90,7 @@
   # Firefox設定
   programs.firefox = {
     enable = true;
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
     profiles.default = {
       id = 0;
       name = "default";

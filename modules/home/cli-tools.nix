@@ -56,7 +56,7 @@
 	github-copilot-cli
 
     # SNS
-    python3Packages.twitter-cli
+    twitter-cli
 
     # Bun
     bun
