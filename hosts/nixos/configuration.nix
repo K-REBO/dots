@@ -131,7 +131,7 @@
   users.users.bido = {
     isNormalUser = true;
     description = "bido nakamura";
-    extraGroups = [ "networkmanager" "wheel" "input" "kvm" ];
+    extraGroups = [ "networkmanager" "wheel" "input" "kvm" "audio"];
     shell = pkgs.zsh;
   };
 
