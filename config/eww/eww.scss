@@ -226,9 +226,188 @@ $orange: #ffaa00;
   color: $blue;
   background-color: $bg-light;
   border-radius: 6px;
-  padding: 3px 10px;
+  padding: 3px 14px;
   &:hover {
     color: lighten($blue, 10%);
+  }
+}
+
+/* Volume Popup */
+.vol-overlay {
+  padding: 50px 14px 0 0;
+}
+
+.vol-popup {
+  background-color: $bg-solid;
+  border-radius: 12px;
+  padding: 14px;
+  min-width: 240px;
+  border: 1px solid rgba($green, 0.3);
+}
+
+.vol-popup-header {
+  padding-bottom: 4px;
+}
+
+.vol-popup-title {
+  color: $green;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.vol-mute-btn {
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 14px;
+  color: $fg-dark;
+  background-color: rgba($fg-dark, 0.15);
+  &:hover { background-color: rgba($fg-dark, 0.25); }
+
+  &.vol-muted {
+    color: $red;
+    background-color: rgba($red, 0.15);
+    &:hover { background-color: rgba($red, 0.25); }
+  }
+}
+
+.vol-separator {
+  background-color: rgba($fg-dark, 0.2);
+  min-height: 1px;
+}
+
+.vol-sink-list {
+  min-width: 210px;
+}
+
+.vol-sink {
+  border-radius: 8px;
+  padding: 8px 10px;
+  background-color: rgba($fg-dark, 0.05);
+  &:hover {
+    background-color: rgba($fg-dark, 0.12);
+  }
+
+  &.vol-sink-active {
+    background-color: rgba($green, 0.1);
+    border: 1px solid rgba($green, 0.25);
+  }
+}
+
+.vol-sink-select {
+  &:hover { background-color: transparent; }
+}
+
+.vol-sink-check {
+  color: $green;
+  font-size: 16px;
+}
+
+.vol-sink-name {
+  color: $fg;
+  font-size: 15px;
+}
+
+.vol-sink-mute {
+  border-radius: 6px;
+  padding: 2px 6px;
+  color: $fg-dark;
+  &:hover { background-color: rgba($fg-dark, 0.2); }
+
+  &.vol-sink-muted {
+    color: $red;
+    &:hover { background-color: rgba($red, 0.2); }
+  }
+}
+
+/* Bluetooth Popup */
+.bt-overlay {
+  padding: 50px 14px 0 0;
+}
+
+.bt-popup {
+  background-color: $bg-solid;
+  border-radius: 12px;
+  padding: 14px;
+  min-width: 260px;
+  border: 1px solid rgba($blue, 0.3);
+}
+
+.bt-popup-header {
+  padding-bottom: 8px;
+}
+
+.bt-popup-title {
+  color: $blue;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.bt-power-btn {
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 14px;
+
+  &.bt-power-on {
+    color: $blue;
+    background-color: rgba($blue, 0.2);
+    &:hover { background-color: rgba($blue, 0.35); }
+  }
+
+  &.bt-power-off {
+    color: $fg-dark;
+    background-color: rgba($fg-dark, 0.15);
+    &:hover { background-color: rgba($fg-dark, 0.25); }
+  }
+}
+
+.bt-separator {
+  background-color: rgba($fg-dark, 0.2);
+  min-height: 1px;
+}
+
+.bt-device {
+  border-radius: 8px;
+  padding: 8px 10px;
+  background-color: rgba($fg-dark, 0.05);
+
+  &:hover {
+    background-color: rgba($fg-dark, 0.1);
+  }
+
+  &.bt-device-connected {
+    background-color: rgba($blue, 0.1);
+    border: 1px solid rgba($blue, 0.25);
+  }
+}
+
+.bt-device-icon {
+  color: $blue;
+  font-size: 20px;
+}
+
+.bt-device-name {
+  color: $fg;
+  font-size: 15px;
+}
+
+.bt-device-battery {
+  color: $fg-dark;
+  font-size: 12px;
+}
+
+.bt-action-btn {
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 16px;
+
+  &.bt-connect {
+    color: $blue;
+    &:hover { background-color: rgba($blue, 0.2); }
+  }
+
+  &.bt-disconnect {
+    color: $red;
+    &:hover { background-color: rgba($red, 0.2); }
   }
 }
 

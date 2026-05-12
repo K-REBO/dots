@@ -26,16 +26,42 @@ get_icon() {
   fi
 }
 
+list_sinks() {
+  local default_name
+  default_name=$(wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null \
+    | grep -E 'node\.name' | sed 's/.*= "\(.*\)"/\1/' | head -1)
+
+  local dump
+  dump=$(pw-dump 2>/dev/null)
+
+  echo "$dump" | jq -c --arg default "$default_name" '
+    [.[] | select(.info.props["media.class"] == "Audio/Sink") | {
+      id: .id,
+      name: (.info.props["node.description"]
+          // .info.props["node.nick"]
+          // .info.props["node.name"]
+          // "Unknown"),
+      is_default: (.info.props["node.name"] == $default),
+      muted: (.info.params.Props[0].mute // false)
+    }]'
+}
+
+set_sink() {
+  wpctl set-default "$1" 2>/dev/null
+  eww update audio-sinks="$(list_sinks)"
+}
+
+mute_sink() {
+  wpctl set-mute "$1" toggle 2>/dev/null
+  eww update audio-sinks="$(list_sinks)"
+}
+
 update_eww() {
   eww update volume-percent="$(get_volume)" volume-icon="$(get_icon)"
 }
 
 listen() {
-  # Output initial values
   update_eww
-
-  # Poll every 0.5 seconds for responsive updates
-  # PipeWire monitoring is too verbose and inefficient
   while true; do
     sleep 0.5
     update_eww
@@ -43,12 +69,11 @@ listen() {
 }
 
 case "$1" in
-  icon)
-    get_icon
-    ;;
-  percent)
-    get_volume
-    ;;
+  icon)     get_icon ;;
+  percent)  get_volume ;;
+  sinks)    list_sinks ;;
+  set-sink)  set_sink "$2" ;;
+  mute-sink) mute_sink "$2" ;;
   toggle)
     wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
     update_eww
@@ -62,16 +87,12 @@ case "$1" in
     update_eww
     ;;
   set)
-    # Set volume to specific percentage (from slider)
-    vol="${2%.*}"  # Remove decimal part
+    vol="${2%.*}"
     wpctl set-volume @DEFAULT_AUDIO_SINK@ "${vol}%"
     update_eww
     ;;
-  listen)
-    listen
-    ;;
+  listen) listen ;;
   *)
-    # Scroll handling
     if [ "$1" = "up" ] || [ "$1" = "" ]; then
       wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
     else

@@ -45,6 +45,7 @@
   (eventbox :onhover "${EWW_CMD} update volume-reveal=true"
             :onhoverlost "${EWW_CMD} update volume-reveal=false"
             :onscroll "$HOME/.config/eww/scripts/volume {}"
+            :onrightclick "${EWW_CMD} open volume-popup"
     (box :class "volume" :space-evenly false :spacing 4
       (revealer :transition "slideright" :reveal volume-reveal :duration "300ms"
         (scale :class "volume-slider"
@@ -56,6 +57,34 @@
       (label :text "${volume-percent}%"))))
 (defpoll volume-icon :interval "999999s" "$HOME/.config/eww/scripts/volume icon")
 (defpoll volume-percent :interval "999999s" "$HOME/.config/eww/scripts/volume percent")
+(defpoll audio-sinks :interval "999999s" "$HOME/.config/eww/scripts/volume sinks")
+
+(defwidget volume-popup-widget []
+  (box :class "vol-popup" :orientation "v" :space-evenly false :spacing 10
+    (box :class "vol-popup-header" :space-evenly false :spacing 8
+      (label :class "vol-popup-title" :text "󰕾  Audio Output" :hexpand true :halign "start")
+      (button :class "vol-mute-btn ${volume-icon == '󰖁' ? 'vol-muted' : ''}"
+              :onclick "$HOME/.config/eww/scripts/volume toggle"
+        (label :text "${volume-icon == '󰖁' ? '󰖁  Muted' : '󰕾  Mute'}")))
+    (box :class "vol-separator")
+    (box :class "vol-sink-list" :orientation "v" :space-evenly false :spacing 4
+      (for sink in audio-sinks
+        (box :class "vol-sink ${sink.is_default ? 'vol-sink-active' : ''}"
+             :space-evenly false :spacing 6
+          (button :class "vol-sink-select"
+                  :onclick "$HOME/.config/eww/scripts/volume set-sink ${sink.id}"
+                  :hexpand true
+            (box :space-evenly false :spacing 8
+              (label :class "vol-sink-check"
+                     :text "${sink.is_default ? '󰄴' : '󰄰'}")
+              (label :class "vol-sink-name"
+                     :text {sink.name}
+                     :halign "start"
+                     :limit-width 20
+                     :truncate true)))
+          (button :class "vol-sink-mute ${sink.muted ? 'vol-sink-muted' : ''}"
+                  :onclick "$HOME/.config/eww/scripts/volume mute-sink ${sink.id}"
+            (label :text "${sink.muted ? '󰖁' : '󰕾'}")))))))
 
 ;; WiFi ;;
 (defwidget wifi []
@@ -78,14 +107,44 @@
 
 ;; Bluetooth ;;
 (defwidget bluetooth []
-  (button :class "bluetooth"
-          :onclick "$HOME/.config/eww/scripts/bluetooth toggle"
-  (box :space-evenly false
-       :spacing 4
-    (label :text bluetooth-icon)
-    (label :text bluetooth-device))))
+  (eventbox :class "bluetooth"
+            :onclick "${EWW_CMD} open bluetooth-popup"
+            :onrightclick "$HOME/.config/eww/scripts/bluetooth toggle"
+    (box :space-evenly false :spacing 4
+      (label :text bluetooth-icon)
+      (label :text bluetooth-device))))
 (defpoll bluetooth-icon :interval "999999s" "$HOME/.config/eww/scripts/bluetooth icon")
 (defpoll bluetooth-device :interval "999999s" "$HOME/.config/eww/scripts/bluetooth device")
+(defpoll bluetooth-devices :interval "999999s" "$HOME/.config/eww/scripts/bluetooth list")
+
+(defwidget bluetooth-popup-widget []
+  (box :class "bt-popup" :orientation "v" :space-evenly false :spacing 10
+    (box :class "bt-popup-header" :space-evenly false :spacing 8
+      (label :class "bt-popup-title" :text "󰂯  Bluetooth" :hexpand true :halign "start")
+      (button :class "bt-power-btn ${bluetooth-icon == '󰂲' ? 'bt-power-off' : 'bt-power-on'}"
+              :onclick "$HOME/.config/eww/scripts/bluetooth toggle"
+        (label :text "${bluetooth-icon == '󰂲' ? '󰂲  Off' : '󰂱  On'}")))
+    (box :class "bt-separator")
+    (box :class "bt-device-list" :orientation "v" :space-evenly false :spacing 4
+      (for device in bluetooth-devices
+        (box :class "bt-device ${device.connected ? 'bt-device-connected' : ''}"
+             :space-evenly false :spacing 8
+          (label :class "bt-device-icon"
+                 :text "${device.connected ? '󰂱' : '󰂯'}")
+          (box :orientation "v" :space-evenly false :spacing 1 :hexpand true
+            (label :class "bt-device-name"
+                   :text {device.name}
+                   :halign "start"
+                   :limit-width 20
+                   :truncate true)
+            (label :class "bt-device-battery"
+                   :text "🔋 ${device.battery}%"
+                   :halign "start"
+                   :visible {device.battery != ""}))
+          (button :class "bt-action-btn ${device.connected ? 'bt-disconnect' : 'bt-connect'}"
+                  :onclick "$HOME/.config/eww/scripts/bluetooth ${device.connected ? 'disconnect' : 'connect'} ${device.mac}"
+            (label :text "${device.connected ? '󰅖' : '󰂱'}")))))))
+
 
 ;; Battery ;;
 (defwidget battery []
@@ -175,7 +234,7 @@
   (box :class "left"
        :space-evenly false
        :halign "start"
-       :spacing 12
+       :spacing 18
     (power)
     (workspaces)))
 
@@ -189,7 +248,7 @@
   (box :class "right"
        :space-evenly false
        :halign "end"
-       :spacing 12
+       :spacing 18
     (taildrop)
     (volume)
     (wifi)
@@ -230,6 +289,36 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                            Windows                                    ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defwindow volume-popup
+  :monitor 0
+  :geometry (geometry :x "0"
+                      :y "0"
+                      :width "100%"
+                      :height "100%"
+                      :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  (eventbox :onclick "${EWW_CMD} close volume-popup"
+    (box :class "vol-overlay" :halign "end" :valign "start"
+      (eventbox :onclick "echo"
+        (volume-popup-widget)))))
+
+(defwindow bluetooth-popup
+  :monitor 0
+  :geometry (geometry :x "0"
+                      :y "0"
+                      :width "100%"
+                      :height "100%"
+                      :anchor "top center")
+  :stacking "overlay"
+  :exclusive false
+  :focusable false
+  (eventbox :onclick "${EWW_CMD} close bluetooth-popup"
+    (box :class "bt-overlay" :halign "end" :valign "start"
+      (eventbox :onclick "echo"
+        (bluetooth-popup-widget)))))
 
 (defwindow calendar
   :monitor 0
