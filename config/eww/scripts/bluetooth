@@ -1,109 +1,173 @@
 #!/usr/bin/env bash
-# Bluetooth status script using bluetoothctl
+# Bluetooth script using busctl (bluetoothctl show is broken non-interactively in bluez 5.86)
 
-get_icon() {
-  # Check if bluetooth is powered on
-  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
+ADAPTER="/org/bluez/hci0"
 
-  if [ "$powered" != "yes" ]; then
-    echo "󰂲"
-    exit
-  fi
-
-  # Check if any device is connected
-  connected=$(bluetoothctl devices Connected 2>/dev/null)
-
-  if [ -n "$connected" ]; then
-    echo "󰂱"
-  else
-    echo "󰂯"
-  fi
+is_powered() {
+  busctl get-property org.bluez "$ADAPTER" org.bluez.Adapter1 Powered 2>/dev/null | awk '{print $2}'
 }
 
-get_status() {
-  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
+get_dev_paths() {
+  busctl tree org.bluez 2>/dev/null | grep 'dev_' | sed 's/.*[└├─]* //'
+}
 
-  if [ "$powered" != "yes" ]; then
-    echo "Bluetooth Off"
-    exit
-  fi
+get_icon() {
+  [ "$(is_powered)" != "true" ] && echo "󰂲" && return
 
-  connected=$(bluetoothctl devices Connected 2>/dev/null | head -1 | cut -d' ' -f3-)
+  while IFS= read -r dev; do
+    connected=$(busctl get-property org.bluez "$dev" org.bluez.Device1 Connected 2>/dev/null | awk '{print $2}')
+    [ "$connected" = "true" ] && echo "󰂱" && return
+  done <<< "$(get_dev_paths)"
 
-  if [ -n "$connected" ]; then
-    echo "Connected: $connected"
-  else
-    echo "Bluetooth On"
-  fi
+  echo "󰂯"
 }
 
 get_device() {
-  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
+  [ "$(is_powered)" != "true" ] && echo "" && return
 
-  if [ "$powered" != "yes" ]; then
-    echo ""
-    exit
-  fi
+  while IFS= read -r dev; do
+    connected=$(busctl get-property org.bluez "$dev" org.bluez.Device1 Connected 2>/dev/null | awk '{print $2}')
+    if [ "$connected" = "true" ]; then
+      busctl --json=short get-property org.bluez "$dev" org.bluez.Device1 Name 2>/dev/null \
+        | sed 's/.*"data":"\(.*\)".*/\1/'
+      return
+    fi
+  done <<< "$(get_dev_paths)"
 
-  connected=$(bluetoothctl devices Connected 2>/dev/null | head -1 | cut -d' ' -f3-)
+  echo ""
+}
 
-  if [ -n "$connected" ]; then
-    echo "$connected"
-  else
-    echo ""
-  fi
+get_status() {
+  [ "$(is_powered)" != "true" ] && echo "Bluetooth Off" && return
+  device=$(get_device)
+  [ -n "$device" ] && echo "Connected: $device" || echo "Bluetooth On"
+}
+
+list_devices() {
+  [ "$(is_powered)" != "true" ] && echo "[]" && return
+
+  entries=()
+  while IFS= read -r dev; do
+    paired=$(busctl get-property org.bluez "$dev" org.bluez.Device1 Paired 2>/dev/null | awk '{print $2}')
+    [ "$paired" != "true" ] && continue
+
+    name=$(busctl --json=short get-property org.bluez "$dev" org.bluez.Device1 Name 2>/dev/null \
+      | sed 's/.*"data":"\(.*\)".*/\1/' | sed 's/\\/\\\\/g; s/"/\\"/g')
+    connected=$(busctl get-property org.bluez "$dev" org.bluez.Device1 Connected 2>/dev/null | awk '{print $2}')
+    battery=$(busctl get-property org.bluez "$dev" org.bluez.Battery1 Percentage 2>/dev/null | awk '{print $2}')
+    mac=$(echo "$dev" | sed 's|.*/dev_||;s/_/:/g')
+
+    [ "$connected" = "true" ] && conn_bool="true" || conn_bool="false"
+
+    entries+=("{\"mac\":\"$mac\",\"name\":\"$name\",\"connected\":$conn_bool,\"battery\":\"${battery:-}\"}")
+  done <<< "$(get_dev_paths)"
+
+  result="["
+  for i in "${!entries[@]}"; do
+    [ $i -gt 0 ] && result+=","
+    result+="${entries[$i]}"
+  done
+  result+="]"
+  echo "$result"
 }
 
 toggle() {
-  powered=$(bluetoothctl show 2>/dev/null | grep "Powered:" | awk '{print $2}')
-
-  if [ "$powered" = "yes" ]; then
-    bluetoothctl power off
+  if [ "$(is_powered)" = "true" ]; then
+    busctl set-property org.bluez "$ADAPTER" org.bluez.Adapter1 Powered b false
   else
-    bluetoothctl power on
+    busctl set-property org.bluez "$ADAPTER" org.bluez.Adapter1 Powered b true
   fi
+}
+
+# 接続後にPipeWireのオーディオプロファイルを設定しデフォルトシンクに切替
+switch_audio_to_bt() {
+  local mac="$1"
+  local mac_upper
+  mac_upper=$(echo "$mac" | tr '[:lower:]' '[:upper:]')
+
+  local dev_id
+  dev_id=$(pw-dump 2>/dev/null | jq -rc --arg mac "$mac_upper" '
+    .[] | select(
+      .info.props["api.bluez5.address"] == $mac and
+      .info.props["media.class"] == "Audio/Device"
+    ) | .id' | head -1)
+  [ -z "$dev_id" ] && return 1
+
+  # Audio/Sinkクラスを持つプロファイルから優先度最大のものを選択
+  local profile_idx
+  profile_idx=$(pw-dump 2>/dev/null | jq -rc --arg id "$dev_id" '
+    .[] | select(.id == ($id | tonumber)) |
+    .info.params.EnumProfile |
+    map(select(
+      .classes != null and
+      (.classes[] | arrays | select(.[0] == "Audio/Sink")) != null
+    )) |
+    sort_by(-.priority) | first | .index // empty' | head -1)
+  [ -z "$profile_idx" ] && return 1
+
+  wpctl set-profile "$dev_id" "$profile_idx" 2>/dev/null || return 1
+  sleep 2
+
+  local sink_id
+  sink_id=$(pw-dump 2>/dev/null | jq -rc --arg mac "$mac_upper" '
+    .[] | select(
+      .info.props["api.bluez5.address"] == $mac and
+      .info.props["media.class"] == "Audio/Sink"
+    ) | .id' | head -1)
+  [ -n "$sink_id" ] && wpctl set-default "$sink_id" 2>/dev/null
+}
+
+connect_device() {
+  local mac="$1"
+  local dev_path
+  dev_path=$(echo "$mac" | sed 's/:/_/g')
+  (
+    busctl call org.bluez "/org/bluez/hci0/dev_$dev_path" org.bluez.Device1 Connect 2>/dev/null
+    sleep 2
+    switch_audio_to_bt "$mac"
+    update_eww
+    # ボリュームのシンクリストも更新
+    eww update audio-sinks="$("$HOME/.config/eww/scripts/volume" sinks 2>/dev/null || echo '[]')"
+  ) &
+}
+
+disconnect_device() {
+  local mac="$1"
+  local dev_path
+  dev_path=$(echo "$mac" | sed 's/:/_/g')
+  (
+    busctl call org.bluez "/org/bluez/hci0/dev_$dev_path" org.bluez.Device1 Disconnect 2>/dev/null
+    sleep 1
+    update_eww
+    eww update audio-sinks="$("$HOME/.config/eww/scripts/volume" sinks 2>/dev/null || echo '[]')"
+  ) &
 }
 
 update_eww() {
-  eww update bluetooth-icon="$(get_icon)" bluetooth-device="$(get_device)"
+  eww update \
+    bluetooth-icon="$(get_icon)" \
+    bluetooth-device="$(get_device)" \
+    bluetooth-devices="$(list_devices)"
 }
 
 listen() {
-  # Output initial values
   update_eww
-
-  # Monitor bluetoothctl events
-  if command -v bluetoothctl &>/dev/null; then
-    # Use grep to filter relevant events
-    bluetoothctl monitor 2>/dev/null | grep --line-buffered -E 'Connected|Disconnected|Device|Controller' | while read -r; do
-      update_eww
-    done
-  else
-    # Fallback: poll every 5 seconds
-    while true; do
-      sleep 5
-      update_eww
-    done
-  fi
+  busctl monitor org.bluez 2>/dev/null \
+    | grep --line-buffered -E 'Adapter1|Device1' \
+    | while read -r; do
+        sleep 0.5
+        update_eww
+      done
 }
 
 case "$1" in
-  icon)
-    get_icon
-    ;;
-  status)
-    get_status
-    ;;
-  device)
-    get_device
-    ;;
-  toggle)
-    toggle
-    ;;
-  listen)
-    listen
-    ;;
-  *)
-    get_icon
-    ;;
+  icon)       get_icon ;;
+  status)     get_status ;;
+  device)     get_device ;;
+  list)       list_devices ;;
+  toggle)     toggle ;;
+  connect)    connect_device "$2" ;;
+  disconnect) disconnect_device "$2" ;;
+  listen)     listen ;;
+  *)          get_icon ;;
 esac
