@@ -274,7 +274,8 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-color-emoji
+      noto-fonts-color-emoji  # Apple Color Emoji未収録の絵文字のフォールバック用
+      apple-color-emoji
     ];
   };
 

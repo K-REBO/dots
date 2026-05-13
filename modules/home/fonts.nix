@@ -50,6 +50,7 @@
         <prefer>
           <family>Noto Serif CJK JP</family>
           <family>Noto Serif</family>
+          <family>Apple Color Emoji</family>
         </prefer>
       </alias>
 
@@ -58,6 +59,7 @@
         <prefer>
           <family>Noto Sans CJK JP</family>
           <family>Noto Sans</family>
+          <family>Apple Color Emoji</family>
         </prefer>
       </alias>
 
@@ -67,8 +69,26 @@
           <family>UbuntuMono Nerd Font</family>
           <family>JetBrains Mono</family>
           <family>Source Code Pro</family>
+          <family>Apple Color Emoji</family>
         </prefer>
       </alias>
+
+      <!-- 絵文字フォント優先順位 -->
+      <alias>
+        <family>emoji</family>
+        <prefer>
+          <family>Apple Color Emoji</family>
+          <family>Noto Color Emoji</family>
+        </prefer>
+      </alias>
+
+      <!-- Noto Color Emoji をApple Color Emojiに置き換え -->
+      <match target="pattern">
+        <test qual="any" name="family"><string>Noto Color Emoji</string></test>
+        <edit name="family" mode="prepend" binding="strong">
+          <string>Apple Color Emoji</string>
+        </edit>
+      </match>
 
       <!-- 日本語フォント優先順位 -->
       <alias>
