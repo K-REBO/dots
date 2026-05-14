@@ -176,6 +176,24 @@
         "type": "github"
       }
     },
+    "flake-utils_2": {
+      "inputs": {
+        "systems": "systems_4"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "gh-grass-src": {
       "flake": false,
       "locked": {
@@ -230,6 +248,23 @@
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "livesync-commonlib": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1772543791,
+        "narHash": "sha256-wshEpdihqloMnIE5wGTdKOTjqLo9IL5WIoEiocZP2VA=",
+        "owner": "vrtmrz",
+        "repo": "livesync-commonlib",
+        "rev": "258d9aca1139e718efb0431449556c0543d72c7e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vrtmrz",
+        "repo": "livesync-commonlib",
+        "rev": "258d9aca1139e718efb0431449556c0543d72c7e",
         "type": "github"
       }
     },
@@ -335,6 +370,28 @@
         "type": "github"
       }
     },
+    "obsidian-vault-cli": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "livesync-commonlib": "livesync-commonlib",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1778751170,
+        "narHash": "sha256-r6eAJe+/AjOgKcmPlk9ugIvfSN3ehxG4kDnaZ9RZjqc=",
+        "owner": "K-REBO",
+        "repo": "obsidian-vault-cli",
+        "rev": "0b4fc0f1445330b4ae48b82af28ea034abe25636",
+        "type": "github"
+      },
+      "original": {
+        "owner": "K-REBO",
+        "repo": "obsidian-vault-cli",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -346,6 +403,7 @@
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
+        "obsidian-vault-cli": "obsidian-vault-cli",
         "tp-render-src": "tp-render-src",
         "wayland-fcitx5-indicator": "wayland-fcitx5-indicator",
         "weathr": "weathr",
@@ -414,6 +472,21 @@
         "type": "github"
       }
     },
+    "systems_4": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "tp-render-src": {
       "flake": false,
       "locked": {
@@ -450,7 +523,7 @@
     },
     "wayland-fcitx5-indicator": {
       "inputs": {
-        "flake-utils": "flake-utils",
+        "flake-utils": "flake-utils_2",
         "nixpkgs": [
           "nixpkgs"
         ]

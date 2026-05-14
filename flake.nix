@@ -55,6 +55,11 @@
       flake = false;
     };
 
+    obsidian-vault-cli = {
+      url = "github:K-REBO/obsidian-vault-cli";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, gh-grass-src, ... }@inputs: let

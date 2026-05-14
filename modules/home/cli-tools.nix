@@ -78,6 +78,9 @@
 
     # 天気
     inputs.weathr.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+    # Obsidian LiveSync vault CLI (AIエージェント向け暗号化vaultアクセス)
+    inputs.obsidian-vault-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # batの設定
