@@ -541,7 +541,8 @@
 
 ;; moment.js 形式 (YYYY/MM/DD/HH/mm) を実際の値に展開（TIME 省略時は現在時刻）
 (defun my/obsidian-moment-expand (fmt &optional time)
-  (let ((result fmt))
+  (let ((case-fold-search nil)
+        (result fmt))
     (setq result (replace-regexp-in-string "YYYY" (format-time-string "%Y" time) result))
     (setq result (replace-regexp-in-string "MM"   (format-time-string "%m" time) result))
     (setq result (replace-regexp-in-string "DD"   (format-time-string "%d" time) result))
