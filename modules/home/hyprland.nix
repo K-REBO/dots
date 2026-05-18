@@ -141,7 +141,6 @@ in
       workspace = "r[1-10],";
 
       dwindle = {
-        pseudotile = true;
         preserve_split = true;
       };
 
@@ -172,7 +171,7 @@ in
         "$mainMod, E, exec, ${pkgs.kdePackages.dolphin}/bin/dolphin"
         "$mainMod, space, togglefloating,"
         "$mainMod, D, exec, ${pkgs.vicinae}/bin/vicinae toggle"
-        "$mainMod, J, togglesplit,"
+        "$mainMod, J, layoutmsg, togglesplit"
         "$mainMod, L, exec, ${pkgs.hyprlock}/bin/hyprlock"
         # Emacs風フォーカス移動
         "$mainMod, p, movefocus, u"
@@ -221,7 +220,7 @@ in
         ", Print, exec, ${pkgs.grimblast}/bin/grimblast save area"
         "SHIFT, Print, exec, /home/bido/.config/hypr/scripts/toggle_recorder.sh"
         # wmfocus
-        ''$mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(30,30,30,0.8)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200''
+        "$mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(48, 9, 11,0.6)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200"
         # OCR screenshot
         "CTRL, Print, exec, ${ocrScript}/bin/ocr-screenshot"
         # リサイズモード開始
