@@ -108,8 +108,15 @@
     xkb.layout = "us";
   };
 
-  # ログインマネージャ（GDM）
-  services.displayManager.gdm.enable = true;
+  # ログインマネージャ（ly）
+  services.displayManager.ly = {
+    enable = true;
+    settings = {
+      clock = "%Y-%m-%d";
+      fg = 5;
+      bg = 0;
+    };
+  };
 
   # ====================
   # Audio (PipeWire)
