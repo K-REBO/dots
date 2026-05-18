@@ -198,9 +198,9 @@
   in {
     # NixOS configuration
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      inherit system;
       specialArgs = { inherit inputs; };
       modules = [
+        { nixpkgs.hostPlatform = system; }
         ./hosts/nixos/configuration.nix
         agenix.nixosModules.default
         nix-index-database.nixosModules.nix-index
@@ -225,8 +225,8 @@
 
     # Demo VM configuration (録画生成用 QEMU VM)
     nixosConfigurations.demo-vm = nixpkgs.lib.nixosSystem {
-      inherit system;
       modules = [
+        { nixpkgs.hostPlatform = system; }
         ./demo-recorder/nix/vm-config.nix
         { nixpkgs.overlays = overlays; }
       ];

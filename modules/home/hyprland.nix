@@ -37,6 +37,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     package = null;  # NixOSモジュールのパッケージを使用
+    configType = "hyprlang";
 
     # UWSM使用時はsystemd統合を無効化（必須）
     systemd.enable = false;
@@ -220,7 +221,7 @@ in
         ", Print, exec, ${pkgs.grimblast}/bin/grimblast save area"
         "SHIFT, Print, exec, /home/bido/.config/hypr/scripts/toggle_recorder.sh"
         # wmfocus
-        ''$mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --textcolorcurrent lightseagreen --font "UbuntuMono Nerd Font":120 --offset 5,5 --margin 0.1,0.2,0.2,0''
+        ''$mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(30,30,30,0.8)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200''
         # OCR screenshot
         "CTRL, Print, exec, ${ocrScript}/bin/ocr-screenshot"
         # リサイズモード開始
