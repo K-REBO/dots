@@ -113,7 +113,7 @@
     enable = true;
     settings = {
       clock = "%Y-%m-%d";
-      fg = 5;
+      fg = 7;
       bg = 0;
     };
   };
