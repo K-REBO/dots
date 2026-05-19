@@ -48,7 +48,6 @@
     # Phase 5: 追加設定
     ./modules/home/fonts.nix
     ./modules/home/applications.nix
-    ./modules/home/dwarf-fortress.nix
     ./modules/home/themes.nix
     ./modules/home/xdg.nix
 
