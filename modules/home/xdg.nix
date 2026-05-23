@@ -30,4 +30,16 @@
   # 既存ファイルを上書き
   xdg.configFile."user-dirs.dirs".force = true;
 
+  # デフォルトブラウザをFirefoxに設定（未設定だとmimeinfo.cacheのアルファベット順でChromeになる）
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html"              = [ "firefox.desktop" ];
+      "x-scheme-handler/http"  = [ "firefox.desktop" ];
+      "x-scheme-handler/https" = [ "firefox.desktop" ];
+      "x-scheme-handler/ftp"   = [ "firefox.desktop" ];
+      "application/xhtml+xml"  = [ "firefox.desktop" ];
+    };
+  };
+
 }
