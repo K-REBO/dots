@@ -1,36 +1,6 @@
 { config, pkgs, lib, ... }:
 
 let
-  ocrPython = pkgs.python312.withPackages (ps: [ ps.manga-ocr ]);
-  ocrDaemon = pkgs.writeText "ocr-daemon.py" ''
-    import subprocess, tempfile, time, unicodedata, os
-    from manga_ocr import MangaOcr
-
-    mocr = MangaOcr()
-    last_image = None
-
-    while True:
-        result = subprocess.run(
-            ['${pkgs.wl-clipboard}/bin/wl-paste', '--type', 'image/png', '--no-newline'],
-            capture_output=True
-        )
-        if result.returncode == 0 and result.stdout and result.stdout != last_image:
-            last_image = result.stdout
-            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
-                f.write(result.stdout)
-                tmppath = f.name
-            try:
-                text = mocr(tmppath)
-                text = unicodedata.normalize('NFKC', text)
-                subprocess.run(['${pkgs.wl-clipboard}/bin/wl-copy'], input=text.encode(), check=True)
-                subprocess.run(['${pkgs.libnotify}/bin/notify-send', 'OCR', text, '--expire-time=3000'])
-            finally:
-                os.unlink(tmppath)
-        time.sleep(0.3)
-  '';
-  ocrScript = pkgs.writeShellScriptBin "ocr-screenshot" ''
-    ${pkgs.grimblast}/bin/grimblast save area - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png
-  '';
 in
 
 {
@@ -65,7 +35,6 @@ in
         "${pkgs.vicinae}/bin/vicinae server"
         "${pkgs.hypridle}/bin/hypridle"
         "${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator"
-        "${ocrPython}/bin/python3 ${ocrDaemon}"
       ];
 
       env = [
@@ -221,8 +190,6 @@ in
         "SHIFT, Print, exec, /home/bido/.config/hypr/scripts/toggle_recorder.sh"
         # wmfocus
         "$mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(48, 9, 11,0.6)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200"
-        # OCR screenshot
-        "CTRL, Print, exec, ${ocrScript}/bin/ocr-screenshot"
         # リサイズモード開始
         ''$mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgba(ff0000ee)"''
         "$mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:border_size 5"
@@ -315,7 +282,6 @@ in
     grim
     slurp
     satty
-    ocrScript
     wl-clipboard
     brightnessctl
     playerctl

@@ -295,6 +295,8 @@
       experimental-features = [ "nix-command" "flakes" ];
       auto-optimise-store = true;
       trusted-users = [ "root" "bido" ];
+      cores = 6;
+      max-jobs = 2;
       download-buffer-size = 524288000; # 500MB
       substituters = [
         "https://cache.nixos.org"
