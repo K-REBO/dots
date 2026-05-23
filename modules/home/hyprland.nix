@@ -25,14 +25,22 @@ in
         "systemctl --user restart emacs.service"
         "${pkgs.awww}/bin/awww-daemon"
         "${pkgs.awww}/bin/awww img $HOME/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg"
-        "${config.programs.eww.package}/bin/eww open bar"
-        "~/.config/eww/scripts/volume listen"
-        "~/.config/eww/scripts/micmute sync"
-        "~/.config/eww/scripts/wifi listen"
-        "~/.config/eww/scripts/bluetooth listen"
-        "~/.config/eww/scripts/battery listen"
-        "~/.config/eww/scripts/ime listen"
-        "${pkgs.vicinae}/bin/vicinae server"
+
+        # quickshell: バー・ランチャー・ロック画面を一括起動
+        "${pkgs.quickshell}/bin/quickshell"
+
+        # eww は quickshell に移行済み（復元時はコメントを外す）
+        # "${config.programs.eww.package}/bin/eww open bar"
+        # "~/.config/eww/scripts/volume listen"
+        # "~/.config/eww/scripts/micmute sync"
+        # "~/.config/eww/scripts/wifi listen"
+        # "~/.config/eww/scripts/bluetooth listen"
+        # "~/.config/eww/scripts/battery listen"
+        # "~/.config/eww/scripts/ime listen"
+
+        # vicinae は quickshell ランチャーに移行済み
+        # "${pkgs.vicinae}/bin/vicinae server"
+
         "${pkgs.hypridle}/bin/hypridle"
         "${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator"
       ];
@@ -139,9 +147,11 @@ in
         "$mainMod, Q, killactive,"
         "$mainMod, E, exec, ${pkgs.kdePackages.dolphin}/bin/dolphin"
         "$mainMod, space, togglefloating,"
-        "$mainMod, D, exec, ${pkgs.vicinae}/bin/vicinae toggle"
+        # vicinae → quickshell ランチャー (qs ipc call launcher toggle)
+        "$mainMod, D, exec, ${pkgs.quickshell}/bin/qs ipc call launcher toggle"
         "$mainMod, J, layoutmsg, togglesplit"
-        "$mainMod, L, exec, ${pkgs.hyprlock}/bin/hyprlock"
+        # hyprlock → quickshell ロック画面 (qs ipc call lock activate)
+        "$mainMod, L, exec, ${pkgs.quickshell}/bin/qs ipc call lock activate"
         # Emacs風フォーカス移動
         "$mainMod, p, movefocus, u"
         "$mainMod, n, movefocus, d"

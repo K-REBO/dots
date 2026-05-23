@@ -1,0 +1,7 @@
+module QuickshellServices
+singleton AudioService    1.0 AudioService.qml
+singleton BatteryService  1.0 BatteryService.qml
+singleton BluetoothService 1.0 BluetoothService.qml
+singleton BrightnessService 1.0 BrightnessService.qml
+singleton ImeService      1.0 ImeService.qml
+singleton NetworkService  1.0 NetworkService.qml

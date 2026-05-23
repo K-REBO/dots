@@ -38,7 +38,8 @@
     ./modules/home/fcitx5.nix
     ./modules/home/xremap.nix
     # ./modules/home/hyprpanel.nix  # ewwに移行のため無効化
-    ./modules/home/eww.nix
+    # ./modules/home/eww.nix        # quickshellに移行のため無効化
+    ./modules/home/quickshell.nix
 
     # Phase 4: システムサービス（ユーザーレベル）
     ./modules/home/swaync.nix

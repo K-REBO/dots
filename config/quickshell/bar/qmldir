@@ -1,0 +1,5 @@
+module QuickshellBar
+Bar              1.0 Bar.qml
+Pill             1.0 Pill.qml
+Recorder         1.0 Recorder.qml
+Taildrop         1.0 Taildrop.qml
