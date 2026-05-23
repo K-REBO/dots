@@ -1,5 +1,6 @@
 {
   "$schema": "https://vicinae.com/schemas/config.json",
+  "imports": ["./config.jsonc"],
   "font": {
     "normal": {
       "family": "Noto Sans",
