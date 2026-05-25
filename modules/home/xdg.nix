@@ -36,34 +36,25 @@ in
   # 既存ファイルを上書き
   xdg.configFile."user-dirs.dirs".force = true;
 
-  # Bitwigのデスクトップエントリをフルパスで上書き（VicianがPATHを引き継がない + stdout Broken Pipe対策）
-  xdg.desktopEntries."com.bitwig.BitwigStudio" = {
-    name = "Bitwig Studio";
-    genericName = "Digital Audio Workstation";
-    comment = "Modern music production and performance";
-    exec = "${bitwigWrapper}";
-    icon = "com.bitwig.BitwigStudio";
-    terminal = false;
-    categories = [ "AudioVideo" "Music" "Audio" "Sequencer" "Midi" "Mixer" "Player" "Recorder" ];
-    mimeType = [
-      "application/bitwig-clip"
-      "application/bitwig-device"
-      "application/bitwig-package"
-      "application/bitwig-preset"
-      "application/bitwig-project"
-      "application/bitwig-scene"
-      "application/bitwig-template"
-      "application/bitwig-extension"
-      "application/bitwig-remote-controls"
-      "application/bitwig-module"
-      "application/bitwig-modulator"
-      "application/vnd.bitwig.dawproject"
-    ];
-    startupNotify = true;
-    settings = {
-      StartupWMClass = "com.bitwig.BitwigStudio";
-    };
-  };
+  # Bitwigのデスクトップエントリを ~/.local/share/applications/ に直接配置
+  # vicinae は XDG_DATA_DIRS を引き継がず ~/.nix-profile/share が見えないため
+  # ~/.local/share/applications/ は常に参照されるのでここに置く
+  home.file.".local/share/applications/com.bitwig.BitwigStudio.desktop".text = ''
+    [Desktop Entry]
+    Version=1.5
+    Type=Application
+    Name=Bitwig Studio
+    GenericName=Digital Audio Workstation
+    Comment=Modern music production and performance
+    Exec=${bitwigWrapper}
+    Icon=com.bitwig.BitwigStudio
+    Terminal=false
+    MimeType=application/bitwig-clip;application/bitwig-device;application/bitwig-package;application/bitwig-preset;application/bitwig-project;application/bitwig-scene;application/bitwig-template;application/bitwig-extension;application/bitwig-remote-controls;application/bitwig-module;application/bitwig-modulator;application/vnd.bitwig.dawproject
+    Categories=AudioVideo;Music;Audio;Sequencer;Midi;Mixer;Player;Recorder
+    Keywords=daw;bitwig;audio;midi
+    StartupNotify=true
+    StartupWMClass=com.bitwig.BitwigStudio
+  '';
 
   # デフォルトブラウザをFirefoxに設定（未設定だとmimeinfo.cacheのアルファベット順でChromeになる）
   xdg.mimeApps = {
