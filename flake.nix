@@ -9,8 +9,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    wmfocus-src = {
-      url = "github:K-REBO/wmfocus";
+    hyprselect-src = {
+      url = "github:K-REBO/hyprselect";
       flake = false;
     };
 
@@ -62,7 +62,7 @@
 
   };
 
-  outputs = { self, nixpkgs, home-manager, wmfocus-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, gh-grass-src, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, hyprselect-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, gh-grass-src, ... }@inputs: let
     system = "x86_64-linux";
 
     # nixpkgs-unstable より新しいバージョンを使いたい場合はコメントを外してバージョンとhashを更新する
@@ -78,11 +78,11 @@
     #   });
     # };
 
-    wmfocusOverlay = final: prev: {
-      wmfocus = let
+    hyprselectOverlay = final: prev: {
+      hyprselect = let
         craneLib = (crane.mkLib final).overrideToolchain final.fenix.stable.toolchain;
         commonArgs = {
-          src = wmfocus-src;
+          src = hyprselect-src;
           strictDeps = true;
           cargoExtraArgs = "--features hyprland";
           nativeBuildInputs = with final; [ pkg-config cmake autoPatchelfHook ];
@@ -107,7 +107,7 @@
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
       in craneLib.buildPackage (commonArgs // {
         inherit cargoArtifacts;
-        pname = "wmfocus";
+        pname = "hyprselect";
         version = "1.5.0";
       });
     };
@@ -188,7 +188,7 @@
       };
     };
 
-    overlays = [ wmfocusOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay appleColorEmojiOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
+    overlays = [ hyprselectOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay appleColorEmojiOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
 
     pkgs = import nixpkgs {
       inherit system;

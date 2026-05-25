@@ -27,8 +27,8 @@
   { "type": "pastel random\n" },
   { "wait": 4.0 },
 
-  { "comment": "wmfocus を4秒間表示して自動終了" },
-  { "launch": "sh -c 'timeout 4 wmfocus-demo; pkill -9 -f wmfocus 2>/dev/null; true'" },
+  { "comment": "hyprselect を4秒間表示して自動終了" },
+  { "launch": "sh -c 'timeout 4 hyprselect-demo; pkill -9 -f hyprselect 2>/dev/null; true'" },
   { "wait": 6.0 },
 
   { "comment": "vicinae ランチャーを開く" },

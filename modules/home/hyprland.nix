@@ -188,8 +188,8 @@ in
         # スクリーンショット
         ", Print, exec, ${pkgs.grimblast}/bin/grimblast save area"
         "SHIFT, Print, exec, /home/bido/.config/hypr/scripts/toggle_recorder.sh"
-        # wmfocus
-        "$mainMod,i,exec,${pkgs.wmfocus}/bin/wmfocus --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(48, 9, 11,0.6)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200"
+        # hyprselect
+        "$mainMod,i,exec,${pkgs.hyprselect}/bin/hyprselect --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(48, 9, 11,0.6)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200"
         # リサイズモード開始
         ''$mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgba(ff0000ee)"''
         "$mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:border_size 5"

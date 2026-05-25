@@ -150,7 +150,7 @@ flake.nix から直接ビルドして取り込んでいる自作・カスタム�
 
 | ツール | フォーク元 | 変更点 |
 |---|---|---|
-| **wmfocus** | [svenstaro/wmfocus](https://github.com/svenstaro/wmfocus) | Hyprland サポートを追加。`Mod+i` でウィンドウにラベルを表示しキー入力でフォーカス。crane + fenix で Rust ビルド |
+| **hyprselect** | [K-REBO/hyprselect](https://github.com/K-REBO/hyprselect) | Hyprland サポートを追加。`Mod+i` でウィンドウにラベルを表示しキー入力でフォーカス。crane + fenix で Rust ビルド |
 | **obsidian-vault-cli** | [K-REBO/obsidian-vault-cli](https://github.com/K-REBO/obsidian-vault-cli) | AI エージェント向け Obsidian LiveSync 対応の暗号化 vault CLI |
 
 ### カスタム Nix オーバーレイ

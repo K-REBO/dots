@@ -54,10 +54,10 @@ let
   '';
 
   # ===========================================================================
-  # wmfocus ラッパー (オプション込み)
+  # hyprselect ラッパー (オプション込み)
   # ===========================================================================
-  wmfocusDemo = pkgs.writeShellScriptBin "wmfocus-demo" ''
-    exec ${pkgs.wmfocus}/bin/wmfocus \
+  hyprselectDemo = pkgs.writeShellScriptBin "hyprselect-demo" ''
+    exec ${pkgs.hyprselect}/bin/hyprselect \
       --textcolorcurrent lightseagreen \
       --font "UbuntuMono Nerd Font:120" \
       --offset 5,5 \
@@ -533,7 +533,7 @@ in
     eww
     swaybg
     vicinae
-    wmfocus
+    hyprselect
     fastfetch  # ホストプロファイルに含まれないため明示
 
     # Eww ワークスペーススクリプト依存
@@ -552,7 +552,7 @@ in
     # リプレイ用
     replayEngine
     demoRunner
-    wmfocusDemo
+    hyprselectDemo
 
     # ユーティリティ
     bash

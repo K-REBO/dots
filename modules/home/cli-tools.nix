@@ -65,7 +65,7 @@
     bun
 
     # ウィンドウフォーカス
-    wmfocus
+    hyprselect
 	
 
     # キー入力表示（Wayland）

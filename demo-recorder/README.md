@@ -121,19 +121,19 @@ zsh の bracketed paste は `.zshrc` で `unset zle_bracketed_paste` により�
 | 設定 | 値 | 理由 |
 |------|-----|------|
 | `WLR_BACKENDS` | `headless` | 物理ディスプレイ不要 |
-| `WLR_RENDERER` | `gles2` | XWayland + wmfocus の EGL 対応 |
+| `WLR_RENDERER` | `gles2` | XWayland + hyprselect の EGL 対応 |
 | `LIBGL_ALWAYS_SOFTWARE` | `1` | Mesa ソフトウェアレンダリング |
 | `GALLIUM_DRIVER` | `llvmpipe` | EGL サポートあり (softpipe は不可) |
 | `hardware.graphics.enable` | `true` | VM 内で Mesa/EGL を有効化 |
 
-### wmfocus のビルド
+### hyprselect のビルド
 
-wmfocus は Hyprland の wlr_foreign_toplevel プロトコルを使うため、
+hyprselect は Hyprland の wlr_foreign_toplevel プロトコルを使うため、
 `cargoExtraArgs = "--features hyprland"` でビルドが必要。
 
 ```nix
 commonArgs = {
-  src = wmfocus-src;
+  src = hyprselect-src;
   cargoExtraArgs = "--features hyprland";
   nativeBuildInputs = with final; [ pkg-config cmake autoPatchelfHook ];
   buildInputs = with final; [ cairo libxcb libx11 fontconfig wayland libxkbcommon expat freetype ];
@@ -158,7 +158,7 @@ Hyprland 起動時に `exec-once = vicinae server` でデーモン起動が必�
 13s  alacritty #2 起動 (右分割)
 16s  alacritty #3 起動 (右下分割)
 18s  pastel list でカラーパレット表示
-22s  wmfocus でウィンドウ選択UI (timeout 4s で自動終了)
+22s  hyprselect でウィンドウ選択UI (timeout 4s で自動終了)
 28s  vicinae ランチャーを開く
 33s  vicinae を閉じる
 35s  録画終了
