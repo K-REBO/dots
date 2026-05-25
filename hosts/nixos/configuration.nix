@@ -116,6 +116,7 @@
       clock = "%Y-%m-%d";
       fg = 7;
       bg = 0;
+      session_log = "/dev/null";
     };
   };
 
