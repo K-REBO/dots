@@ -10,9 +10,8 @@
   # Home-Managerに管理を任せる
   programs.home-manager.enable = true;
 
-  # モジュールのインポート
   imports = [
-    # Phase 1: CLIツール
+    # CLIツール
     ./modules/home/cli-tools.nix
     ./modules/home/cowsay.nix
     ./modules/home/fortune.nix
@@ -23,29 +22,28 @@
     ./modules/home/git.nix
     ./modules/home/vim.nix
 
-    # Phase 2A: 開発環境
+    # 開発環境
     ./modules/home/emacs.nix
     ./modules/home/vscode.nix
     ./modules/home/language-tools.nix
 
-    # Phase 2B: WMツール
-    ./modules/home/rofi.nix
+    # ランチャー / WMツール
     ./modules/home/wofi.nix
     ./modules/home/vicinae.nix
 
-    # Phase 3: デスクトップ環境
+    # デスクトップ環境
     ./modules/home/hyprland.nix
     ./modules/home/fcitx5.nix
     ./modules/home/xremap.nix
     # ./modules/home/hyprpanel.nix  # ewwに移行のため無効化
     ./modules/home/eww.nix
 
-    # Phase 4: システムサービス（ユーザーレベル）
+    # システムサービス（ユーザーレベル）
     ./modules/home/swaync.nix
     ./modules/home/pipewire.nix
     ./modules/home/taildrop.nix
 
-    # Phase 5: 追加設定
+    # 追加設定
     ./modules/home/fonts.nix
     ./modules/home/applications.nix
     ./modules/home/themes.nix

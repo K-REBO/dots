@@ -62,7 +62,7 @@
 
   };
 
-  outputs = { self, nixpkgs, home-manager, hyprselect-src, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, crane, fenix, tp-render-src, gh-grass-src, ... }@inputs: let
+  outputs = { self, nixpkgs, home-manager, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, obsidian-vault-cli, ... }@inputs: let
     system = "x86_64-linux";
 
     # nixpkgs-unstable より新しいバージョンを使いたい場合はコメントを外してバージョンとhashを更新する
@@ -78,117 +78,15 @@
     #   });
     # };
 
-    hyprselectOverlay = final: prev: {
-      hyprselect = let
-        craneLib = (crane.mkLib final).overrideToolchain final.fenix.stable.toolchain;
-        commonArgs = {
-          src = hyprselect-src;
-          strictDeps = true;
-          cargoExtraArgs = "--features hyprland";
-          nativeBuildInputs = with final; [ pkg-config cmake autoPatchelfHook ];
-          buildInputs = with final; [
-            cairo
-            libxcb
-            libx11
-            fontconfig
-            wayland
-            libxkbcommon
-            expat
-            freetype
-          ];
-          # テストを無効化（テストコードにコンパイルエラーあり）
-          doCheck = false;
-          # expat-sys cmake互換性問題の回避
-          preBuild = ''
-            export CMAKE_POLICY_VERSION_MINIMUM=3.5
-          '';
-        };
-        # 依存クレートを先にビルド → Nixストアにキャッシュ
-        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
-      in craneLib.buildPackage (commonArgs // {
-        inherit cargoArtifacts;
-        pname = "hyprselect";
-        version = "1.5.0";
-      });
-    };
-
-    twitterCliOverlay = final: prev: let
-      pyPkgs = prev.python3.pkgs;
-      xclienttransaction = pyPkgs.buildPythonPackage rec {
-        pname = "xclienttransaction";
-        version = "1.0.2";
-        format = "wheel";
-        src = final.fetchurl {
-          url = "https://files.pythonhosted.org/packages/py3/x/xclienttransaction/xclienttransaction-${version}-py3-none-any.whl";
-          sha256 = "sha256-ZiUVVPAkcs0Ps6M7xkaM/rdAlJdU3cB9vkFk5DmshhM=";
-        };
-        dependencies = with pyPkgs; [ beautifulsoup4 ];
-        pythonRuntimeDepsCheckHook = false;
-        doCheck = false;
-      };
-    in {
-      twitter-cli = pyPkgs.buildPythonApplication rec {
-        pname = "twitter-cli";
-        version = "0.8.5";
-        format = "wheel";
-        src = final.fetchurl {
-          url = "https://files.pythonhosted.org/packages/py3/t/twitter_cli/twitter_cli-${version}-py3-none-any.whl";
-          sha256 = "sha256-sudyBOrnFZ4Q4Znjv1KWppFGlFeSnN+QoHDMUXLzkxc=";
-        };
-        dependencies = with pyPkgs; [
-          beautifulsoup4
-          browser-cookie3
-          click
-          curl-cffi
-          pyyaml
-          rich
-          xclienttransaction
-        ];
-        doCheck = false;
-      };
-    };
-
-    ghGrassOverlay = final: prev: {
-      gh-grass = final.buildGoModule {
-        pname = "gh-grass";
-        version = "unstable-2025";
-        src = gh-grass-src;
-        vendorHash = "sha256-lvSdQ09zg8PfVSkKoZ49VwXRVmxI1J8IAONAHBXwmEg=";
-      };
-    };
-
-    appleColorEmojiOverlay = final: prev: {
-      apple-color-emoji = final.stdenvNoCC.mkDerivation {
-        pname = "apple-color-emoji";
-        version = "macos-26-20260219";
-        src = final.fetchurl {
-          url = "https://github.com/samuelngs/apple-emoji-ttf/releases/download/macos-26-20260219-2aa12422/AppleColorEmoji-Linux.ttf";
-          sha256 = "062k1zf20mnw6lsflbnsg9hxd07wbds697h5f52d41j7y0x08njk";
-        };
-        dontUnpack = true;
-        installPhase = ''
-          mkdir -p $out/share/fonts/truetype
-          cp $src $out/share/fonts/truetype/AppleColorEmoji.ttf
-        '';
-      };
-    };
-
-    tpRenderOverlay = final: prev: {
-      tp-render = final.stdenv.mkDerivation {
-        pname = "tp-render";
-        version = "0.1.0";
-        src = tp-render-src;
-        nativeBuildInputs = [ final.makeWrapper ];
-        installPhase = ''
-          mkdir -p $out/lib $out/bin
-          cp dist/cli.js $out/lib/tp-render.js
-          makeWrapper ${final.nodejs}/bin/node $out/bin/tp-render \
-            --add-flags "$out/lib/tp-render.js"
-        '';
-      };
-    };
-
-    overlays = [ hyprselectOverlay twitterCliOverlay tpRenderOverlay ghGrassOverlay appleColorEmojiOverlay nur.overlays.default fenix.overlays.default ];  # claudeOverlay無効化
+    overlays = [
+      (import ./overlays/hyprselect.nix inputs)
+      (import ./overlays/twitter-cli.nix)
+      (import ./overlays/tp-render.nix inputs)
+      (import ./overlays/gh-grass.nix inputs)
+      (import ./overlays/apple-color-emoji.nix)
+      nur.overlays.default
+      inputs.fenix.overlays.default
+    ];
 
     pkgs = import nixpkgs {
       inherit system;
