@@ -1,13 +1,14 @@
 { stdenv, unzip, autoPatchelfHook
 , libx11, libxcb, libxcb-util, libxcb-cursor, libxcb-wm, libxcb-image
 , libxkbcommon, glib, cairo, pango, fontconfig
+, src
 }:
 
 stdenv.mkDerivation {
   pname = "mt-power-drum-kit";
   version = "2.1.5.0";
 
-  src = ../../private/MTPDK-2.1.5.0-VST3-64bit-Linux-FULL.zip;
+  inherit src;
 
   nativeBuildInputs = [ unzip autoPatchelfHook ];
 
