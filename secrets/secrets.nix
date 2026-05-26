@@ -20,6 +20,4 @@ in
   # SSH private key example
   # "ssh-key.age".publicKeys = users;
 
-  # GitHub SSH key (for root to access private flake inputs)
-  "github-ssh-key.age".publicKeys = all;
 }
