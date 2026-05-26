@@ -147,7 +147,7 @@
     devShells.${system}.default = pkgs.mkShell {
       packages = with pkgs; [
         nil        # Nix LSP
-        nixfmt-rfc-style  # Nix formatter
+        nixfmt  # Nix formatter
         agenix.packages.${system}.default  # Secret management CLI
       ];
     };
