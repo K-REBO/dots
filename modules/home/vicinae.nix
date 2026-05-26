@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   home.packages = with pkgs; [ vicinae ];
 
@@ -7,4 +7,10 @@
     source = ../../config/vicinae/settings.json;
     force = true;
   };
+
+  # home-manager switch 後にvicinaeのGIOアプリキャッシュをリロードする
+  # （新しいdesktopエントリを認識させるため）
+  home.activation.reloadVicinae = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD systemctl --user kill -s HUP vicinae.service 2>/dev/null || true
+  '';
 }

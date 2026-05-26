@@ -251,6 +251,22 @@
         "type": "github"
       }
     },
+    "hyprselect-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779688386,
+        "narHash": "sha256-rW8NJji9O/tz6fsFbzf++hT12AUTcxVjxPbTYAq10eM=",
+        "owner": "K-REBO",
+        "repo": "hyprselect",
+        "rev": "2de592f0b4882b180d46ea45be9bad8452ea7b64",
+        "type": "github"
+      },
+      "original": {
+        "owner": "K-REBO",
+        "repo": "hyprselect",
+        "type": "github"
+      }
+    },
     "livesync-commonlib": {
       "flake": false,
       "locked": {
@@ -398,14 +414,14 @@
         "fenix": "fenix",
         "gh-grass-src": "gh-grass-src",
         "home-manager": "home-manager_2",
+        "hyprselect-src": "hyprselect-src",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
         "nur": "nur",
         "obsidian-vault-cli": "obsidian-vault-cli",
         "tp-render-src": "tp-render-src",
         "wayland-fcitx5-indicator": "wayland-fcitx5-indicator",
-        "weathr": "weathr",
-        "wmfocus-src": "wmfocus-src"
+        "weathr": "weathr"
       }
     },
     "rust-analyzer-src": {
@@ -556,22 +572,6 @@
       "original": {
         "owner": "Veirt",
         "repo": "weathr",
-        "type": "github"
-      }
-    },
-    "wmfocus-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1779083018,
-        "narHash": "sha256-6k+beGNfKnD/MwNhLGHtN4hJwwJW4puxa8+8vpwMB70=",
-        "owner": "K-REBO",
-        "repo": "wmfocus",
-        "rev": "94545be006363c307d8c18f0a3078c6a65ae4e48",
-        "type": "github"
-      },
-      "original": {
-        "owner": "K-REBO",
-        "repo": "wmfocus",
         "type": "github"
       }
     }
