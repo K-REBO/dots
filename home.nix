@@ -53,5 +53,8 @@
 
     # WinApps
     ./modules/home/winapps.nix
+
+    # Audio / DAW
+    ./modules/home/audio.nix
   ];
 }

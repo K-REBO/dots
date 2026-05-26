@@ -163,6 +163,18 @@
     zlib
     openssl
     curl
+    # VST3プラグイン用（MT-Power Drum Kit等）
+    libx11
+    libxcb
+    libxcb-util
+    libxcb-wm
+    libxcb-image
+    libxcb-cursor
+    libxkbcommon
+    glib
+    cairo
+    pango
+    fontconfig
   ];
 
 
