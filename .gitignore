@@ -31,3 +31,4 @@ Thumbs.db
 .claude/
 demo-vm.qcow2
 pkgs/mt-power-drum-kit/*.zip
+private/
