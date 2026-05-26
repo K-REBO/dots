@@ -51,7 +51,7 @@
     };
 
     dots-private = {
-      url = "github:K-REBO/dots-private";
+      url = "git+ssh://git@github.com/K-REBO/dots-private";
       flake = false;
     };
 
