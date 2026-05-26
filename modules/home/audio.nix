@@ -1,9 +1,7 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 let
-  mt-power-drum-kit = pkgs.callPackage ../../pkgs/mt-power-drum-kit {
-    src = "${inputs.dots-private}/MTPDK-2.1.5.0-VST3-64bit-Linux-FULL.zip";
-  };
+  mt-power-drum-kit = pkgs.callPackage ../../pkgs/mt-power-drum-kit {};
 in {
   home.packages = [ mt-power-drum-kit ];
 

@@ -20,19 +20,6 @@
     mode = "0600";
   };
 
-  age.secrets.github-ssh-key = {
-    file = ../../secrets/github-ssh-key.age;
-    path = "/root/.ssh/github";
-    mode = "0600";
-    owner = "root";
-  };
-
-  programs.ssh.extraConfig = ''
-    Host github.com
-      HostName github.com
-      User git
-      IdentityFile /root/.ssh/github
-  '';
 
   # ====================
   # Boot

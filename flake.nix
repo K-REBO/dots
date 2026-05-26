@@ -50,11 +50,6 @@
       flake = false;
     };
 
-    dots-private = {
-      url = "git+ssh://git@github.com/K-REBO/dots-private";
-      flake = false;
-    };
-
     gh-grass-src = {
       url = "github:koki-develop/gh-grass";
       flake = false;
