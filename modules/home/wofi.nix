@@ -16,7 +16,7 @@
       orientation = "vertical";
       content_halign = "fill";
       drun-display_generic = true;
-      icon-theme = "Papirus";
+      icon-theme = "Colloid-dark";
     };
 
     # スタイルCSS

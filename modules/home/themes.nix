@@ -21,6 +21,13 @@ let
       runHook postInstall
     '';
   };
+  colloid-with-fallbacks = pkgs.colloid-icon-theme.overrideAttrs (old: {
+    postInstall = (old.postInstall or "") + ''
+      for f in $out/share/icons/Colloid*/index.theme; do
+        sed -i 's/Inherits=hicolor,breeze/Inherits=Tela-dark,Papirus-Dark,hicolor,breeze/' "$f"
+      done
+    '';
+  });
 in
 {
   # GTK/Qt テーマ設定
@@ -35,8 +42,8 @@ in
     };
 
     iconTheme = {
-      name = "Papirus-Dark";
-      package = pkgs.papirus-icon-theme;
+      name = "Colloid-dark";
+      package = colloid-with-fallbacks;
     };
 
     cursorTheme = {
@@ -71,9 +78,10 @@ in
     # GTKテーマ
     gnome-macos-tahoe
 
-    # アイコンテーマ
+    # アイコンテーマ（Colloid → Tela → Papirus フォールバックチェーン）
+    colloid-with-fallbacks
+    pkgs.tela-icon-theme
     pkgs.papirus-icon-theme
-    # eos-qogir-icons  # EndeavourOS特有（Nixにない可能性）
     pkgs.adwaita-icon-theme
 
     # カーソルテーマ
