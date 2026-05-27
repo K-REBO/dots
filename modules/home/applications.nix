@@ -25,7 +25,15 @@
     # ============
     # 音楽制作
     # ============
-    bitwig-studio               # DAW
+    (symlinkJoin {
+      name = "bitwig-studio";
+      paths = [ bitwig-studio ];
+      buildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/bitwig-studio \
+          --prefix LD_LIBRARY_PATH : ${fontconfig.lib}/lib
+      '';
+    })
     musescore                   # 楽譜作成
 
     # ============

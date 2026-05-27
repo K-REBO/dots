@@ -11,6 +11,6 @@
   # home-manager switch 後にvicinaeのGIOアプリキャッシュをリロードする
   # （新しいdesktopエントリを認識させるため）
   home.activation.reloadVicinae = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    $DRY_RUN_CMD systemctl --user kill -s HUP vicinae.service 2>/dev/null || true
+    $DRY_RUN_CMD ${pkgs.procps}/bin/pkill -HUP vicinae 2>/dev/null || true
   '';
 }

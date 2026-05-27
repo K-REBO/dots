@@ -3,7 +3,7 @@
 let
   # stdout Broken Pipe対策: vicinaeがパイプを閉じてもクラッシュしないようにラップ
   bitwigWrapper = pkgs.writeShellScript "bitwig-studio-wrapped" ''
-    exec /etc/profiles/per-user/bido/bin/bitwig-studio >/dev/null 2>&1
+    exec uwsm app -- /etc/profiles/per-user/bido/bin/bitwig-studio
   '';
 in
 {
