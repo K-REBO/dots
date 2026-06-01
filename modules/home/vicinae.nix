@@ -16,7 +16,7 @@
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
-      ExecStart = "${pkgs.vicinae}/bin/vicinae server";
+      ExecStart = "${pkgs.vicinae}/bin/vicinae server --config %h/.config/vicinae/config.jsonc";
       Restart = "on-failure";
       RestartSec = "2s";
     };

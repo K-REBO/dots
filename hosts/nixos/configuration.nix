@@ -125,7 +125,7 @@
   # graphical-session.target を正しく activate するために必要。
   system.activationScripts.lyDefaultSession = ''
     if [ -f /etc/ly/save.txt ]; then
-      sed -i 's/^bido:.*/bido:0/' /etc/ly/save.txt
+      ${pkgs.gnused}/bin/sed -i 's/^bido:.*/bido:0/' /etc/ly/save.txt
     fi
   '';
 
