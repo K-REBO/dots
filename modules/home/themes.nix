@@ -42,7 +42,7 @@ in
     };
 
     iconTheme = {
-      name = "Colloid-dark";
+      name = "Colloid-Dark";
       package = colloid-with-fallbacks;
     };
 

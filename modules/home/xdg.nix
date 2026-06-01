@@ -3,7 +3,25 @@
 let
   # stdout Broken Pipe対策: vicinaeがパイプを閉じてもクラッシュしないようにラップ
   bitwigWrapper = pkgs.writeShellScript "bitwig-studio-wrapped" ''
+    if ! ${pkgs.procps}/bin/pgrep -f 'com.bitwig.flt.app.BitwigStudioMain' > /dev/null 2>&1; then
+      # クラッシュ後に残る /dev/shm/bitwig-posix-bido を削除しないと
+      # ランチャーが「起動中」と誤認識し IPCタイムアウト（約10分）まで待ち続ける
+      rm -rf /dev/shm/bitwig-posix-bido 2>/dev/null || true
+      rm -f "$HOME/.BitwigStudio/lock" "$HOME/.BitwigStudio/lock.pid" 2>/dev/null || true
+
+      ${pkgs.libnotify}/bin/notify-send \
+        --icon=com.bitwig.BitwigStudio \
+        --app-name="Bitwig Studio" \
+        -t 30000 \
+        "Bitwig Studio" "起動中..." &
+    fi
     exec uwsm app -- /etc/profiles/per-user/bido/bin/bitwig-studio
+  '';
+  # boot後初回起動時にworkspace 1へ飛ぶ問題の修正:
+  # vicinaeはuwsmを経由しないためHyprlandがワークスペースコンテキストを受け取れず
+  # workspace 1に配置してしまう。uwsm app -- で起動することで正常動作する。
+  firefoxWrapper = pkgs.writeShellScript "firefox-wrapped" ''
+    exec uwsm app -- firefox "$@"
   '';
 in
 {
@@ -35,6 +53,37 @@ in
 
   # 既存ファイルを上書き
   xdg.configFile."user-dirs.dirs".force = true;
+
+  # Firefoxのデスクトップエントリを上書き
+  # システムの firefox.desktop は Exec=firefox --name firefox %U のため uwsm を経由しない
+  # ~/.local/share/applications/ に置くことでシステムのものより優先される
+  home.file.".local/share/applications/firefox.desktop".text = ''
+    [Desktop Entry]
+    Actions=new-private-window;new-window;profile-manager-window
+    Categories=Network;WebBrowser
+    Exec=${firefoxWrapper} %U
+    GenericName=Web Browser
+    Icon=firefox
+    MimeType=text/html;text/xml;application/xhtml+xml;application/vnd.mozilla.xul+xml;x-scheme-handler/http;x-scheme-handler/https
+    Name=Firefox
+    StartupNotify=true
+    StartupWMClass=firefox
+    Terminal=false
+    Type=Application
+    Version=1.5
+
+    [Desktop Action new-private-window]
+    Exec=${firefoxWrapper} --private-window %U
+    Name=New Private Window
+
+    [Desktop Action new-window]
+    Exec=${firefoxWrapper} --new-window %U
+    Name=New Window
+
+    [Desktop Action profile-manager-window]
+    Exec=${firefoxWrapper} --ProfileManager
+    Name=Profile Manager
+  '';
 
   # Bitwigのデスクトップエントリを ~/.local/share/applications/ に直接配置
   # vicinae は XDG_DATA_DIRS を引き継がず ~/.nix-profile/share が見えないため

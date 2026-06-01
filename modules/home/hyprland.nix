@@ -1,6 +1,14 @@
 { config, pkgs, lib, ... }:
 
 let
+  # Bitwigのキーファイルをページキャッシュに事前ロードし、
+  # reboot後のコールドスタートを高速化する（低優先度で実行）
+  bitwigWarmup = pkgs.writeShellScript "bitwig-warmup" ''
+    renice -n 19 $$ > /dev/null 2>&1
+    find ${pkgs.bitwig-studio}/libexec -maxdepth 4 \
+      \( -name "*.jar" -o -name "BitwigStudio" -o -name "BitwigAudioEngine*" \) \
+      -print0 | xargs -0 -P2 -I{} dd if={} of=/dev/null bs=4M status=none 2>/dev/null
+  '';
 in
 
 {
@@ -32,9 +40,10 @@ in
         "~/.config/eww/scripts/bluetooth listen"
         "~/.config/eww/scripts/battery listen"
         "~/.config/eww/scripts/ime listen"
-        "${pkgs.vicinae}/bin/vicinae server"
         "${pkgs.hypridle}/bin/hypridle"
         "${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator"
+        # reboot後のBitwig起動を高速化するためキーファイルをページキャッシュに読み込む
+        "${bitwigWarmup}"
       ];
 
       env = [
@@ -237,6 +246,19 @@ in
         name = suppress-maximize-events
         match:class = .*
         suppress_event = maximize
+      }
+
+      windowrule {
+        name = bitwig-splash-pin
+        match:class = ^show-splash-gtk$
+        pin = true
+        float = true
+      }
+
+      windowrule {
+        name = nautilus-float
+        match:class = ^org\.gnome\.Nautilus$
+        float = true
       }
 
       windowrule {

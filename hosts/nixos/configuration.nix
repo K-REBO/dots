@@ -121,6 +121,14 @@
     };
   };
 
+  # ly が hyprland-uwsm.desktop（index 0）を選択するように固定する。
+  # graphical-session.target を正しく activate するために必要。
+  system.activationScripts.lyDefaultSession = ''
+    if [ -f /etc/ly/save.txt ]; then
+      sed -i 's/^bido:.*/bido:0/' /etc/ly/save.txt
+    fi
+  '';
+
   # ====================
   # Audio (PipeWire)
   # ====================
