@@ -52,7 +52,6 @@
     # ============
     # ファイルマネージャ
     # ============
-    kdePackages.dolphin         # KDEファイルマネージャ
     nautilus                    # GNOMEファイルマネージャ
     gvfs                        # Nautilus用仮想ファイルシステム
 
