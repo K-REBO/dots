@@ -33,14 +33,18 @@ in
         "systemctl --user restart emacs.service"
         "${pkgs.awww}/bin/awww-daemon"
         "${pkgs.awww}/bin/awww img $HOME/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg"
-        "${config.programs.eww.package}/bin/eww open bar"
-        "~/.config/eww/scripts/volume listen"
-        "~/.config/eww/scripts/micmute sync"
-        "~/.config/eww/scripts/wifi listen"
-        "~/.config/eww/scripts/bluetooth listen"
-        "~/.config/eww/scripts/battery listen"
-        "~/.config/eww/scripts/ime listen"
-        "~/.config/hypr/scripts/start-hypridle.sh"
+        "${pkgs.quickshell}/bin/quickshell"
+
+        # eww は quickshell に移行済み（復元時はコメントを外す）
+        # "${config.programs.eww.package}/bin/eww open bar"
+        # "~/.config/eww/scripts/volume listen"
+        # "~/.config/eww/scripts/micmute sync"
+        # "~/.config/eww/scripts/wifi listen"
+        # "~/.config/eww/scripts/bluetooth listen"
+        # "~/.config/eww/scripts/battery listen"
+        # "~/.config/eww/scripts/ime listen"
+
+        "${pkgs.hypridle}/bin/hypridle"
         "${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator"
         # reboot後のBitwig起動を高速化するためキーファイルをページキャッシュに読み込む
         "${bitwigWarmup}"
