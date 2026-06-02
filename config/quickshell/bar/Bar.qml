@@ -64,7 +64,34 @@ PanelWindow {
 
         Item { implicitWidth: 4 }
 
-        // ── 中央スペーサー ─────────────────────────────────────────
+        // ── 中央スペーサー（左） ───────────────────────────────────
+        Item { Layout.fillWidth: true }
+
+        // ── FileDrop ───────────────────────────────────────────────
+        Rectangle {
+            implicitHeight: Theme.pillH
+            implicitWidth:  _fd.implicitWidth + 20
+            radius:         Theme.radiusMd
+            color:          _fd.containsDrag
+                            ? Qt.rgba(0.00, 0.83, 1.00, 0.12)
+                            : Theme.bgLight
+            border.color:   Theme.cyan
+            border.width:   _fd.containsDrag ? 1 : 0
+            Behavior on color        { ColorAnimation  { duration: Theme.animFast } }
+            Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
+
+            HoverHandler {
+                id: _fdHov
+                onHoveredChanged: _fd.expanded = hovered
+            }
+
+            FileDrop {
+                id:               _fd
+                anchors.centerIn: parent
+            }
+        }
+
+        // ── 中央スペーサー（右） ───────────────────────────────────
         Item { Layout.fillWidth: true }
 
         // ── 右: ウィジェット群 ─────────────────────────────────────

@@ -74,6 +74,8 @@
     # Obsidian Templater CLIレンダラー
     tp-render
 
+	# trashy(rmを使わないように!)
+	trashy
 
   ] ++ [
     # Nix関連 (flake inputsから取得して競合を回避)

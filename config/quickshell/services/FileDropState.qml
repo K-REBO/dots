@@ -1,0 +1,84 @@
+pragma Singleton
+import QtQuick
+import Quickshell.Io
+
+QtObject {
+    id: root
+
+    property bool open: false
+    property var selectedIndices: []
+    property ListModel files: ListModel {}
+    readonly property int count: files.count
+
+    function toggle() { open = !open }
+    function close()  { open = false }
+
+    function clearSelection() { selectedIndices = [] }
+
+    function toggleSelect(idx) {
+        let arr = selectedIndices.slice()
+        const pos = arr.indexOf(idx)
+        if (pos >= 0) arr.splice(pos, 1)
+        else arr.push(idx)
+        selectedIndices = arr
+    }
+
+    function isSelected(idx) {
+        return selectedIndices.indexOf(idx) >= 0
+    }
+
+    // ── ファイル操作キュー ────────────────────────────────────────
+
+    property var _queue: []
+
+    property Process _proc: Process {
+        onRunningChanged: {
+            if (!running && root._queue.length > 0) {
+                command = root._queue.shift()
+                running = true
+            }
+        }
+    }
+
+    function _enqueue(cmd) {
+        if (_proc.running) {
+            _queue.push(cmd)
+        } else {
+            _proc.command = cmd
+            _proc.running = true
+        }
+    }
+
+    Component.onCompleted: {
+        _enqueue(["bash", "-c", "mkdir -p /tmp/drag-drop/storage /tmp/drag-drop/trash"])
+    }
+
+    function addFile(srcPath) {
+        const name = srcPath.replace(/^.*\//, "")
+        const dest = "/tmp/drag-drop/storage/" + name
+        _enqueue(["cp", "--", srcPath, dest])
+        files.append({ name: name, path: dest })
+    }
+
+    function trashFile(idx) {
+        if (idx < 0 || idx >= files.count) return
+        const item = files.get(idx)
+        _enqueue(["mv", "--", item.path, "/tmp/drag-drop/trash/" + item.name])
+        files.remove(idx)
+        selectedIndices = selectedIndices
+            .filter(i => i !== idx)
+            .map(i => i > idx ? i - 1 : i)
+    }
+
+    function removeSelected() {
+        const sorted = selectedIndices.slice().sort((a, b) => b - a)
+        for (const i of sorted) {
+            if (i >= 0 && i < files.count) {
+                const item = files.get(i)
+                _enqueue(["mv", "--", item.path, "/tmp/drag-drop/trash/" + item.name])
+                files.remove(i)
+            }
+        }
+        clearSelection()
+    }
+}

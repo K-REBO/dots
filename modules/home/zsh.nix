@@ -23,6 +23,9 @@
       lla = "eza -lh@ma --time-style=iso";
       lal = "eza -lh@ma --time-style=iso";
 
+	  # mv
+	  mv = "mv -I";
+
       # Other tools
       #z = "zoxide";
       dust = "dust -r";
@@ -40,6 +43,9 @@
 
       # wget without history file
       wget = "wget --no-hsts";
+
+	  # trashy(alternative of rm and trash-cli)
+	  t = "trash";
 
       # claude-codeはnative-installerを使用
 
