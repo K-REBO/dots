@@ -6,7 +6,6 @@ import Quickshell.Io
 RowLayout {
     id: root
     spacing: Theme.paddingSm
-    visible: recording
 
     property bool   recording: false
     property string elapsed:   ""

@@ -20,38 +20,40 @@ PanelWindow {
     RowLayout {
         anchors {
             fill:         parent
-            leftMargin:   10
-            rightMargin:  10
-            topMargin:    5
-            bottomMargin: 5
+            leftMargin:   14
+            rightMargin:  14
+            topMargin:    4
+            bottomMargin: 4
         }
         spacing: Theme.gap
 
         // ── 左: パワーメニュー ─────────────────────────────────────
         Rectangle {
-            implicitHeight: parent.height
-            implicitWidth:  _pwr.implicitWidth + 24
-            radius:         Theme.radiusWs
-            color:          Theme.bgPillCyan
-            border.color:   Qt.rgba(0.00, 0.83, 1.00, 0.35)
-            border.width:   1
+            implicitHeight: Theme.pillH
+            implicitWidth:  _pm.implicitWidth + 28
+            radius:         Theme.radiusMd
+            color:          _pmHov.hovered ? Theme.bgHover : Theme.bgLight
+            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+
+            HoverHandler {
+                id: _pmHov
+                onHoveredChanged: _pm.expanded = hovered
+            }
 
             PowerMenu {
-                id:              _pwr
+                id:               _pm
                 anchors.centerIn: parent
             }
         }
 
-        Item { implicitWidth: 8 }
+        Item { implicitWidth: 4 }
 
         // ── ワークスペース ─────────────────────────────────────────
         Rectangle {
-            implicitHeight: parent.height
-            implicitWidth:  _ws.implicitWidth + 16
-            radius:         Theme.radiusWs
+            implicitHeight: Theme.pillH
+            implicitWidth:  _ws.implicitWidth + 20
+            radius:         Theme.radiusMd
             color:          Theme.bgLight
-            border.color:   Theme.border
-            border.width:   1
 
             Workspaces {
                 id:              _ws
@@ -65,23 +67,30 @@ PanelWindow {
         // ── 中央スペーサー ─────────────────────────────────────────
         Item { Layout.fillWidth: true }
 
-        Item { implicitWidth: 4 }
-
         // ── 右: ウィジェット群 ─────────────────────────────────────
         RowLayout {
             spacing: Theme.gap
 
-            // Taildrop（自己完結コンポーネント）
-            Taildrop {}
+            // Taildrop
+            Rectangle {
+                implicitHeight: Theme.pillH
+                implicitWidth:  _tdrop.implicitWidth + 20
+                radius:         Theme.radiusWs
+                color:          Theme.bgLight
+                visible:        _tdrop.active
+
+                Taildrop {
+                    id:               _tdrop
+                    anchors.centerIn: parent
+                }
+            }
 
             // 音量
             Rectangle {
-                implicitHeight: parent.height
+                implicitHeight: Theme.pillH
                 implicitWidth:  _vol.implicitWidth + 20
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
-                border.color:   Theme.border
-                border.width:   1
 
                 Volume {
                     id:              _vol
@@ -91,12 +100,10 @@ PanelWindow {
 
             // WiFi
             Rectangle {
-                implicitHeight: parent.height
+                implicitHeight: Theme.pillH
                 implicitWidth:  _net.implicitWidth + 20
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
-                border.color:   Theme.border
-                border.width:   1
 
                 Network {
                     id:              _net
@@ -106,12 +113,10 @@ PanelWindow {
 
             // Bluetooth
             Rectangle {
-                implicitHeight: parent.height
+                implicitHeight: Theme.pillH
                 implicitWidth:  _bt.implicitWidth + 20
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
-                border.color:   Theme.border
-                border.width:   1
 
                 Bluetooth {
                     id:              _bt
@@ -119,16 +124,15 @@ PanelWindow {
                 }
             }
 
-            // バッテリー
+            // バッテリー（充電中のみ eww 同様に赤ボーダー）
             Rectangle {
-                implicitHeight: parent.height
+                implicitHeight: Theme.pillH
                 implicitWidth:  _bat.implicitWidth + 20
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
-                border.color:   BatteryService.status === "Charging"
-                                ? Theme.green : Theme.border
-                border.width:   1
-                Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
+                border.color:   Theme.red
+                border.width:   BatteryService.acOnline ? 2 : 0
+                Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
 
                 Battery {
                     id:              _bat
@@ -141,12 +145,10 @@ PanelWindow {
 
             // スリープタイム
             Rectangle {
-                implicitHeight: parent.height
+                implicitHeight: Theme.pillH
                 implicitWidth:  _sleep.implicitWidth + 20
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
-                border.color:   Theme.border
-                border.width:   1
 
                 SleepTime {
                     id:              _sleep
@@ -156,12 +158,10 @@ PanelWindow {
 
             // 輝度
             Rectangle {
-                implicitHeight: parent.height
+                implicitHeight: Theme.pillH
                 implicitWidth:  _bri.implicitWidth + 20
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
-                border.color:   Theme.border
-                border.width:   1
 
                 Brightness {
                     id:              _bri
@@ -169,20 +169,29 @@ PanelWindow {
                 }
             }
 
-            // Recorder（自己完結コンポーネント）
-            Recorder {}
-
-            // 日時（青アクセントピル）
+            // Recorder
             Rectangle {
-                implicitHeight: parent.height
-                implicitWidth:  _clk.implicitWidth + 22
+                implicitHeight: Theme.pillH
+                implicitWidth:  _rec.implicitWidth + 20
                 radius:         Theme.radiusWs
-                color:          Theme.bgPillBlue
-                border.color:   CalendarState.open
-                                ? Qt.rgba(0.00, 0.83, 1.00, 0.50)
-                                : Qt.rgba(0.30, 0.60, 1.00, 0.30)
-                border.width:   1
-                Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
+                color:          Theme.bgLight
+                visible:        _rec.recording
+
+                Recorder {
+                    id:               _rec
+                    anchors.centerIn: parent
+                }
+            }
+
+            // 日時（カレンダー開時のみ枠を表示）
+            Rectangle {
+                implicitHeight: Theme.pillH
+                implicitWidth:  _clk.implicitWidth + 28
+                radius:         Theme.radiusMd
+                color:          Theme.bgLight
+                border.color:   Theme.cyan
+                border.width:   CalendarState.open ? 1 : 0
+                Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
 
                 Clock {
                     id:              _clk

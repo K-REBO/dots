@@ -8,6 +8,7 @@ QtObject {
 
     property int    percent:  100
     property string status:   "Full"
+    property bool   acOnline: false
     property string icon:     "󰁹"
     property string timeLeft: ""
 
@@ -28,17 +29,19 @@ QtObject {
                 en=$(cat "$BAT/energy_now" 2>/dev/null || echo 0)
                 pw=$(cat "$BAT/power_now" 2>/dev/null || echo 0)
                 ef=$(cat "$BAT/energy_full" 2>/dev/null || echo 1)
-                echo "$cap|$stat|$en|$pw|$ef"
+                ac=$(cat /sys/class/power_supply/AC/online 2>/dev/null || echo 0)
+                echo "$cap|$stat|$en|$pw|$ef|$ac"
             else
-                echo "100|Full|0|0|1"
+                echo "100|Full|0|0|1|0"
             fi
         `]
         running: false
         stdout: SplitParser {
             onRead: line => {
                 const p = line.split("|")
-                root.percent = parseInt(p[0]) || 100
-                root.status  = (p[1] || "Full").trim()
+                root.percent  = parseInt(p[0]) || 100
+                root.status   = (p[1] || "Full").trim()
+                root.acOnline = (parseInt(p[5]) === 1)
                 const en = parseFloat(p[2]) || 0
                 const pw = parseFloat(p[3]) || 0
                 const ef = parseFloat(p[4]) || 1

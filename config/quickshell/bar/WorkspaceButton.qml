@@ -20,19 +20,21 @@ Rectangle {
         const tls = myToplevels
         return Array.from(tls).map(tl => {
             const id = (tl.wayland?.appId ?? "").toLowerCase()
-            if (id.includes("firefox"))                                                      return ""
-            if (id.includes("alacritty"))                                                    return ""
-            if (id.includes("spotify"))                                                      return ""
-            if (id.includes("code") || id.includes("vscodium"))                             return ""
-            if (id.includes("discord"))                                                      return ""
-            if (id.includes("chromium") || id.includes("chrome"))                           return ""
-            if (id.includes("thunar") || id.includes("nautilus") || id.includes("dolphin")) return ""
-            if (id.includes("mpv"))                                                          return ""
-            return ""
+            if (id.includes("firefox"))                                                                   return "󰈹"
+            if (id.includes("alacritty"))                                                                 return "󰆍"
+            if (id.includes("spotify"))                                                                   return "󰓇"
+            if (id.includes("code") || id.includes("vscodium"))                                          return "󰨞"
+            if (id.includes("discord"))                                                                   return "󰙯"
+            if (id.includes("slack"))                                                                     return "󰒱"
+            if (id.includes("telegram"))                                                                  return "󰔁"
+            if (id.includes("chromium") || id.includes("chrome"))                                        return "󰊯"
+            if (id.includes("thunar") || id.includes("nautilus") || id.includes("dolphin") || id.includes("pcmanfm")) return "󰉋"
+            if (id.includes("mpv"))                                                                       return "󰕧"
+            return "󰀏"
         }).join(" ")
     }
 
-    implicitHeight: 24
+    implicitHeight: Theme.pillH - 6
     implicitWidth:  _wsRow.implicitWidth + 14
 
     radius: Theme.radiusSm
@@ -66,7 +68,7 @@ Rectangle {
         }
 
         Text {
-            text:           "[" + root.iconsStr + "]"
+            text:           "[" + root.iconsStr + " ]"
             visible:        root.occupied
             font.family:    Theme.iconFontFamily
             font.pixelSize: Theme.fontSm

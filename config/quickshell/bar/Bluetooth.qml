@@ -16,11 +16,7 @@ RowLayout {
         text:           BluetoothService.icon
         font.family:    Theme.fontFamily
         font.pixelSize: Theme.fontMd
-        color: {
-            if (!BluetoothService.powered)        return Theme.fgDim
-            if (BluetoothService.connectedDevice) return Theme.blue
-            return Theme.fg
-        }
+        color: BluetoothService.powered ? Theme.red : Theme.fgDim
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
         MouseArea {

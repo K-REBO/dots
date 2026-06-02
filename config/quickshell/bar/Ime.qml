@@ -4,33 +4,22 @@ import "../services"
 
 Rectangle {
     id: root
-    implicitWidth:  28
-    implicitHeight: 24
-    radius:         Theme.radiusSm
-
-    color: ImeService.mode === "あ"
-        ? Qt.rgba(0, 0.67, 1, 0.18)
-        : Qt.rgba(1, 1, 1, 0.05)
-
-    border.color: ImeService.mode === "あ" ? Theme.blue : Theme.border
-    border.width: 1
-
-    Behavior on color       { ColorAnimation { duration: Theme.animFast } }
-    Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
+    implicitWidth:  Theme.pillH
+    implicitHeight: Theme.pillH
+    radius:         Theme.radiusWs
+    color:          Theme.bgLight
 
     Text {
         anchors.centerIn: parent
-        text:             ImeService.icon
+        text:             ImeService.mode
         font.family:      Theme.fontFamily
         font.pixelSize:   Theme.fontSm
-        font.bold:        ImeService.mode === "あ"
-        color:            ImeService.mode === "あ" ? Theme.blue : Theme.fgDark
-        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+        font.bold:        true
+        color:            Theme.yellow
     }
 
     HoverHandler { id: hov }
 
-    // ホバーハイライト
     Rectangle {
         anchors.fill: parent
         radius:       parent.radius

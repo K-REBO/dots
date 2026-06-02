@@ -14,11 +14,11 @@ RowLayout {
         onHoveredChanged: root.expanded = hov.hovered
     }
 
-    // zzzアイコン
+    // スリープアイコン (eww dpms-icon と同じ)
     Text {
         text:           "󰒲"
-        font.family:    Theme.fontFamily
-        font.pixelSize: Theme.fontMd
+        font.family:    Theme.iconFontFamily
+        font.pixelSize: Theme.fontSm
         color:          hov.hovered ? Theme.yellow : Theme.fgDark
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
     }
@@ -28,13 +28,14 @@ RowLayout {
         text:           SleepTimeService.label
         font.family:    Theme.fontFamily
         font.pixelSize: Theme.fontSm
-        color:          Theme.fgSub
+        color:          Theme.yellow
     }
 
     // ホバーで展開するメニュー
     Item {
         id: expandArea
-        height: parent.height
+        enabled: expanded
+        height: Theme.pillH
         implicitWidth:  expanded ? menuRow.implicitWidth + Theme.paddingSm : 0
         clip:           true
         Behavior on implicitWidth {

@@ -22,7 +22,7 @@ QtObject {
 
     property var _proc: Process {
         command: ["bash", "-c", `
-            info=$(nmcli -t -f SSID,SIGNAL,ACTIVE device wifi 2>/dev/null | grep ':yes$' | head -1)
+            info=$(LANG=C nmcli -t -f SSID,SIGNAL,ACTIVE device wifi 2>/dev/null | grep ':yes$' | head -1)
             name=$(echo "$info" | cut -d: -f1)
             sig=$(echo "$info"  | cut -d: -f2)
             ip=$(ip -4 addr show | awk '/inet / && !/127\.0\.0\.1/{print $2}' | cut -d/ -f1 | head -1)

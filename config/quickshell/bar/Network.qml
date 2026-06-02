@@ -15,7 +15,7 @@ RowLayout {
         text:           NetworkService.icon
         font.family:    Theme.fontFamily
         font.pixelSize: Theme.fontMd
-        color:          NetworkService.ssid ? Theme.fg : Theme.fgDim
+        color:          "#e76fec"
         Behavior on color { ColorAnimation { duration: Theme.animFast } }
     }
 
@@ -23,7 +23,7 @@ RowLayout {
         text:           NetworkService.ssid || "──"
         font.family:    Theme.fontFamily
         font.pixelSize: Theme.fontSm
-        color:          NetworkService.ssid ? Theme.fg : Theme.fgDim
+        color:          "#e76fec"
         Layout.maximumWidth: 90
         elide:          Text.ElideRight
     }

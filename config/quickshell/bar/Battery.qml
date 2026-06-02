@@ -14,7 +14,7 @@ RowLayout {
             if (BatteryService.status === "Charging") return Theme.green
             if (BatteryService.percent <= 15)         return Theme.red
             if (BatteryService.percent <= 35)         return Theme.yellow
-            return Theme.fg
+            return Theme.blue
         }
         Behavior on color { ColorAnimation { duration: 500 } }
     }
@@ -23,7 +23,12 @@ RowLayout {
         text:           BatteryService.percent + "%"
         font.family:    Theme.fontFamily
         font.pixelSize: Theme.fontSm
-        color:          BatteryService.percent <= 15 ? Theme.red : Theme.fgDark
+        color: {
+            if (BatteryService.status === "Charging") return Theme.green
+            if (BatteryService.percent <= 15)         return Theme.red
+            if (BatteryService.percent <= 35)         return Theme.yellow
+            return Theme.blue
+        }
         Behavior on color { ColorAnimation { duration: 500 } }
     }
 

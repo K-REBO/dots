@@ -5,17 +5,15 @@ import Quickshell.Io
 
 RowLayout {
     id: root
-    spacing: Theme.paddingSm
-    visible: active
+    spacing: Theme.paddingXs
 
     property bool   active:   false
     property string filename: ""
-    property string status:   ""
     property string size:     ""
 
     property var _proc: Process {
         command: ["bash", "-c", `
-            journalctl --user -u taildrop.service -f -n 0 2>/dev/null | \
+            stdbuf -oL journalctl --user -u taildrop.service -f -n 0 2>/dev/null | \
             while IFS= read -r line; do
                 if echo "$line" | grep -q 'wrote '; then
                     name=$(echo "$line" | sed "s/.*wrote \\([^ ]*\\) as.*/\\1/")
@@ -27,18 +25,17 @@ RowLayout {
                         elif [ "$bytes" -ge 1024 ];       then sz=$(awk "BEGIN{printf \"%.1fKB\",$bytes/1024}")
                         else sz="\${bytes}B"; fi
                     fi
-                    printf '1|%s|受信完了|%s\n' "$name" "$sz"
+                    printf '1|%s|%s\n' "$name" "$sz"
                 fi
             done
         `]
         running: true
         stdout: SplitParser {
             onRead: line => {
-                const p    = line.split("|")
+                const p     = line.split("|")
                 root.active   = (p[0] === "1")
                 root.filename = p[1] || ""
-                root.status   = p[2] || ""
-                root.size     = p[3] || ""
+                root.size     = p[2] || ""
                 hideTimer.restart()
             }
         }
@@ -50,30 +47,30 @@ RowLayout {
         onTriggered: root.active = false
     }
 
+    // アイコン
     Text {
         text:           "󰛶"
-        font.family:    Theme.fontFamily
+        font.family:    Theme.iconFontFamily
         font.pixelSize: Theme.fontMd
         color:          Theme.cyan
     }
 
-    Column {
-        spacing: 1
+    // ファイル名（省略あり）
+    Text {
+        text:           root.filename
+        font.family:    Theme.fontFamily
+        font.pixelSize: Theme.fontSm
+        color:          Theme.fg
+        width:          80
+        elide:          Text.ElideRight
+    }
 
-        Text {
-            text:           root.filename
-            font.family:    Theme.fontFamily
-            font.pixelSize: Theme.fontSm - 1
-            color:          Theme.fg
-            width:          90
-            elide:          Text.ElideRight
-        }
-
-        Text {
-            text:           root.status + (root.size ? " " + root.size : "")
-            font.family:    Theme.fontFamily
-            font.pixelSize: Theme.fontSm - 2
-            color:          Theme.fgDark
-        }
+    // サイズ
+    Text {
+        text:           root.size
+        font.family:    Theme.fontFamily
+        font.pixelSize: Theme.fontSm
+        color:          Theme.fgDark
+        visible:        root.size !== ""
     }
 }
