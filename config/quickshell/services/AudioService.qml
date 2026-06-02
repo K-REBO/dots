@@ -10,14 +10,16 @@ QtObject {
     property bool muted:  false
     property string icon: "󰕾"
 
+    property bool micMuted: false
+
     function updateIcon() {
-        if (muted)          icon = "󰖁"
+        if (muted)             icon = "󰖁"
         else if (volume >= 70) icon = "󰕾"
         else if (volume >= 30) icon = "󰖀"
         else                   icon = "󰕿"
     }
 
-    // ── One-shot volume fetch ────────────────────────────────────
+    // ── スピーカー音量取得 ────────────────────────────────────────
     property var _fetch: Process {
         command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@"]
         running: false
@@ -36,20 +38,46 @@ QtObject {
 
     function refresh() { _fetch.running = true }
 
-    // ── Monitor via pactl subscribe ──────────────────────────────
-    property var _sub: Process {
-        command: ["bash", "-c", "pactl subscribe 2>/dev/null | grep --line-buffered 'sink'"]
-        running: true
-        stdout: SplitParser { onRead: _ => root.refresh() }
+    // ── マイクミュート状態取得 ────────────────────────────────────
+    property var _micFetch: Process {
+        command: ["bash", "-c", "wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null"]
+        running: false
+        stdout: SplitParser {
+            onRead: line => {
+                root.micMuted = line.includes("[MUTED]")
+                root._micFetch.running = false
+                // ThinkPad マイクミュート LED 同期
+                root._ledSync.running = true
+            }
+        }
     }
 
-    // ── Fallback timer ───────────────────────────────────────────
+    function refreshMic() { _micFetch.running = true }
+
+    property var _ledSync: Process {
+        command: ["bash", "-c",
+            "(wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null | grep -q MUTED && echo 1 || echo 0) > /sys/class/leds/platform::micmute/brightness 2>/dev/null || true"]
+        running: false
+    }
+
+    // ── pactl subscribe でスピーカー／マイク変化を監視 ───────────
+    property var _sub: Process {
+        command: ["bash", "-c", "pactl subscribe 2>/dev/null | grep --line-buffered 'sink\\|source'"]
+        running: true
+        stdout: SplitParser {
+            onRead: line => {
+                if (line.includes("sink"))   root.refresh()
+                if (line.includes("source")) root.refreshMic()
+            }
+        }
+    }
+
     property var _timer: Timer {
         interval: 5000; repeat: true; running: true
-        onTriggered: root.refresh()
+        onTriggered: { root.refresh(); root.refreshMic() }
     }
 
-    // ── Control ──────────────────────────────────────────────────
+    // ── スピーカー制御 ───────────────────────────────────────────
     function setVolume(pct) {
         _setVol.command = ["bash", "-c",
             "wpctl set-volume @DEFAULT_AUDIO_SINK@ " + Math.max(0, Math.min(100, pct)) + "%"]
@@ -68,5 +96,5 @@ QtObject {
         running: false; onExited: root.refresh()
     }
 
-    Component.onCompleted: refresh()
+    Component.onCompleted: { refresh(); refreshMic() }
 }

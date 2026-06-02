@@ -218,7 +218,7 @@ in
       ];
 
       bindl = [
-        ",XF86AudioMicMute, exec, $HOME/.config/eww/scripts/micmute"
+        ",XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && (wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null | grep -q MUTED && echo 1 || echo 0) > /sys/class/leds/platform::micmute/brightness 2>/dev/null || true"
         ", XF86AudioNext, exec, ${pkgs.playerctl}/bin/playerctl next"
         ", XF86AudioPause, exec, ${pkgs.playerctl}/bin/playerctl play-pause"
         ", XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause"
