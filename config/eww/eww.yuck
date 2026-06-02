@@ -10,6 +10,7 @@
 (defvar brightness-reveal false)
 (defvar wifi-reveal false)
 (defvar battery-reveal false)
+(defvar dpms-reveal false)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                            Widgets                                    ;;
@@ -166,6 +167,37 @@
     ime-icon))
 (defpoll ime-icon :interval "999999s" "$HOME/.config/eww/scripts/ime icon")
 
+;; DPMS Timeout (画面スリープ延長) ;;
+(defpoll dpms-label :interval "999999s"
+  "$HOME/.config/eww/scripts/dpms-timeout label")
+
+(defwidget dpms-timeout []
+  (eventbox :onhover "${EWW_CMD} update dpms-reveal=true"
+            :onhoverlost "${EWW_CMD} update dpms-reveal=false"
+    (box :class "dpms-widget ${dpms-label != '5分' ? 'dpms-active' : ''}"
+         :space-evenly false :spacing 6
+      (label :class "dpms-icon" :text "󰒲")
+      (revealer :transition "slideright" :reveal dpms-reveal :duration "300ms"
+        (box :space-evenly false :spacing 6
+          (label :class "dpms-separator" :text "|")
+          (button :class "dpms-btn ${dpms-label == '5分' ? 'dpms-btn-on' : ''}"
+                  :onclick "$HOME/.config/eww/scripts/dpms-timeout set 300"
+            (label :text "5分"))
+          (button :class "dpms-btn ${dpms-label == '15分' ? 'dpms-btn-on' : ''}"
+                  :onclick "$HOME/.config/eww/scripts/dpms-timeout set 900"
+            (label :text "15分"))
+          (button :class "dpms-btn ${dpms-label == '30分' ? 'dpms-btn-on' : ''}"
+                  :onclick "$HOME/.config/eww/scripts/dpms-timeout set 1800"
+            (label :text "30分"))
+          (button :class "dpms-btn ${dpms-label == '1時間' ? 'dpms-btn-on' : ''}"
+                  :onclick "$HOME/.config/eww/scripts/dpms-timeout set 3600"
+            (label :text "1時間"))
+          (button :class "dpms-btn ${dpms-label == '無効' ? 'dpms-btn-on dpms-btn-off' : ''}"
+                  :onclick "$HOME/.config/eww/scripts/dpms-timeout set 0"
+            (label :text "無効"))
+          ))
+      (label :class "dpms-current-label" :text dpms-label))))
+
 ;; Brightness ;;
 (defwidget brightness []
   (eventbox :onhover "${EWW_CMD} update brightness-reveal=true"
@@ -255,6 +287,7 @@
     (bluetooth)
     (battery)
     (ime)
+    (dpms-timeout)
     (brightness)
     (recorder)
     (datetime)))
