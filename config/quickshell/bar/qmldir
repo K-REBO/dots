@@ -1,7 +1,18 @@
 module QuickshellBar
-Bar              1.0 Bar.qml
-Pill             1.0 Pill.qml
-Recorder         1.0 Recorder.qml
-Taildrop         1.0 Taildrop.qml
-Workspaces       1.0 Workspaces.qml
-WorkspaceButton  1.0 WorkspaceButton.qml
+ActiveWindow    1.0 ActiveWindow.qml
+Calendar        1.0 Calendar.qml
+Bar             1.0 Bar.qml
+Battery         1.0 Battery.qml
+Bluetooth       1.0 Bluetooth.qml
+Brightness      1.0 Brightness.qml
+Clock           1.0 Clock.qml
+Ime             1.0 Ime.qml
+Network         1.0 Network.qml
+Pill            1.0 Pill.qml
+PowerMenu       1.0 PowerMenu.qml
+Recorder        1.0 Recorder.qml
+SleepTime       1.0 SleepTime.qml
+Taildrop        1.0 Taildrop.qml
+Volume          1.0 Volume.qml
+WorkspaceButton 1.0 WorkspaceButton.qml
+Workspaces      1.0 Workspaces.qml

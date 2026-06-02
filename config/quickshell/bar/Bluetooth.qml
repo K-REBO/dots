@@ -7,12 +7,17 @@ RowLayout {
     id: root
     spacing: Theme.paddingXs
 
+    property bool hovered: false
+
+    HoverHandler { onHoveredChanged: root.hovered = hovered }
+
+    // アイコン（クリックで電源トグル）
     Text {
         text:           BluetoothService.icon
         font.family:    Theme.fontFamily
         font.pixelSize: Theme.fontMd
         color: {
-            if (!BluetoothService.powered)       return Theme.fgDim
+            if (!BluetoothService.powered)        return Theme.fgDim
             if (BluetoothService.connectedDevice) return Theme.blue
             return Theme.fg
         }
@@ -25,13 +30,24 @@ RowLayout {
         }
     }
 
-    Text {
-        visible:        BluetoothService.connectedDevice !== ""
-        text:           BluetoothService.connectedDevice
-        font.family:    Theme.fontFamily
-        font.pixelSize: Theme.fontSm
-        color:          Theme.fgDark
-        Layout.maximumWidth: 80
-        elide:          Text.ElideRight
+    // ホバー時のみ接続デバイス名を展開
+    Item {
+        implicitHeight: deviceText.implicitHeight
+        implicitWidth:  (root.hovered && BluetoothService.connectedDevice !== "")
+                        ? deviceText.implicitWidth : 0
+        clip:           true
+        Behavior on implicitWidth {
+            NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
+        }
+
+        Text {
+            id:             deviceText
+            text:           BluetoothService.connectedDevice
+            font.family:    Theme.fontFamily
+            font.pixelSize: Theme.fontSm
+            color:          Theme.fgDark
+            opacity:        root.hovered ? 1 : 0
+            Behavior on opacity { NumberAnimation { duration: Theme.animNormal } }
+        }
     }
 }

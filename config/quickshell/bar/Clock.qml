@@ -1,17 +1,12 @@
 import QtQuick
 import QtQuick.Layouts
 import ".."
+import "../services"
 import Quickshell
 
 RowLayout {
     id: root
     spacing: Theme.paddingSm
-
-    // カレンダーポップアップ表示フラグ（Barから参照される）
-    property bool calendarOpen: false
-
-    // Barから参照できるよう公開
-    readonly property SystemClock sysClock: _clock
 
     SystemClock {
         id: _clock
@@ -22,7 +17,7 @@ RowLayout {
         cursorShape:    Qt.PointingHandCursor
         implicitWidth:  _row.implicitWidth
         implicitHeight: _row.implicitHeight
-        onClicked:      root.calendarOpen = !root.calendarOpen
+        onClicked:      CalendarState.toggle()
 
         RowLayout {
             id: _row
@@ -32,7 +27,8 @@ RowLayout {
                 text:           ""
                 font.family:    Theme.fontFamily
                 font.pixelSize: Theme.fontMd
-                color:          Theme.fgDark
+                color:          CalendarState.open ? Theme.cyan : Theme.fgDark
+                Behavior on color { ColorAnimation { duration: Theme.animFast } }
             }
 
             Text {
