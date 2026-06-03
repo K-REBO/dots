@@ -709,8 +709,8 @@
       '--help[Print help information (use `--help` for more detail)]' \
       '-V[Print version information]' \
       '--version[Print version information]' \
-      ":: :_trash_commands" \
-      "*::: :->trashy" \
+      ': :_trash_commands' \
+      '*::: :->trashy' \
       && ret=0
           case $state in
           (trashy)
@@ -824,7 +824,7 @@
       ;;
                   (help)
       _arguments "''${_arguments_options[@]}" \
-      ":: :_trash__help_commands" \
+      ": :_trash__help_commands" \
       "*::: :->help" \
       && ret=0
           case $state in
