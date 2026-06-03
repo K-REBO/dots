@@ -13,6 +13,7 @@ QtObject {
     readonly property color border:    Qt.rgba(1,    1,    1,    0.12)
     readonly property color borderFoc: Qt.rgba(1,    1,    1,    0.22)
     readonly property color bgDark:    Qt.rgba(0.04, 0.04, 0.07, 0.96)
+    readonly property color bgPanel:   Qt.rgba(0.06, 0.06, 0.14, 0.96)
 
     // Accent pill backgrounds
     readonly property color bgPillCyan:    Qt.rgba(0.00, 0.83, 1.00, 0.12)

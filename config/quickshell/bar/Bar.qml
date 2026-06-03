@@ -184,7 +184,7 @@ PanelWindow {
                 }
             }
 
-            // 日時（カレンダー開時のみ枠を表示）
+            // 日時
             Rectangle {
                 implicitHeight: Theme.pillH
                 implicitWidth:  _clk.implicitWidth + 28
@@ -193,9 +193,10 @@ PanelWindow {
                 border.color:   Theme.cyan
                 border.width:   CalendarState.open ? 1 : 0
                 Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
+                Binding { target: CalendarState; property: "clockPillWidth"; value: implicitWidth }
 
                 Clock {
-                    id:              _clk
+                    id:               _clk
                     anchors.centerIn: parent
                 }
             }

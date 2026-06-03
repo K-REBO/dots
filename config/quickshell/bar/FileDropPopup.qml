@@ -37,7 +37,7 @@ PanelWindow {
     Rectangle {
         anchors { fill: parent; margins: 6 }
         radius:       Theme.radiusMd
-        color:        Qt.rgba(0.06, 0.06, 0.14, 0.96)
+        color:        Theme.bgPanel
         border.color: Theme.border
         border.width: 1
         opacity:      root.contentOpacity
@@ -220,6 +220,6 @@ PanelWindow {
             "js": "󰌞", "ts": "󰌞", "py": "󰌞", "rs": "󰌞",
             "nix": "󰋊", "sh": "󰆍",
         })
-        return map[ext] || "󰈔"
+        return map[ext] || " "
     }
 }
