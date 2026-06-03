@@ -709,7 +709,6 @@
       '--help[Print help information (use `--help` for more detail)]' \
       '-V[Print version information]' \
       '--version[Print version information]' \
-      '*::paths -- The paths to put into the trash:_files' \
       ":: :_trash_commands" \
       "*::: :->trashy" \
       && ret=0
