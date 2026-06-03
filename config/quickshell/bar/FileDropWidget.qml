@@ -115,7 +115,7 @@ PanelWindow {
         radius:       Theme.radiusMd
         clip:         true
         color:        _drop.containsDrag
-                      ? Qt.rgba(0.00, 0.83, 1.00, 0.12)
+                      ? Qt.rgba(0.04, 0.22, 0.30, 0.92)
                       : Theme.bgLight
         border.color: (_drop.containsDrag || FileDropState.hovered) ? Theme.cyan : Theme.border
         border.width: 1
