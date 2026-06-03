@@ -333,6 +333,10 @@ PanelWindow {
                                 readonly property string filePath: model.path
                                 readonly property string fileName: model.name
                                 readonly property int    fileIdx:  index
+                                readonly property bool   isImage: {
+                                    const ext = (fileName.split(".").pop() || "").toLowerCase()
+                                    return ["png","jpg","jpeg","gif","webp","bmp","svg"].indexOf(ext) >= 0
+                                }
 
                                 implicitWidth:  90
                                 implicitHeight: 100
@@ -358,14 +362,40 @@ PanelWindow {
                                     anchors { fill: parent; margins: 6 }
                                     spacing: 4
 
-                                    // ドキュメントサムネイル
+                                    // サムネイルエリア
                                     Rectangle {
                                         Layout.fillWidth:  true
                                         Layout.fillHeight: true
-                                        color:             "#e8eaf6"
+                                        color:             _card.isImage ? "transparent" : "#e8eaf6"
                                         radius:            4
+                                        clip:              true
 
+                                        // ① 画像サムネイル
+                                        Image {
+                                            visible:      _card.isImage
+                                            anchors.fill: parent
+                                            source:       visible ? "file://" + _card.filePath : ""
+                                            fillMode:     Image.PreserveAspectCrop
+                                            smooth:       true
+                                            asynchronous: true
+                                            clip:         true
+                                        }
+
+                                        // ② テキストプレビュー
+                                        Text {
+                                            visible:      !_card.isImage && model.preview !== ""
+                                            anchors { fill: parent; margins: 3 }
+                                            text:         model.preview
+                                            font.family:  Theme.fontFamily
+                                            font.pixelSize: 4
+                                            wrapMode:     Text.Wrap
+                                            color:        "#3a3d5c"
+                                            clip:         true
+                                        }
+
+                                        // ③ 汎用デコレーション（フォールバック）
                                         ColumnLayout {
+                                            visible:  !_card.isImage && model.preview === ""
                                             anchors { fill: parent; margins: 5 }
                                             spacing: 3
 

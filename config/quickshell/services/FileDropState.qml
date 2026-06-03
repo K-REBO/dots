@@ -62,7 +62,9 @@ QtObject {
         const name = srcPath.replace(/^.*\//, "")
         const dest = "/tmp/drag-drop/storage/" + name
         _enqueue(["cp", "--", srcPath, dest])
-        files.append({ name: name, path: dest })
+        const idx = files.count
+        files.append({ name: name, path: dest, preview: "" })
+        if (_isTextFile(name)) _enqueuePreview(idx, srcPath)
     }
 
     function trashFile(idx) {
@@ -85,5 +87,47 @@ QtObject {
             }
         }
         clearSelection()
+    }
+
+    // ── テキストプレビュー読み取り ────────────────────────────────
+
+    property var    _previewQueue: []
+    property string _readBuf:      ""
+    property int    _readIdx:      -1
+
+    property Process _readProc: Process {
+        stdout: SplitParser {
+            onRead: line => root._readBuf += (root._readBuf ? "\n" : "") + line
+        }
+        onRunningChanged: {
+            if (!running) {
+                if (root._readIdx >= 0 && root._readIdx < files.count)
+                    files.setProperty(root._readIdx, "preview", root._readBuf)
+                root._readBuf = ""
+                root._readIdx = -1
+                root._processPreviewQueue()
+            }
+        }
+    }
+
+    function _processPreviewQueue() {
+        if (_previewQueue.length === 0) return
+        const item = _previewQueue.shift()
+        _readIdx  = item.idx
+        _readBuf  = ""
+        _readProc.command = ["bash", "-c", "head -c 500 -- " + JSON.stringify(item.path)]
+        _readProc.running = true
+    }
+
+    function _enqueuePreview(idx, path) {
+        _previewQueue.push({ idx: idx, path: path })
+        if (!_readProc.running) _processPreviewQueue()
+    }
+
+    function _isTextFile(name) {
+        const ext = (name.split(".").pop() || "").toLowerCase()
+        return ["txt","md","js","ts","tsx","jsx","py","rs","nix","sh",
+                "json","yaml","yml","toml","css","html","xml","csv",
+                "conf","ini","log"].indexOf(ext) >= 0
     }
 }
