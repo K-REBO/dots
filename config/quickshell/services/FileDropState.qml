@@ -64,7 +64,7 @@ QtObject {
         _enqueue(["cp", "--", srcPath, dest])
         const idx = files.count
         files.append({ name: name, path: dest, preview: "" })
-        if (_isTextFile(name)) _enqueuePreview(idx, srcPath)
+        if (!_isImageFile(name)) _enqueuePreview(idx, srcPath)
     }
 
     function trashFile(idx) {
@@ -115,7 +115,10 @@ QtObject {
         const item = _previewQueue.shift()
         _readIdx  = item.idx
         _readBuf  = ""
-        _readProc.command = ["bash", "-c", "head -c 500 -- " + JSON.stringify(item.path)]
+        // MIME が text/* の場合のみ先頭 500 bytes を出力、それ以外は無出力
+        _readProc.command = ["bash", "-c",
+            "file --mime-type -b -- " + JSON.stringify(item.path) +
+            " | grep -q '^text/' && head -c 500 -- " + JSON.stringify(item.path) + " || true"]
         _readProc.running = true
     }
 
@@ -124,10 +127,8 @@ QtObject {
         if (!_readProc.running) _processPreviewQueue()
     }
 
-    function _isTextFile(name) {
+    function _isImageFile(name) {
         const ext = (name.split(".").pop() || "").toLowerCase()
-        return ["txt","md","js","ts","tsx","jsx","py","rs","nix","sh",
-                "json","yaml","yml","toml","css","html","xml","csv",
-                "conf","ini","log"].indexOf(ext) >= 0
+        return ["png","jpg","jpeg","gif","webp","bmp","svg"].indexOf(ext) >= 0
     }
 }
