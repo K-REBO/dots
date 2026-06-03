@@ -65,13 +65,19 @@ PanelWindow {
         }
         onDropped: drop => {
             const urls = drop.urls
+            let hasExternal = false
             for (let i = 0; i < urls.length; i++) {
                 const url = urls[i].toString()
                 if (url.startsWith("file://")) {
-                    FileDropState.addFile(decodeURIComponent(url.slice(7)))
+                    const path = decodeURIComponent(url.slice(7))
+                    // /tmp/drag-drop/ 以下は自分のカードからの自己ドロップ → 複製を防ぐためスキップ
+                    if (path.startsWith("/tmp/drag-drop/")) continue
+                    FileDropState.addFile(path)
+                    hasExternal = true
                 }
             }
-            drop.accept(Qt.CopyAction)
+            if (hasExternal) drop.accept(Qt.CopyAction)
+            // 自己ドロップは accept しない → Qt.IgnoreAction → trashFile 呼ばれない
         }
     }
 
@@ -316,23 +322,12 @@ PanelWindow {
                 anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 8 }
                 spacing: 8
 
-                // ── カードエリア（横スクロール可）────────────────
-                Flickable {
-                    id:           _flick
-                    implicitWidth:  Math.min(_cardRow.implicitWidth, root._maxW - 100)
-                    implicitHeight: _cardRow.implicitHeight
-                    contentWidth:  _cardRow.implicitWidth
-                    contentHeight: _cardRow.implicitHeight
-                    clip:          true
-                    flickableDirection: Flickable.HorizontalFlick
+                // ── カードエリア ──────────────────────────────────
+                RowLayout {
+                    id:      _cardRow
+                    spacing: 8
 
-                    RowLayout {
-                        id:      _cardRow
-                        spacing: 8
-                        width:   implicitWidth
-                        height:  implicitHeight
-
-                        Repeater {
+                    Repeater {
                             model: FileDropState.files
 
                             delegate: Rectangle {
@@ -364,7 +359,7 @@ PanelWindow {
                                         FileDropState.trashFile(_card.fileIdx)
                                 }
 
-                                DragHandler { id: _dragH }
+                                DragHandler { id: _dragH; target: null }
 
                                 ColumnLayout {
                                     anchors { fill: parent; margins: 6 }
@@ -459,7 +454,6 @@ PanelWindow {
                             }
                         }
                     }
-                }
 
                 // ── アクションボタン ──────────────────────────────
                 ColumnLayout {
