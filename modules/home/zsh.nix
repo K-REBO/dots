@@ -682,6 +682,209 @@
     '';
   };
 
+  home.file.".zfunc/_trash" = {
+    text = ''
+      #compdef trash
+
+      autoload -U is-at-least
+
+      _trash() {
+          typeset -A opt_args
+          typeset -a _arguments_options
+          local ret=1
+
+          if is-at-least 5.2; then
+              _arguments_options=(-s -S -C)
+          else
+              _arguments_options=(-s -C)
+          fi
+
+          local context curcontext="$curcontext" state line
+          _arguments "''${_arguments_options[@]}" \
+      '-c+[When to use colors]:COLOR_STATUS:(auto always never)' \
+      '--color=[When to use colors]:COLOR_STATUS:(auto always never)' \
+      '-t+[When to format as a table]:TABLE_STATUS:(auto always never)' \
+      '--table=[When to format as a table]:TABLE_STATUS:(auto always never)' \
+      '-h[Print help information (use `--help` for more detail)]' \
+      '--help[Print help information (use `--help` for more detail)]' \
+      '-V[Print version information]' \
+      '--version[Print version information]' \
+      '*::paths -- The paths to put into the trash:_files' \
+      ":: :_trash_commands" \
+      "*::: :->trashy" \
+      && ret=0
+          case $state in
+          (trashy)
+              words=($line[2] "''${words[@]}")
+              (( CURRENT += 1 ))
+              curcontext="''${curcontext%:*:*}:trash-command-$line[2]:"
+              case $line[2] in
+                  (list)
+      _arguments "''${_arguments_options[@]}" \
+      '*--before=[Filter by time (older than)]:BEFORE: ' \
+      '*--older-than=[Filter by time (older than)]:BEFORE: ' \
+      '*--older=[Filter by time (older than)]:BEFORE: ' \
+      '*--within=[Filter by time]:WITHIN: ' \
+      '*--newer-than=[Filter by time]:WITHIN: ' \
+      '*--newer=[Filter by time]:WITHIN: ' \
+      '*--regex=[Filter by regex]:REGEX: ' \
+      '*--glob=[Filter by glob]:GLOB: ' \
+      '*--substring=[Filter by substring]:SUBSTRING: ' \
+      '*--exact=[Filter by exact match]:EXACT: ' \
+      '-m+[What type of pattern to use]:MATCH:(regex substring glob exact)' \
+      '--match=[What type of pattern to use]:MATCH:(regex substring glob exact)' \
+      '*-d+[Filter by directory]:DIRECTORIES:_files' \
+      '*--directory=[Filter by directory]:DIRECTORIES:_files' \
+      '*--dir=[Filter by directory]:DIRECTORIES:_files' \
+      '-n+[Show n maximum trash items]:MAX: ' \
+      '--max=[Show n maximum trash items]:MAX: ' \
+      '--rev[Reverse the sorting of trash items]' \
+      '-h[Print help information (use `--help` for more detail)]' \
+      '--help[Print help information (use `--help` for more detail)]' \
+      '*::patterns -- Filter by pattern:' \
+      && ret=0
+      ;;
+                  (put)
+      _arguments "''${_arguments_options[@]}" \
+      '-h[Print help information]' \
+      '--help[Print help information]' \
+      '*::paths -- The paths to put into the trash:_files' \
+      && ret=0
+      ;;
+                  (empty)
+      _arguments "''${_arguments_options[@]}" \
+      '*--before=[Filter by time (older than)]:BEFORE: ' \
+      '*--older-than=[Filter by time (older than)]:BEFORE: ' \
+      '*--older=[Filter by time (older than)]:BEFORE: ' \
+      '*--within=[Filter by time]:WITHIN: ' \
+      '*--newer-than=[Filter by time]:WITHIN: ' \
+      '*--newer=[Filter by time]:WITHIN: ' \
+      '*--regex=[Filter by regex]:REGEX: ' \
+      '*--glob=[Filter by glob]:GLOB: ' \
+      '*--substring=[Filter by substring]:SUBSTRING: ' \
+      '*--exact=[Filter by exact match]:EXACT: ' \
+      '-m+[What type of pattern to use]:MATCH:(regex substring glob exact)' \
+      '--match=[What type of pattern to use]:MATCH:(regex substring glob exact)' \
+      '*-d+[Filter by directory]:DIRECTORIES:_files' \
+      '*--directory=[Filter by directory]:DIRECTORIES:_files' \
+      '*--dir=[Filter by directory]:DIRECTORIES:_files' \
+      '-n+[Show n maximum trash items]:MAX: ' \
+      '--max=[Show n maximum trash items]:MAX: ' \
+      '(--before --within --glob --regex --exact --substring -m --match --rev -n --max -d --directory)*-r+[Filter by ranges]:RANGES: ' \
+      '(--before --within --glob --regex --exact --substring -m --match --rev -n --max -d --directory)*--ranges=[Filter by ranges]:RANGES: ' \
+      '--rev[Reverse the sorting of trash items]' \
+      '(--before --within --glob --regex --exact --substring -m --match --rev -n --max -d --directory)--all[Empty all files]' \
+      '-f[Skip confirmation]' \
+      '--force[Skip confirmation]' \
+      '-h[Print help information (use `--help` for more detail)]' \
+      '--help[Print help information (use `--help` for more detail)]' \
+      '*::patterns -- Filter by pattern:' \
+      && ret=0
+      ;;
+                  (restore)
+      _arguments "''${_arguments_options[@]}" \
+      '*--before=[Filter by time (older than)]:BEFORE: ' \
+      '*--older-than=[Filter by time (older than)]:BEFORE: ' \
+      '*--older=[Filter by time (older than)]:BEFORE: ' \
+      '*--within=[Filter by time]:WITHIN: ' \
+      '*--newer-than=[Filter by time]:WITHIN: ' \
+      '*--newer=[Filter by time]:WITHIN: ' \
+      '*--regex=[Filter by regex]:REGEX: ' \
+      '*--glob=[Filter by glob]:GLOB: ' \
+      '*--substring=[Filter by substring]:SUBSTRING: ' \
+      '*--exact=[Filter by exact match]:EXACT: ' \
+      '-m+[What type of pattern to use]:MATCH:(regex substring glob exact)' \
+      '--match=[What type of pattern to use]:MATCH:(regex substring glob exact)' \
+      '*-d+[Filter by directory]:DIRECTORIES:_files' \
+      '*--directory=[Filter by directory]:DIRECTORIES:_files' \
+      '*--dir=[Filter by directory]:DIRECTORIES:_files' \
+      '-n+[Show n maximum trash items]:MAX: ' \
+      '--max=[Show n maximum trash items]:MAX: ' \
+      '(--before --within --glob --regex --exact --substring -m --match --rev -n --max -d --directory)*-r+[Filter by ranges]:RANGES: ' \
+      '(--before --within --glob --regex --exact --substring -m --match --rev -n --max -d --directory)*--ranges=[Filter by ranges]:RANGES: ' \
+      '--rev[Reverse the sorting of trash items]' \
+      '-f[Skip confirmation]' \
+      '--force[Skip confirmation]' \
+      '-h[Print help information (use `--help` for more detail)]' \
+      '--help[Print help information (use `--help` for more detail)]' \
+      '*::patterns -- Filter by pattern:' \
+      && ret=0
+      ;;
+                  (completions)
+      _arguments "''${_arguments_options[@]}" \
+      '-h[Print help information]' \
+      '--help[Print help information]' \
+      ':shell -- shell to generate completions for:(bash elvish fish powershell zsh)' \
+      && ret=0
+      ;;
+                  (manpage)
+      _arguments "''${_arguments_options[@]}" \
+      '-h[Print help information]' \
+      '--help[Print help information]' \
+      && ret=0
+      ;;
+                  (help)
+      _arguments "''${_arguments_options[@]}" \
+      ":: :_trash__help_commands" \
+      "*::: :->help" \
+      && ret=0
+          case $state in
+          (help)
+              words=($line[1] "''${words[@]}")
+              (( CURRENT += 1 ))
+              curcontext="''${curcontext%:*:*}:trash-help-command-$line[1]:"
+              case $line[1] in
+                  (list|put|empty|restore|completions|manpage|help)
+      _arguments "''${_arguments_options[@]}" && ret=0
+      ;;
+              esac
+          ;;
+      esac
+      ;;
+              esac
+          ;;
+      esac
+      }
+
+      (( $+functions[_trash_commands] )) ||
+      _trash_commands() {
+          local commands; commands=(
+      'list:List files'
+      'put:Put files'
+      'empty:PERMANANTLY removes files'
+      'restore:Restore files'
+      'completions:Generates completion for a shell'
+      'manpage:Generates manpages'
+      'help:Print this message or the help of the given subcommand(s)'
+          )
+          _describe -t commands 'trash commands' commands "$@"
+      }
+
+      (( $+functions[_trash__help_commands] )) ||
+      _trash__help_commands() {
+          local commands; commands=(
+      'list:List files'
+      'put:Put files'
+      'empty:PERMANANTLY removes files'
+      'restore:Restore files'
+      'completions:Generates completion for a shell'
+      'manpage:Generates manpages'
+      'help:Print this message or the help of the given subcommand(s)'
+          )
+          _describe -t commands 'trash help commands' commands "$@"
+      }
+
+      for _cmd in completions empty help list manpage put restore; do
+          (( $+functions[_trash__''${_cmd}_commands] )) ||
+          eval "_trash__''${_cmd}_commands() { local commands; commands=(); _describe -t commands 'trash ''${_cmd} commands' commands \"\$@\" }"
+          (( $+functions[_trash__help__''${_cmd}_commands] )) ||
+          eval "_trash__help__''${_cmd}_commands() { local commands; commands=(); _describe -t commands 'trash help ''${_cmd} commands' commands \"\$@\" }"
+      done
+
+      _trash "$@"
+    '';
+  };
+
   # ============================================================
   # Additional packages needed for zsh setup
   # ============================================================

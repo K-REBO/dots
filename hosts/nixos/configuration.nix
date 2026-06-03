@@ -198,8 +198,14 @@
   # XDG Desktop Portal (スクリーンシェア、ファイルピッカー等)
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = "*";  # 1.17以降の互換性設定
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-gnome  # Nautilusファイルチューザー
+    ];
+    config.common = {
+      default = "*";  # 1.17以降の互換性設定
+      "org.freedesktop.impl.portal.FileChooser" = [ "gnome" ];
+    };
   };
 
 
@@ -215,6 +221,7 @@
     git
     htop
     psmisc  # killall, fuser, pstree等
+    nautilus  # ファイルマネージャー（xdg-desktop-portal-gnomeのファイルチューザー用）
     # Hyprland関連パッケージはHome Managerで管理
 
     # QEMU/KVM
