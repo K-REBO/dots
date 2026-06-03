@@ -141,6 +141,52 @@ QtObject {
         clearSelection()
     }
 
+    // ── Taildrop 送信 ────────────────────────────────────────────────
+    // peerIP: "100.x.x.x", paths: string[] (空なら全ファイル)
+    // onDone(success: bool, msg: string)
+    function sendViaTaildrop(peerIP, paths, onDone) {
+        const filePaths = (paths && paths.length > 0)
+            ? paths
+            : (function() {
+                const all = []
+                for (let i = 0; i < files.count; i++) all.push(files.get(i).path)
+                return all
+              })()
+
+        if (filePaths.length === 0 || !peerIP) {
+            if (onDone) onDone(false, "no files")
+            return
+        }
+
+        _sendProc._onDone = onDone
+        _sendProc.command = ["bash", "-c",
+            "tailscale file cp " +
+            filePaths.map(p => JSON.stringify(p)).join(" ") + " " +
+            JSON.stringify(peerIP + ":") +
+            "; echo '__EXIT:'$?"]
+        _sendProc.running = true
+    }
+
+    property Process _sendProc: Process {
+        property var _onDone: null
+        running: false
+        stdout: SplitParser {
+            onRead: line => {
+                if (!line.startsWith("__EXIT:")) return
+                const code = parseInt(line.slice(7))
+                const cb   = root._sendProc._onDone
+                root._sendProc._onDone = null
+                if (cb) cb(code === 0, code === 0 ? "" : "exit " + code)
+            }
+        }
+        onRunningChanged: {
+            if (!running && _onDone) {
+                const cb = _onDone; _onDone = null
+                if (cb) cb(false, "プロセスエラー")
+            }
+        }
+    }
+
     // ── テキストプレビュー読み取り ────────────────────────────────
 
     property var    _previewQueue: []

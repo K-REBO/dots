@@ -19,6 +19,29 @@ PanelWindow {
     // 最大幅: ファイルが多くても画面幅に収まるよう制限
     readonly property real _maxW: Math.min(screen ? screen.width - 40 : 600, 600)
 
+    // ── Taildrop 送信状態 ──────────────────────────────────────────
+    property bool      _showPeers: false
+    property bool      _sending:   false
+    property string    _statusMsg: ""
+    property ListModel _peers:     ListModel {}
+
+    function _closePeers() { _showPeers = false; _statusMsg = "" }
+
+    property Process _peerProc: Process {
+        running: false
+        stdout: SplitParser {
+            onRead: line => {
+                const p = line.trim().split("|")
+                if (p.length < 3) return
+                root._peers.append({
+                    online: p[0] === "1",
+                    ip:     p[1].trim(),
+                    name:   p[2].trim()
+                })
+            }
+        }
+    }
+
     function fileUrl(path) {
         return "file://" + path.split("/").map(function(c) {
             return c ? encodeURIComponent(c) : c
@@ -52,6 +75,13 @@ PanelWindow {
         function onImplicitHeightChanged() {
             if (FileDropState.hovered)
                 root._panelH = Theme.pillH + 1 + _popupContent.implicitHeight
+        }
+    }
+
+    Connections {
+        target: FileDropState
+        function onCountChanged() {
+            if (FileDropState.count === 0) root._closePeers()
         }
     }
 
@@ -219,8 +249,11 @@ PanelWindow {
                     width: parent.width
 
                     // ファイルなし → ドロップ誘導 UI
+                    // ファイルあり + ピア選択中 → ピアピッカー
                     // ファイルあり → 横並びカードリスト
-                    sourceComponent: FileDropState.count === 0 ? _dropHintComp : _fileListComp
+                    sourceComponent: FileDropState.count === 0 ? _dropHintComp
+                                   : root._showPeers           ? _peerPickerComp
+                                   :                             _fileListComp
                 }
             }
         }
@@ -459,6 +492,46 @@ PanelWindow {
                 ColumnLayout {
                     spacing: 6
 
+                    // Taildrop 送信ボタン
+                    Rectangle {
+                        implicitWidth:  32
+                        implicitHeight: 32
+                        radius:         Theme.radiusMd
+                        color:          _tailMouse.containsMouse
+                                        ? Qt.rgba(0.00, 0.83, 1.00, 0.20)
+                                        : Qt.rgba(0.00, 0.83, 1.00, 0.10)
+                        border.color:   Qt.rgba(0.00, 0.83, 1.00, 0.40)
+                        border.width:   1
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text:           "󰛶"
+                            font.family:    Theme.iconFontFamily
+                            font.pixelSize: Theme.fontSm
+                            color:          Theme.cyan
+                        }
+
+                        MouseArea {
+                            id:           _tailMouse
+                            anchors.fill: parent
+                            cursorShape:  Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onClicked: {
+                                root._peers.clear()
+                                root._statusMsg = ""
+                                root._peerProc.command = ["bash", "-c",
+                                    "self=$(tailscale ip -4 2>/dev/null); " +
+                                    "tailscale status 2>/dev/null | " +
+                                    "awk -v self=\"$self\" '/^[0-9]+\\./ && $1!=self " +
+                                    "{ online=($5==\"-\"?\"0\":\"1\"); print online\"|\"$1\"|\"$2 }' " +
+                                    "| sort -r"]
+                                root._peerProc.running = true
+                                root._showPeers = true
+                            }
+                        }
+                    }
+
                     // ゴミ箱ボタン
                     Rectangle {
                         implicitWidth:  32
@@ -513,6 +586,209 @@ PanelWindow {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // ── ピアピッカーコンポーネント ────────────────────────────────────────
+    Component {
+        id: _peerPickerComp
+
+        Item {
+            implicitWidth:  280
+            implicitHeight: _pcol.implicitHeight + 20
+
+            ColumnLayout {
+                id:      _pcol
+                anchors { top: parent.top; topMargin: 10
+                          left: parent.left; leftMargin: 8
+                          right: parent.right; rightMargin: 8 }
+                spacing: 6
+
+                // ── ヘッダー行 ────────────────────────────────────
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Rectangle {
+                        implicitWidth:  28
+                        implicitHeight: 28
+                        radius:         Theme.radiusMd
+                        color:          _backMouse.containsMouse ? Theme.bgHover : "transparent"
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text:           "󰁍"
+                            font.family:    Theme.iconFontFamily
+                            font.pixelSize: Theme.fontSm
+                            color:          Theme.fgSub
+                        }
+
+                        MouseArea {
+                            id:           _backMouse
+                            anchors.fill: parent
+                            cursorShape:  Qt.PointingHandCursor
+                            hoverEnabled: true
+                            onClicked:    root._closePeers()
+                        }
+                    }
+
+                    Text {
+                        text:           "Taildropで送信"
+                        font.family:    Theme.fontFamily
+                        font.pixelSize: Theme.fontSm
+                        font.bold:      true
+                        color:          Theme.fg
+                    }
+
+                    Item { Layout.fillWidth: true }
+
+                    Text {
+                        visible:     root._statusMsg !== ""
+                        text:        root._statusMsg
+                        font.family: Theme.fontFamily
+                        font.pixelSize: Theme.fontXs - 2
+                        color: root._statusMsg.startsWith("失敗") ? Theme.red
+                             : root._sending                     ? Theme.yellow
+                             :                                     Theme.green
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    height:           1
+                    color:            Theme.border
+                }
+
+                // フェッチ中インジケーター
+                Item {
+                    Layout.fillWidth: true
+                    visible:          root._peerProc.running
+                    implicitHeight:   40
+
+                    Text {
+                        anchors.centerIn: parent
+                        text:           "󰔟"
+                        font.family:    Theme.iconFontFamily
+                        font.pixelSize: Theme.fontMd
+                        color:          Theme.fgSub
+                    }
+                }
+
+                // ピアなし
+                Item {
+                    Layout.fillWidth: true
+                    visible:          !root._peerProc.running && root._peers.count === 0
+                    implicitHeight:   56
+
+                    ColumnLayout {
+                        anchors.centerIn: parent
+                        spacing: 4
+
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text:           "󰤭"
+                            font.family:    Theme.iconFontFamily
+                            font.pixelSize: Theme.fontLg
+                            color:          Theme.fgDim
+                        }
+
+                        Text {
+                            Layout.alignment: Qt.AlignHCenter
+                            text:           "オンラインのピアがいません"
+                            font.family:    Theme.fontFamily
+                            font.pixelSize: Theme.fontXs
+                            color:          Theme.fgSub
+                        }
+                    }
+                }
+
+                // ── ピア一覧 ──────────────────────────────────────
+                Repeater {
+                    model: root._peers
+
+                    delegate: Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight:   36
+                        radius:           Theme.radiusMd
+                        opacity:          model.online ? 1.0 : 0.4
+                        color:            _peerMouse.containsMouse && !root._sending && model.online
+                                          ? Theme.bgPillCyanHov : "transparent"
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+
+                        RowLayout {
+                            anchors { fill: parent; leftMargin: 8; rightMargin: 8 }
+                            spacing: 8
+
+                            // オンライン状態ドット
+                            Rectangle {
+                                width:  8
+                                height: 8
+                                radius: 4
+                                color:  model.online ? Theme.green : Theme.fgDim
+                            }
+
+                            Text {
+                                text:           "󰍹"
+                                font.family:    Theme.iconFontFamily
+                                font.pixelSize: Theme.fontSm
+                                color:          model.online ? Theme.cyan : Theme.fgDim
+                            }
+
+                            Text {
+                                text:           model.name
+                                font.family:    Theme.fontFamily
+                                font.pixelSize: Theme.fontSm
+                                color:          Theme.fg
+                                Layout.fillWidth: true
+                                elide:          Text.ElideRight
+                            }
+
+                            Text {
+                                text:           model.ip
+                                font.family:    Theme.fontFamily
+                                font.pixelSize: Theme.fontXs - 2
+                                color:          Theme.fgSub
+                            }
+                        }
+
+                        MouseArea {
+                            id:           _peerMouse
+                            anchors.fill: parent
+                            cursorShape:  (!root._sending && model.online) ? Qt.PointingHandCursor : Qt.ArrowCursor
+                            hoverEnabled: true
+                            enabled:      !root._sending && model.online
+                            onClicked: {
+                                const sel   = FileDropState.selectedIndices
+                                const paths = (sel && sel.length > 0)
+                                    ? sel.map(i => FileDropState.files.get(i).path)
+                                    : (function() {
+                                        const all = []
+                                        for (let j = 0; j < FileDropState.files.count; j++)
+                                            all.push(FileDropState.files.get(j).path)
+                                        return all
+                                      })()
+
+                                root._sending   = true
+                                root._statusMsg = "送信中..."
+                                FileDropState.sendViaTaildrop(model.ip, paths, function(ok, msg) {
+                                    root._sending   = false
+                                    root._statusMsg = ok ? "送信完了 ✓" : ("失敗: " + msg)
+                                    if (ok) _doneTimer.restart()
+                                })
+                            }
+                        }
+                    }
+                }
+
+                Item { implicitHeight: 4 }
+            }
+
+            Timer {
+                id:       _doneTimer
+                interval: 3000
+                onTriggered: root._closePeers()
             }
         }
     }
