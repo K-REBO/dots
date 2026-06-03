@@ -328,11 +328,11 @@ in
   xdg.configFile."systemd/user/xdg-desktop-portal-hyprland.service.d/recovery.conf".text = ''
     [Unit]
     ConditionEnvironment=HYPRLAND_INSTANCE_SIGNATURE
+    StartLimitIntervalSec=30
+    StartLimitBurst=3
 
     [Service]
     RestartSec=2
-    StartLimitIntervalSec=30
-    StartLimitBurst=3
   '';
 
 }
