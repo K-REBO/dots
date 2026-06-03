@@ -49,6 +49,10 @@ PanelWindow {
     DropArea {
         id: _drop
         anchors.fill: parent
+        onContainsDragChanged: {
+            if (containsDrag) FileDropState.startHover()
+            else              FileDropState.endHover()
+        }
         onDropped: drop => {
             const urls = drop.urls
             for (let i = 0; i < urls.length; i++) {
