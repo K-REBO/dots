@@ -5,12 +5,9 @@ import "../services"
 
 Item {
     id: root
-    // root width just follows the inner RowLayout — no Behavior here
-    // (animation is driven solely by expandArea.implicitWidth)
     implicitWidth:  _row.implicitWidth
     implicitHeight: Theme.pillH
 
-    property bool expanded: false
     readonly property bool containsDrag: _drop.containsDrag
 
     DropArea {
@@ -36,7 +33,7 @@ Item {
 
         // ── アイコン（常時表示）───────────────────────────────────
         Text {
-            text:           "󰉋"
+            text:           "󰚑"
             font.family:    Theme.iconFontFamily
             font.pixelSize: Theme.fontMd
             color:          _drop.containsDrag ? Theme.cyan
@@ -45,44 +42,9 @@ Item {
             Behavior on color { ColorAnimation { duration: Theme.animFast } }
         }
 
-        // ── 展開エリア（hover / drag で slide-in）────────────────
-        Item {
-            id: _expandArea
-            enabled:      root.expanded || _drop.containsDrag
-            height:       Theme.pillH
-            implicitWidth: (root.expanded || _drop.containsDrag)
-                           ? _content.implicitWidth + Theme.paddingXs : 0
-            clip: true
-            Behavior on implicitWidth {
-                NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
-            }
-
-            RowLayout {
-                id: _content
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: Theme.paddingXs
-
-                Rectangle { width: 1; height: 16; color: Theme.border }
-
-                Text {
-                    text:           _drop.containsDrag        ? "ここにドロップ"
-                                  : FileDropState.count > 0  ? FileDropState.count + " 件"
-                                  :                            "一時置き場"
-                    font.family:    Theme.fontFamily
-                    font.pixelSize: Theme.fontSm
-                    color:          _drop.containsDrag        ? Theme.cyan
-                                  : FileDropState.count > 0  ? Theme.blue
-                                  :                            Theme.fgSub
-                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                }
-            }
-        }
-
-        // ── バッジ（未展開・非ドラッグ時のみ）──────────────────
+        // ── バッジ（ファイルあり・非展開時）──────────────────────
         Rectangle {
-            visible:        FileDropState.count > 0
-                            && !root.expanded
-                            && !_drop.containsDrag
+            visible:        FileDropState.count > 0 && !FileDropState.open && !_drop.containsDrag
             implicitWidth:  _num.implicitWidth + 8
             implicitHeight: 18
             radius:         Theme.radiusFull
@@ -103,5 +65,6 @@ Item {
     MouseArea {
         anchors.fill: parent
         cursorShape:  Qt.PointingHandCursor
+        onClicked:    FileDropState.toggle()
     }
 }

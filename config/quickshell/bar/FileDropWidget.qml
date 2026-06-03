@@ -13,16 +13,18 @@ PanelWindow {
     anchors { top: true; left: true }
     margins {
         top:  Theme.barMargin
-        left: screen ? Math.max(0, (screen.width - 400) / 2) : 0
+        left: screen ? Math.max(0, (screen.width - _maxW) / 2) : 0
     }
 
-    implicitWidth:  400
-    // ウィンドウ高さは固定最大値 — Wayland サーフェスリサイズ完全ゼロ
-    // 視覚的な展開/収縮は _panelH → _widget.height のアニメーションが担う
-    implicitHeight: Theme.barHeight + 12 + 460
+    // 最大幅: ファイルが多くても画面幅に収まるよう制限
+    readonly property real _maxW: Math.min(screen ? screen.width - 40 : 600, 600)
+
+    // Wayland サーフェス固定: 見た目はアニメーションで調整
+    implicitWidth:  _maxW
+    implicitHeight: Theme.barHeight + 12 + 200
     color:          "transparent"
     exclusionMode:  ExclusionMode.Ignore
-    aboveWindows:   true   // Bar (PanelWindow) の z-order より上に強制配置
+    aboveWindows:   true
 
     // ── 視覚高さアニメーション ────────────────────────────────────
     property real _panelH: Theme.barHeight
@@ -32,14 +34,14 @@ PanelWindow {
 
     Connections {
         target: FileDropState
-        function onHoveredChanged() {
-            root._panelH = FileDropState.hovered
-                ? Theme.barHeight + 12 + Math.min(_gridCol.implicitHeight, 460)
+        function onOpenChanged() {
+            root._panelH = FileDropState.open
+                ? Theme.barHeight + 12 + _popupContent.implicitHeight
                 : Theme.barHeight
         }
         function onCountChanged() {
-            if (FileDropState.hovered)
-                root._panelH = Theme.barHeight + 12 + Math.min(_gridCol.implicitHeight, 460)
+            if (FileDropState.open)
+                root._panelH = Theme.barHeight + 12 + _popupContent.implicitHeight
         }
     }
 
@@ -59,22 +61,7 @@ PanelWindow {
         }
     }
 
-    // ── ホバー検知 (_panelH に追従する Item 内に限定) ────────────
-    // ウィンドウが固定最大高さでも、アニメーション範囲外での誤発火を防ぐ
-    Item {
-        width:  parent.width
-        height: root._panelH
-        anchors.top: parent.top
-
-        HoverHandler {
-            onHoveredChanged: {
-                if (hovered) FileDropState.startHover()
-                else         FileDropState.endHover()
-            }
-        }
-    }
-
-    // ── 統合ウィジェット ─────────────────────────────────────────
+    // ── メインウィジェット ────────────────────────────────────────
     Rectangle {
         id: _widget
 
@@ -85,26 +72,29 @@ PanelWindow {
             topMargin:        _vPad
             horizontalCenter: parent.horizontalCenter
         }
-        height: root._panelH - _vPad   // ウィンドウ高さとは独立してアニメーション
+        height: root._panelH - _vPad
 
-        // Nerd Font グリフの implicitWidth は Qt フォントメトリクスで 0 になる場合があるため
-        // アイコン幅は fontMd 固定で計算する
-        property real _pillCollapsedW: Theme.fontMd
-                                       + (FileDropState.count > 0
-                                          ? Theme.paddingXs + _badge.implicitWidth : 0)
-                                       + 20
-
-        property real _w: _pillCollapsedW
+        // 幅アニメーション: 閉時はピル幅、開時はポップアップ幅
+        property real _pillW: Theme.fontMd
+                              + (FileDropState.count > 0
+                                 ? Theme.paddingXs + _badgeRef.implicitWidth : 0)
+                              + 20
+        property real _w: _pillW
         Behavior on _w {
             NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
         }
-        width:         _w
-        implicitWidth: _w
+        width: _w
 
         Connections {
             target: FileDropState
-            function onHoveredChanged() {
-                _widget._w = FileDropState.hovered ? 380 : _widget._pillCollapsedW
+            function onOpenChanged() {
+                _widget._w = FileDropState.open
+                    ? Math.min(_popupContent.implicitWidth + 32, root._maxW)
+                    : _widget._pillW
+            }
+            function onCountChanged() {
+                if (!FileDropState.open) _widget._w = _widget._pillW
+                else _widget._w = Math.min(_popupContent.implicitWidth + 32, root._maxW)
             }
         }
 
@@ -113,7 +103,7 @@ PanelWindow {
         color:        _drop.containsDrag
                       ? Qt.rgba(0.00, 0.83, 1.00, 0.12)
                       : Theme.bgLight
-        border.color: (_drop.containsDrag || FileDropState.hovered) ? Theme.cyan : Theme.border
+        border.color: (_drop.containsDrag || FileDropState.open) ? Theme.cyan : Theme.border
         border.width: 1
         Behavior on color        { ColorAnimation { duration: Theme.animFast } }
         Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
@@ -122,75 +112,42 @@ PanelWindow {
             anchors { top: parent.top; left: parent.left; right: parent.right }
             spacing: 0
 
-            // ── Pill 行 ───────────────────────────────────────────
+            // ── ピル行 ────────────────────────────────────────────
             Item {
                 Layout.fillWidth: true
                 height: Theme.pillH
 
-                // アイコンを左端固定にすることで、_expandArea アニメーションと
-                // _w アニメーションが非同期でも centerIn による左オーバーフローを防ぐ
                 RowLayout {
-                    id: _pillRow
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.left:           parent.left
-                    anchors.leftMargin:     (Theme.pillH - Theme.fontMd) / 2  // = 10
+                    anchors.leftMargin:     (Theme.pillH - Theme.fontMd) / 2
                     spacing: Theme.paddingXs
 
                     Text {
-                        id:             _iconText
-                        text:           "󰉋"
+                        text:           "󰚑"
                         font.family:    Theme.iconFontFamily
                         font.pixelSize: Theme.fontMd
-                        width:                    Theme.fontMd
-                        horizontalAlignment:      Text.AlignHCenter
-                        color:          _drop.containsDrag        ? Theme.cyan
-                                      : FileDropState.count > 0  ? Theme.blue
-                                      : Theme.fg
+                        width:          Theme.fontMd
+                        horizontalAlignment: Text.AlignHCenter
+                        color: _drop.containsDrag        ? Theme.cyan
+                             : FileDropState.count > 0  ? Theme.blue
+                             : Theme.fg
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
 
-                    // Behavior を持たず _w の clip に委ねる
-                    // → _expandArea と _w が非同期になるオーバーフロー問題を解消
-                    Item {
-                        id: _expandArea
-                        height: Theme.pillH
-                        implicitWidth: (FileDropState.hovered || _drop.containsDrag)
-                                       ? _expandContent.implicitWidth + Theme.paddingXs : 0
-                        clip: true
-
-                        RowLayout {
-                            id: _expandContent
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: Theme.paddingXs
-
-                            Rectangle { width: 1; height: 16; color: Theme.border }
-
-                            Text {
-                                text:           _drop.containsDrag        ? "ここにドロップ"
-                                              : FileDropState.count > 0  ? FileDropState.count + " 件"
-                                              :                            "一時置き場"
-                                font.family:    Theme.fontFamily
-                                font.pixelSize: Theme.fontSm
-                                color:          _drop.containsDrag        ? Theme.cyan
-                                              : FileDropState.count > 0  ? Theme.blue
-                                              :                            Theme.fgSub
-                                Behavior on color { ColorAnimation { duration: Theme.animFast } }
-                            }
-                        }
-                    }
-
+                    // バッジ（閉時かつファイルあり）
                     Rectangle {
-                        id:             _badge
+                        id:             _badgeRef
                         visible:        FileDropState.count > 0
-                                        && !FileDropState.hovered
+                                        && !FileDropState.open
                                         && !_drop.containsDrag
-                        implicitWidth:  _num.implicitWidth + 8
+                        implicitWidth:  _badgeNum.implicitWidth + 8
                         implicitHeight: 18
                         radius:         Theme.radiusFull
                         color:          Theme.blue
 
                         Text {
-                            id:             _num
+                            id:             _badgeNum
                             anchors.centerIn: parent
                             text:           FileDropState.count
                             font.family:    Theme.fontFamily
@@ -200,6 +157,12 @@ PanelWindow {
                         }
                     }
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape:  Qt.PointingHandCursor
+                    onClicked:    FileDropState.toggle()
+                }
             }
 
             // ── セパレーター ──────────────────────────────────────
@@ -207,46 +170,265 @@ PanelWindow {
                 Layout.fillWidth: true
                 height:  1
                 color:   Theme.border
-                opacity: FileDropState.hovered ? 1 : 0
+                opacity: FileDropState.open ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
             }
 
-            // ── コンテンツ ────────────────────────────────────────
+            // ── ポップアップコンテンツ ────────────────────────────
+            Item {
+                id:                  _popupContent
+                Layout.fillWidth:    true
+                implicitWidth:       _popupLoader.item ? _popupLoader.item.implicitWidth  : 240
+                implicitHeight:      _popupLoader.item ? _popupLoader.item.implicitHeight : 120
+                clip:                true
+
+                opacity: FileDropState.open ? 1 : 0
+                Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+
+                Loader {
+                    id:    _popupLoader
+                    width: parent.width
+
+                    // ファイルなし → ドロップ誘導 UI
+                    // ファイルあり → 横並びカードリスト
+                    sourceComponent: FileDropState.count === 0 ? _dropHintComp : _fileListComp
+                }
+            }
+        }
+    }
+
+    // ── ドロップ誘導コンポーネント ────────────────────────────────
+    Component {
+        id: _dropHintComp
+
+        Item {
+            implicitWidth:  240
+            implicitHeight: _col.implicitHeight + 24
+
             ColumnLayout {
-                id:       _gridCol
-                Layout.fillWidth:   true
-                Layout.leftMargin:  14
-                Layout.rightMargin: 14
+                id:       _col
+                anchors { top: parent.top; topMargin: 12; horizontalCenter: parent.horizontalCenter }
                 spacing:  10
 
+                // inbox アイコン（大）
+                Text {
+                    Layout.alignment: Qt.AlignHCenter
+                    text:           "󰚑"
+                    font.family:    Theme.iconFontFamily
+                    font.pixelSize: Theme.fontXl
+                    color:          _drop.containsDrag ? Theme.cyan : Theme.fgSub
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                }
+
+                // "Drop" ヒント行
                 RowLayout {
-                    Layout.fillWidth: true
-                    Layout.topMargin: 4
+                    Layout.alignment: Qt.AlignHCenter
+                    spacing: Theme.paddingXs
 
                     Text {
-                        text:           "一時置き場"
+                        text:           "󰳽"
+                        font.family:    Theme.iconFontFamily
+                        font.pixelSize: Theme.fontSm
+                        color:          Theme.fgSub
+                    }
+                    Text {
+                        text:           "Drop"
                         font.family:    Theme.fontFamily
                         font.pixelSize: Theme.fontSm
-                        font.bold:      true
-                        color:          Theme.fg
+                        color:          Theme.fgSub
                     }
 
-                    Item { Layout.fillWidth: true }
-
-                    Rectangle {
-                        visible:        FileDropState.selectedIndices.length > 0
-                        implicitWidth:  _delLabel.implicitWidth + 18
-                        implicitHeight: 26
-                        radius:         Theme.radiusMd
-                        color:          Qt.rgba(1, 0.2, 0.33, 0.85)
+                    // ドラッグ中のファイル名プレビュー
+                    RowLayout {
+                        visible: _drop.containsDrag
+                        spacing: 4
 
                         Text {
-                            id:             _delLabel
-                            anchors.centerIn: parent
-                            text:           "削除 " + FileDropState.selectedIndices.length + " 件"
+                            text:           "󰈔"
+                            font.family:    Theme.iconFontFamily
+                            font.pixelSize: Theme.fontSm
+                            color:          Theme.cyan
+                        }
+                        Text {
+                            text:           _drop.containsDrag ? "ファイル" : ""
                             font.family:    Theme.fontFamily
-                            font.pixelSize: Theme.fontXs
-                            color:          "#ffffff"
+                            font.pixelSize: Theme.fontSm
+                            color:          Theme.cyan
+                        }
+                    }
+                }
+
+                // 緑の "+" ボタン
+                Rectangle {
+                    Layout.alignment:  Qt.AlignHCenter
+                    Layout.bottomMargin: 4
+                    width:  36
+                    height: 36
+                    radius: 18
+                    color:  Theme.green
+
+                    Text {
+                        anchors.centerIn: parent
+                        text:           "+"
+                        font.family:    Theme.fontFamily
+                        font.pixelSize: Theme.fontLg
+                        color:          Theme.bg
+                        font.bold:      true
+                    }
+                }
+            }
+        }
+    }
+
+    // ── ファイルリストコンポーネント ──────────────────────────────
+    Component {
+        id: _fileListComp
+
+        Item {
+            implicitWidth:  _row.implicitWidth + 16
+            implicitHeight: _row.implicitHeight + 20
+
+            RowLayout {
+                id:      _row
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 8 }
+                spacing: 8
+
+                // ── カードエリア（横スクロール可）────────────────
+                Flickable {
+                    id:           _flick
+                    implicitWidth:  Math.min(_cardRow.implicitWidth, root._maxW - 100)
+                    implicitHeight: _cardRow.implicitHeight
+                    contentWidth:  _cardRow.implicitWidth
+                    contentHeight: _cardRow.implicitHeight
+                    clip:          true
+                    flickableDirection: Flickable.HorizontalFlick
+
+                    RowLayout {
+                        id:      _cardRow
+                        spacing: 8
+
+                        Repeater {
+                            model: FileDropState.files
+
+                            delegate: Rectangle {
+                                id: _card
+
+                                readonly property string filePath: model.path
+                                readonly property string fileName: model.name
+                                readonly property int    fileIdx:  index
+
+                                implicitWidth:  90
+                                implicitHeight: 100
+                                radius:         Theme.radiusMd
+                                color:          FileDropState.isSelected(index)
+                                               ? Theme.bgPillBlue : Qt.rgba(0.10, 0.11, 0.20, 0.95)
+                                border.color:   FileDropState.isSelected(index)
+                                               ? Theme.blue : Theme.border
+                                border.width:   1
+                                Behavior on color { ColorAnimation { duration: Theme.animFast } }
+
+                                Drag.active:   _dragH.active
+                                Drag.dragType: Drag.Automatic
+                                Drag.mimeData: ({ "text/uri-list": "file://" + _card.filePath + "\r\n" })
+                                Drag.onDragFinished: action => {
+                                    if (action !== Qt.IgnoreAction)
+                                        FileDropState.trashFile(_card.fileIdx)
+                                }
+
+                                DragHandler { id: _dragH }
+
+                                ColumnLayout {
+                                    anchors { fill: parent; margins: 6 }
+                                    spacing: 4
+
+                                    // ドキュメントサムネイル
+                                    Rectangle {
+                                        Layout.fillWidth:  true
+                                        Layout.fillHeight: true
+                                        color:             "#e8eaf6"
+                                        radius:            4
+
+                                        ColumnLayout {
+                                            anchors { fill: parent; margins: 5 }
+                                            spacing: 3
+
+                                            Repeater {
+                                                model: 5
+                                                Rectangle {
+                                                    Layout.fillWidth: true
+                                                    height: 2
+                                                    radius: 1
+                                                    color:  index === 0 ? "#9096b8" : "#c5c8d8"
+                                                }
+                                            }
+                                            Item { Layout.fillHeight: true }
+                                        }
+                                    }
+
+                                    // ファイル名
+                                    Text {
+                                        Layout.fillWidth:    true
+                                        horizontalAlignment: Text.AlignHCenter
+                                        text:                _card.fileName
+                                        font.family:         Theme.fontFamily
+                                        font.pixelSize:      Theme.fontXs - 3
+                                        color:               Theme.fg
+                                        elide:               Text.ElideMiddle
+                                    }
+                                }
+
+                                // 選択チェックマーク（左上）
+                                Rectangle {
+                                    visible: FileDropState.isSelected(index)
+                                    anchors { top: parent.top; left: parent.left; margins: 4 }
+                                    width:  18
+                                    height: 18
+                                    radius: 9
+                                    color:  Theme.blue
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text:           "󰄬"
+                                        font.family:    Theme.iconFontFamily
+                                        font.pixelSize: 10
+                                        color:          "#07070e"
+                                    }
+                                }
+
+                                MouseArea {
+                                    anchors.fill:    parent
+                                    onClicked:       FileDropState.toggleSelect(index)
+                                    onDoubleClicked: Qt.openUrlExternally("file://" + _card.filePath)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // ── アクションボタン ──────────────────────────────
+                ColumnLayout {
+                    spacing: 6
+
+                    // ゴミ箱ボタン
+                    Rectangle {
+                        implicitWidth:  32
+                        implicitHeight: 32
+                        radius:         Theme.radiusMd
+                        color:          _trashHov.hovered
+                                        ? Qt.rgba(1, 0.2, 0.33, 0.25)
+                                        : Qt.rgba(1, 0.2, 0.33, 0.12)
+                        border.color:   Qt.rgba(1, 0.2, 0.33, 0.4)
+                        border.width:   1
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
+
+                        HoverHandler { id: _trashHov }
+
+                        Text {
+                            anchors.centerIn: parent
+                            text:           "󰗑"
+                            font.family:    Theme.iconFontFamily
+                            font.pixelSize: Theme.fontSm
+                            color:          Theme.red
                         }
 
                         MouseArea {
@@ -255,121 +437,33 @@ PanelWindow {
                             onClicked:    FileDropState.removeSelected()
                         }
                     }
-                }
 
-                Item {
-                    Layout.fillWidth: true
-                    visible:          FileDropState.count === 0
-                    implicitHeight:   60
+                    // 折りたたみボタン（^）
+                    Rectangle {
+                        implicitWidth:  32
+                        implicitHeight: 32
+                        radius:         Theme.radiusMd
+                        color:          _collapseHov.hovered ? Theme.bgHover : "transparent"
+                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
-                    ColumnLayout {
-                        anchors.centerIn: parent
-                        spacing: 6
+                        HoverHandler { id: _collapseHov }
 
                         Text {
-                            Layout.alignment: Qt.AlignHCenter
-                            text:           "󰄼"
+                            anchors.centerIn: parent
+                            text:           ""
                             font.family:    Theme.iconFontFamily
-                            font.pixelSize: Theme.fontXl
-                            color:          Theme.fgDim
-                        }
-
-                        Text {
-                            Layout.alignment: Qt.AlignHCenter
-                            text:           "ここにファイルをドロップ"
-                            font.family:    Theme.fontFamily
                             font.pixelSize: Theme.fontSm
                             color:          Theme.fgSub
                         }
-                    }
-                }
 
-                GridLayout {
-                    Layout.fillWidth: true
-                    visible:          FileDropState.count > 0
-                    columns:          3
-                    columnSpacing:    8
-                    rowSpacing:       8
-
-                    Repeater {
-                        model: FileDropState.files
-
-                        delegate: Rectangle {
-                            id: _card
-
-                            readonly property string filePath: model.path
-                            readonly property string fileName: model.name
-                            readonly property int    fileIdx:  index
-
-                            Layout.fillWidth:  true
-                            implicitHeight:    80
-                            radius:            Theme.radiusMd
-                            color:             FileDropState.isSelected(index)
-                                               ? Theme.bgPillBlue : Theme.bgLight
-                            border.color:      FileDropState.isSelected(index)
-                                               ? Theme.blue : "transparent"
-                            border.width:      1
-                            Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-                            Drag.active:   _dragH.active
-                            Drag.dragType: Drag.Automatic
-                            Drag.mimeData: ({ "text/uri-list": "file://" + _card.filePath + "\r\n" })
-                            Drag.onDragFinished: action => {
-                                if (action !== Qt.IgnoreAction)
-                                    FileDropState.trashFile(_card.fileIdx)
-                            }
-
-                            DragHandler { id: _dragH }
-
-                            ColumnLayout {
-                                anchors { fill: parent; margins: 6 }
-                                spacing: 4
-
-                                Text {
-                                    Layout.alignment: Qt.AlignHCenter
-                                    text:           _fileIcon(_card.fileName)
-                                    font.family:    Theme.iconFontFamily
-                                    font.pixelSize: Theme.fontLg
-                                    color:          Theme.blue
-                                }
-
-                                Text {
-                                    Layout.fillWidth:    true
-                                    horizontalAlignment: Text.AlignHCenter
-                                    text:                _card.fileName
-                                    font.family:         Theme.fontFamily
-                                    font.pixelSize:      Theme.fontXs - 1
-                                    color:               Theme.fg
-                                    elide:               Text.ElideMiddle
-                                }
-                            }
-
-                            MouseArea {
-                                anchors.fill:    parent
-                                onClicked:       FileDropState.toggleSelect(index)
-                                onDoubleClicked: Qt.openUrlExternally("file://" + _card.filePath)
-                            }
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape:  Qt.PointingHandCursor
+                            onClicked:    FileDropState.close()
                         }
                     }
                 }
-
-                Item { implicitHeight: 6 }
             }
         }
-    }
-
-    function _fileIcon(name) {
-        const ext = (name.split(".").pop() || "").toLowerCase()
-        const map = ({
-            "pdf": "󰈦", "png": "󰈟", "jpg": "󰈟", "jpeg": "󰈟",
-            "gif": "󰈟", "svg": "󰈟", "webp": "󰈟",
-            "mp4": "󰈰", "mkv": "󰈰", "mov": "󰈰", "avi": "󰈰",
-            "mp3": "󰈣", "flac": "󰈣", "ogg": "󰈣", "wav": "󰈣",
-            "zip": "󰛫", "tar": "󰛫", "gz": "󰛫", "xz": "󰛫", "7z": "󰛫", "rar": "󰛫",
-            "txt": "󰈮", "md": "󰍔",
-            "js": "󰌞", "ts": "󰌞", "py": "󰌞", "rs": "󰌞",
-            "nix": "󰋊", "sh": "󰆍",
-        })
-        return map[ext] || "󰈔"
     }
 }
