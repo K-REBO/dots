@@ -84,6 +84,7 @@
       (import ./overlays/tp-render.nix inputs)
       (import ./overlays/gh-grass.nix inputs)
       (import ./overlays/apple-color-emoji.nix)
+      (import ./overlays/alacritty-sixel.nix)
       nur.overlays.default
       inputs.fenix.overlays.default
     ];
