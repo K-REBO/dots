@@ -27,7 +27,7 @@ PanelWindow {
     aboveWindows:   true
 
     // ── 視覚高さアニメーション ────────────────────────────────────
-    property real _panelH: Theme.barHeight
+    property real _panelH: Theme.pillH
     Behavior on _panelH {
         NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
     }
@@ -36,12 +36,12 @@ PanelWindow {
         target: FileDropState
         function onHoveredChanged() {
             root._panelH = FileDropState.hovered
-                ? Theme.barHeight + 12 + _popupContent.implicitHeight
-                : Theme.barHeight
+                ? Theme.pillH + 12 + _popupContent.implicitHeight
+                : Theme.pillH
         }
         function onCountChanged() {
             if (FileDropState.hovered) {
-                const newH = Theme.barHeight + 12 + _popupContent.implicitHeight
+                const newH = Theme.pillH + 12 + _popupContent.implicitHeight
                 if (newH > root._panelH)
                     root._panelH = newH  // ファイル追加時のみ拡張（削除時は縮小しない）
             }
@@ -79,7 +79,7 @@ PanelWindow {
             topMargin:        _vPad
             horizontalCenter: parent.horizontalCenter
         }
-        height: root._panelH - _vPad
+        height: root._panelH
 
         // 幅アニメーション: 閉時はピル幅、開時はポップアップ幅
         property real _pillW: Theme.fontMd
@@ -138,13 +138,11 @@ PanelWindow {
                 height: Theme.pillH
 
                 RowLayout {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left:           parent.left
-                    anchors.leftMargin:     (Theme.pillH - Theme.fontMd) / 2
+                    anchors.centerIn: parent
                     spacing: Theme.paddingXs
 
                     Text {
-                        text:           "󰚑"
+                        text:           "󰈔"
                         font.family:    Theme.iconFontFamily
                         font.pixelSize: Theme.fontMd
                         width:          Theme.fontMd
@@ -232,7 +230,7 @@ PanelWindow {
                 // inbox アイコン（大）
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text:           "󰚑"
+                    text:           "󰈔"
                     font.family:    Theme.iconFontFamily
                     font.pixelSize: Theme.fontXl
                     color:          _drop.containsDrag ? Theme.cyan : Theme.fgSub
@@ -472,7 +470,7 @@ PanelWindow {
 
                         Text {
                             anchors.centerIn: parent
-                            text:           "󰗑"
+                            text:           "󰆴"
                             font.family:    Theme.iconFontFamily
                             font.pixelSize: Theme.fontSm
                             color:          Theme.red

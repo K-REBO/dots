@@ -34,7 +34,7 @@ Item {
 
         // ── アイコン（常時表示）───────────────────────────────────
         Text {
-            text:           "󰚑"
+            text:           "󰈔"
             font.family:    Theme.iconFontFamily
             font.pixelSize: Theme.fontMd
             color:          _drop.containsDrag ? Theme.cyan
