@@ -21,14 +21,14 @@ PanelWindow {
     exclusionMode:  ExclusionMode.Ignore
 
     // フェードアウト完了まで Window を保持
-    property real contentOpacity: FileDropState.open ? 1.0 : 0.0
+    property real contentOpacity: FileDropState.hovered ? 1.0 : 0.0
     Behavior on contentOpacity {
         NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
     }
     visible: contentOpacity > 0
 
     // ドロップダウン演出用オフセット（root スコープで定義し Translate から参照）
-    property real dropOffset: FileDropState.open ? 0 : -10
+    property real dropOffset: FileDropState.hovered ? 0 : -10
     Behavior on dropOffset {
         NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
     }
@@ -44,7 +44,12 @@ PanelWindow {
         transform:    Translate { y: root.dropOffset }
 
         // 2ゾーンホバー: popup 内にいる間もタイマーをキャンセル
-        HoverHandler {}
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered) FileDropState.startHover()
+                else         FileDropState.endHover()
+            }
+        }
 
         Flickable {
             anchors { fill: parent; margins: 1 }

@@ -34,13 +34,13 @@ PanelWindow {
 
     Connections {
         target: FileDropState
-        function onOpenChanged() {
-            root._panelH = FileDropState.open
+        function onHoveredChanged() {
+            root._panelH = FileDropState.hovered
                 ? Theme.barHeight + 12 + _popupContent.implicitHeight
                 : Theme.barHeight
         }
         function onCountChanged() {
-            if (FileDropState.open)
+            if (FileDropState.hovered)
                 root._panelH = Theme.barHeight + 12 + _popupContent.implicitHeight
         }
     }
@@ -58,6 +58,20 @@ PanelWindow {
                 }
             }
             drop.accept(Qt.CopyAction)
+        }
+    }
+
+    // ── ホバー検知 (_panelH に追従する Item 内に限定) ────────────
+    Item {
+        width:  parent.width
+        height: root._panelH
+        anchors.top: parent.top
+
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered) FileDropState.startHover()
+                else         FileDropState.endHover()
+            }
         }
     }
 
@@ -87,13 +101,13 @@ PanelWindow {
 
         Connections {
             target: FileDropState
-            function onOpenChanged() {
-                _widget._w = FileDropState.open
+            function onHoveredChanged() {
+                _widget._w = FileDropState.hovered
                     ? Math.min(_popupContent.implicitWidth + 32, root._maxW)
                     : _widget._pillW
             }
             function onCountChanged() {
-                if (!FileDropState.open) _widget._w = _widget._pillW
+                if (!FileDropState.hovered) _widget._w = _widget._pillW
                 else _widget._w = Math.min(_popupContent.implicitWidth + 32, root._maxW)
             }
         }
@@ -103,7 +117,7 @@ PanelWindow {
         color:        _drop.containsDrag
                       ? Qt.rgba(0.00, 0.83, 1.00, 0.12)
                       : Theme.bgLight
-        border.color: (_drop.containsDrag || FileDropState.open) ? Theme.cyan : Theme.border
+        border.color: (_drop.containsDrag || FileDropState.hovered) ? Theme.cyan : Theme.border
         border.width: 1
         Behavior on color        { ColorAnimation { duration: Theme.animFast } }
         Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
@@ -139,7 +153,7 @@ PanelWindow {
                     Rectangle {
                         id:             _badgeRef
                         visible:        FileDropState.count > 0
-                                        && !FileDropState.open
+                                        && !FileDropState.hovered
                                         && !_drop.containsDrag
                         implicitWidth:  _badgeNum.implicitWidth + 8
                         implicitHeight: 18
@@ -161,7 +175,6 @@ PanelWindow {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape:  Qt.PointingHandCursor
-                    onClicked:    FileDropState.toggle()
                 }
             }
 
@@ -170,7 +183,7 @@ PanelWindow {
                 Layout.fillWidth: true
                 height:  1
                 color:   Theme.border
-                opacity: FileDropState.open ? 1 : 0
+                opacity: FileDropState.hovered ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
             }
 
@@ -182,7 +195,7 @@ PanelWindow {
                 implicitHeight:      _popupLoader.item ? _popupLoader.item.implicitHeight : 120
                 clip:                true
 
-                opacity: FileDropState.open ? 1 : 0
+                opacity: FileDropState.hovered ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
 
                 Loader {
@@ -459,7 +472,7 @@ PanelWindow {
                         MouseArea {
                             anchors.fill: parent
                             cursorShape:  Qt.PointingHandCursor
-                            onClicked:    FileDropState.close()
+                            onClicked:    FileDropState.endHover()
                         }
                     }
                 }

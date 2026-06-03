@@ -5,13 +5,18 @@ import Quickshell.Io
 QtObject {
     id: root
 
-    property bool open: false
+    property bool hovered: false
     property var selectedIndices: []
     property ListModel files: ListModel {}
     readonly property int count: files.count
 
-    function toggle() { open = !open }
-    function close()  { open = false }
+    function startHover() { _closeTimer.stop(); hovered = true }
+    function endHover()   { _closeTimer.restart() }
+
+    property Timer _closeTimer: Timer {
+        interval: 200
+        onTriggered: root.hovered = false
+    }
 
     function clearSelection() { selectedIndices = [] }
 
