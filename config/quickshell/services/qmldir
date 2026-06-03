@@ -8,3 +8,4 @@ singleton NetworkService    1.0 NetworkService.qml
 singleton SleepTimeService  1.0 SleepTimeService.qml
 singleton CalendarState     1.0 CalendarState.qml
 singleton FileDropState    1.0 FileDropState.qml
+singleton TlpService       1.0 TlpService.qml

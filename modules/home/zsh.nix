@@ -100,7 +100,7 @@
       # compinit を最初のコマンド実行直前（preexec）まで遅延させて起動時間を短縮。
       # nixプロファイル更新時は tool_init キャッシュ再生成時に zcompdump を削除し、
       # 次の preexec で強制的にフル compinit が走る。
-      fpath+=~/.zfunc
+      fpath=(~/.zfunc $fpath)
       autoload -Uz compinit
       _deferred_compinit() {
         compinit -C

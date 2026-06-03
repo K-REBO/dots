@@ -77,6 +77,21 @@
     options thinkpad_acpi fan_control=1
   '';
 
+  # wheel グループが platform_profile を書き込めるようにする
+  systemd.services.platform-profile-perms = {
+    description = "Set platform_profile sysfs permissions";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "systemd-udevd.service" ];
+    script = ''
+      chmod 0664 /sys/firmware/acpi/platform_profile
+      chgrp wheel /sys/firmware/acpi/platform_profile
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+  };
+
   # MicMute LED をユーザーが書き込めるようにする
   # udevのKERNEL/DEVPATHマッチングが "::" を含むデバイス名で機能しないため
   # systemdサービスで起動時にパーミッションを設定する
