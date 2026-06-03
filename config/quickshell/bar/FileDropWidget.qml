@@ -48,12 +48,18 @@ PanelWindow {
         }).join("/")
     }
 
-    // Wayland サーフェス固定: 見た目はアニメーションで調整
+    // ウィンドウサイズは固定（アニメーションなし）。mask で入力領域を可視ウィジェットに限定
     implicitWidth:  _maxW
     implicitHeight: Theme.barHeight + 12 + 200
     color:          "transparent"
     exclusionMode:  ExclusionMode.Ignore
     aboveWindows:   true
+    mask: Region {
+        x:      _widget.x
+        y:      _widget.y
+        width:  _widget.width
+        height: _widget.height
+    }
 
     // ── 視覚高さアニメーション ────────────────────────────────────
     property real _panelH: Theme.pillH
@@ -184,7 +190,7 @@ PanelWindow {
                     spacing: Theme.paddingXs
 
                     Text {
-                        text:           "󰈔"
+                        text:           " "
                         font.family:    Theme.iconFontFamily
                         font.pixelSize: Theme.fontMd
                         width:          Theme.fontMd
@@ -275,7 +281,7 @@ PanelWindow {
                 // inbox アイコン（大）
                 Text {
                     Layout.alignment: Qt.AlignHCenter
-                    text:           "󰈔"
+                    text:           " "
                     font.family:    Theme.iconFontFamily
                     font.pixelSize: Theme.fontXl
                     color:          _drop.containsDrag ? Theme.cyan : Theme.fgSub
@@ -306,7 +312,7 @@ PanelWindow {
                         spacing: 4
 
                         Text {
-                            text:           "󰈔"
+                            text:           " "
                             font.family:    Theme.iconFontFamily
                             font.pixelSize: Theme.fontSm
                             color:          Theme.cyan
@@ -521,11 +527,13 @@ PanelWindow {
                                 root._peers.clear()
                                 root._statusMsg = ""
                                 root._peerProc.command = ["bash", "-c",
-                                    "self=$(tailscale ip -4 2>/dev/null); " +
-                                    "tailscale status 2>/dev/null | " +
-                                    "awk -v self=\"$self\" '/^[0-9]+\\./ && $1!=self " +
-                                    "{ online=($5==\"-\"?\"0\":\"1\"); print online\"|\"$1\"|\"$2 }' " +
-                                    "| sort -r"]
+                                    "tailscale status --json 2>/dev/null | " +
+                                    "python3 -c \"import json,sys; d=json.load(sys.stdin); " +
+                                    "res=[('1' if p.get('Online',False) else '0'," +
+                                    "p.get('TailscaleIPs',[''])[0]," +
+                                    "(p.get('DNSName','').split('.')[0] or p.get('HostName','?'))) " +
+                                    "for p in d.get('Peer',{}).values()]; " +
+                                    "res.sort(reverse=True); [print(r[0]+'|'+r[1]+'|'+r[2]) for r in res]\""]
                                 root._peerProc.running = true
                                 root._showPeers = true
                             }
