@@ -45,12 +45,13 @@ PanelWindow {
                 ? Theme.pillH + 1 + _popupContent.implicitHeight
                 : Theme.pillH
         }
-        function onCountChanged() {
-            if (FileDropState.hovered) {
-                const newH = Theme.pillH + 1 + _popupContent.implicitHeight
-                if (newH > root._panelH)
-                    root._panelH = newH
-            }
+    }
+
+    Connections {
+        target: _popupContent
+        function onImplicitHeightChanged() {
+            if (FileDropState.hovered)
+                root._panelH = Theme.pillH + 1 + _popupContent.implicitHeight
         }
     }
 
@@ -105,14 +106,13 @@ PanelWindow {
                     ? Math.min(_popupContent.implicitWidth + 32, root._maxW)
                     : _widget._pillW
             }
-            function onCountChanged() {
-                if (!FileDropState.hovered) {
-                    _widget._w = _widget._pillW
-                } else {
-                    const newW = Math.min(_popupContent.implicitWidth + 32, root._maxW)
-                    if (newW > _widget._w)
-                        _widget._w = newW  // ファイル追加時のみ拡張
-                }
+        }
+
+        Connections {
+            target: _popupContent
+            function onImplicitWidthChanged() {
+                if (FileDropState.hovered)
+                    _widget._w = Math.min(_popupContent.implicitWidth + 32, root._maxW)
             }
         }
 
