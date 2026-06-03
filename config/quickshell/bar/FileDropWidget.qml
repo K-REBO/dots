@@ -19,6 +19,12 @@ PanelWindow {
     // 最大幅: ファイルが多くても画面幅に収まるよう制限
     readonly property real _maxW: Math.min(screen ? screen.width - 40 : 600, 600)
 
+    function fileUrl(path) {
+        return "file://" + path.split("/").map(function(c) {
+            return c ? encodeURIComponent(c) : c
+        }).join("/")
+    }
+
     // Wayland サーフェス固定: 見た目はアニメーションで調整
     implicitWidth:  _maxW
     implicitHeight: Theme.barHeight + 12 + 200
@@ -36,14 +42,14 @@ PanelWindow {
         target: FileDropState
         function onHoveredChanged() {
             root._panelH = FileDropState.hovered
-                ? Theme.pillH + 12 + _popupContent.implicitHeight
+                ? Theme.pillH + 1 + _popupContent.implicitHeight
                 : Theme.pillH
         }
         function onCountChanged() {
             if (FileDropState.hovered) {
-                const newH = Theme.pillH + 12 + _popupContent.implicitHeight
+                const newH = Theme.pillH + 1 + _popupContent.implicitHeight
                 if (newH > root._panelH)
-                    root._panelH = newH  // ファイル追加時のみ拡張（削除時は縮小しない）
+                    root._panelH = newH
             }
         }
     }
@@ -323,6 +329,8 @@ PanelWindow {
                     RowLayout {
                         id:      _cardRow
                         spacing: 8
+                        width:   implicitWidth
+                        height:  implicitHeight
 
                         Repeater {
                             model: FileDropState.files
@@ -350,7 +358,7 @@ PanelWindow {
 
                                 Drag.active:   _dragH.active
                                 Drag.dragType: Drag.Automatic
-                                Drag.mimeData: ({ "text/uri-list": "file://" + _card.filePath + "\r\n" })
+                                Drag.mimeData: ({ "text/uri-list": root.fileUrl(_card.filePath) + "\r\n" })
                                 Drag.onDragFinished: action => {
                                     if (action !== Qt.IgnoreAction)
                                         FileDropState.trashFile(_card.fileIdx)
@@ -372,13 +380,14 @@ PanelWindow {
 
                                         // ① 画像サムネイル
                                         Image {
-                                            visible:      _card.isImage
+                                            visible:      _card.isImage && model.ready
                                             anchors.fill: parent
-                                            source:       visible ? "file://" + _card.filePath : ""
+                                            source:       visible ? root.fileUrl(_card.filePath) : ""
                                             fillMode:     Image.PreserveAspectCrop
                                             smooth:       true
                                             asynchronous: true
                                             clip:         true
+                                            sourceSize:   Qt.size(width, height)
                                         }
 
                                         // ② テキストプレビュー
@@ -445,7 +454,7 @@ PanelWindow {
                                 MouseArea {
                                     anchors.fill:    parent
                                     onClicked:       FileDropState.toggleSelect(index)
-                                    onDoubleClicked: Qt.openUrlExternally("file://" + _card.filePath)
+                                    onDoubleClicked: Qt.openUrlExternally(root.fileUrl(_card.filePath))
                                 }
                             }
                         }
