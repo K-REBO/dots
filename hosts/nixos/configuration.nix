@@ -121,11 +121,12 @@
     };
   };
 
-  # ly が hyprland-uwsm.desktop（index 0）を選択するように固定する。
+  # ly が hyprland-uwsm.desktop（index 2）を選択するように固定する。
+  # セッション順: 0=shell, 1=hyprland.desktop, 2=hyprland-uwsm.desktop
   # graphical-session.target を正しく activate するために必要。
   system.activationScripts.lyDefaultSession = ''
     if [ -f /etc/ly/save.txt ]; then
-      ${pkgs.gnused}/bin/sed -i 's/^bido:.*/bido:0/' /etc/ly/save.txt
+      ${pkgs.gnused}/bin/sed -i 's/^bido:.*/bido:2/' /etc/ly/save.txt
     fi
   '';
 
