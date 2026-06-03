@@ -26,11 +26,14 @@ QtObject {
 
     function refresh() { _fetch.running = true }
 
-    function cycleProfile() {
-        const next = (profileIndex + 1) % profiles.length
+    function setProfile(profile) {
         _set.command = ["bash", "-c",
-            "echo '" + profiles[next] + "' > /sys/firmware/acpi/platform_profile"]
+            "echo '" + profile + "' > /sys/firmware/acpi/platform_profile"]
         _set.running = true
+    }
+
+    function cycleProfile() {
+        setProfile(profiles[(profileIndex + 1) % profiles.length])
     }
 
     property var _set: Process {
