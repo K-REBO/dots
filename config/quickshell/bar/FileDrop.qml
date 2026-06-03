@@ -5,16 +5,13 @@ import "../services"
 
 Item {
     id: root
-    implicitWidth:  _drop.containsDrag ? 160
-                  : (expanded           ? _icon.implicitWidth + _expandArea.implicitWidth + Theme.paddingXs
-                  :                       _icon.implicitWidth + (FileDropState.count > 0 ? Theme.paddingXs + _badge.implicitWidth : 0))
+    // root width just follows the inner RowLayout — no Behavior here
+    // (animation is driven solely by expandArea.implicitWidth)
+    implicitWidth:  _row.implicitWidth
     implicitHeight: Theme.pillH
 
     property bool expanded: false
-
     readonly property bool containsDrag: _drop.containsDrag
-
-    Behavior on implicitWidth { NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic } }
 
     DropArea {
         id: _drop
@@ -32,49 +29,60 @@ Item {
         }
     }
 
-    // ── 通常表示 ─────────────────────────────────────────────────
     RowLayout {
+        id: _row
         anchors.centerIn: parent
-        spacing:  Theme.paddingXs
-        opacity:  _drop.containsDrag ? 0 : 1
-        Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+        spacing: Theme.paddingXs
 
-        // アイコン
+        // ── アイコン（常時表示）───────────────────────────────────
         Text {
-            id:             _icon
             text:           "󰉋"
             font.family:    Theme.iconFontFamily
             font.pixelSize: Theme.fontMd
-            color:          FileDropState.count > 0 ? Theme.blue : Theme.fgSub
+            color:          _drop.containsDrag ? Theme.cyan
+                          : FileDropState.count > 0 ? Theme.blue
+                          : Theme.fgSub
+            Behavior on color { ColorAnimation { duration: Theme.animFast } }
         }
 
-        // hover展開ラベル
+        // ── 展開エリア（hover / drag で slide-in）────────────────
         Item {
-            id:           _expandArea
-            implicitWidth: root.expanded && !_drop.containsDrag
-                           ? _label.implicitWidth : 0
-            height:        Theme.pillH
-            clip:          true
+            id: _expandArea
+            enabled:      root.expanded || _drop.containsDrag
+            height:       Theme.pillH
+            implicitWidth: (root.expanded || _drop.containsDrag)
+                           ? _content.implicitWidth + Theme.paddingXs : 0
+            clip: true
             Behavior on implicitWidth {
                 NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
             }
 
-            Text {
-                id:             _label
+            RowLayout {
+                id: _content
                 anchors.verticalCenter: parent.verticalCenter
-                text:           FileDropState.count > 0
-                                ? FileDropState.count + " 件"
-                                : "一時置き場"
-                font.family:    Theme.fontFamily
-                font.pixelSize: Theme.fontSm
-                color:          FileDropState.count > 0 ? Theme.blue : Theme.fgSub
+                spacing: Theme.paddingXs
+
+                Rectangle { width: 1; height: 16; color: Theme.border }
+
+                Text {
+                    text:           _drop.containsDrag        ? "ここにドロップ"
+                                  : FileDropState.count > 0  ? FileDropState.count + " 件"
+                                  :                            "一時置き場"
+                    font.family:    Theme.fontFamily
+                    font.pixelSize: Theme.fontSm
+                    color:          _drop.containsDrag        ? Theme.cyan
+                                  : FileDropState.count > 0  ? Theme.blue
+                                  :                            Theme.fgSub
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
+                }
             }
         }
 
-        // バッジ（通常時・未展開）
+        // ── バッジ（未展開・非ドラッグ時のみ）──────────────────
         Rectangle {
-            id:             _badge
-            visible:        FileDropState.count > 0 && !root.expanded
+            visible:        FileDropState.count > 0
+                            && !root.expanded
+                            && !_drop.containsDrag
             implicitWidth:  _num.implicitWidth + 8
             implicitHeight: 18
             radius:         Theme.radiusFull
@@ -92,31 +100,8 @@ Item {
         }
     }
 
-    // ── ドロップゾーン表示 ────────────────────────────────────────
-    RowLayout {
-        anchors.centerIn: parent
-        spacing:  Theme.paddingXs
-        opacity:  _drop.containsDrag ? 1 : 0
-        Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
-
-        Text {
-            text:           "󰄼"
-            font.family:    Theme.iconFontFamily
-            font.pixelSize: Theme.fontMd
-            color:          Theme.cyan
-        }
-
-        Text {
-            text:           "ここにドロップ"
-            font.family:    Theme.fontFamily
-            font.pixelSize: Theme.fontSm
-            color:          Theme.cyan
-        }
-    }
-
     MouseArea {
         anchors.fill: parent
         cursorShape:  Qt.PointingHandCursor
-        onClicked:    FileDropState.toggle()
     }
 }

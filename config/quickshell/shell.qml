@@ -21,10 +21,10 @@ ShellRoot {
         }
     }
 
-    // ── FileDropポップアップ（各スクリーンに1つ）─────────────────
+    // ── FileDropウィジェット（各スクリーンに1つ）────────────────
     Variants {
         model: Quickshell.screens
-        delegate: FileDropPopup {
+        delegate: FileDropWidget {
             required property var modelData
             screen: modelData
         }

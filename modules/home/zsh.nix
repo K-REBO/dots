@@ -23,8 +23,8 @@
       lla = "eza -lh@ma --time-style=iso";
       lal = "eza -lh@ma --time-style=iso";
 
-	  # mv
-	  mv = "mv -I";
+	  # rm
+	  rm = "rm -I";
 
       # Other tools
       #z = "zoxide";

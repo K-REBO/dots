@@ -18,8 +18,20 @@ PanelWindow {
     implicitWidth:  400
     implicitHeight: Math.min(_col.implicitHeight + 28, 520)
     color:          "transparent"
-    visible:        FileDropState.open
     exclusionMode:  ExclusionMode.Ignore
+
+    // フェードアウト完了まで Window を保持
+    property real contentOpacity: FileDropState.hovered ? 1.0 : 0.0
+    Behavior on contentOpacity {
+        NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
+    }
+    visible: contentOpacity > 0
+
+    // ドロップダウン演出用オフセット（root スコープで定義し Translate から参照）
+    property real dropOffset: FileDropState.hovered ? 0 : -10
+    Behavior on dropOffset {
+        NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
+    }
 
     // ── 背景 ─────────────────────────────────────────────────────
     Rectangle {
@@ -28,10 +40,15 @@ PanelWindow {
         color:        Qt.rgba(0.06, 0.06, 0.14, 0.96)
         border.color: Theme.border
         border.width: 1
+        opacity:      root.contentOpacity
+        transform:    Translate { y: root.dropOffset }
 
-        MouseArea {
-            anchors.fill:            parent
-            propagateComposedEvents: true
+        // 2ゾーンホバー: popup 内にいる間もタイマーをキャンセル
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered) FileDropState.startHover()
+                else         FileDropState.endHover()
+            }
         }
 
         Flickable {
@@ -145,8 +162,8 @@ PanelWindow {
                             Drag.active:   _dragH.active
                             Drag.dragType: Drag.Automatic
                             Drag.mimeData: ({ "text/uri-list": "file://" + _card.filePath + "\r\n" })
-                            Drag.onDropped: drop => {
-                                if (drop.action !== Qt.IgnoreAction)
+                            Drag.onDragFinished: action => {
+                                if (action !== Qt.IgnoreAction)
                                     FileDropState.trashFile(_card.fileIdx)
                             }
 
