@@ -68,20 +68,6 @@ PanelWindow {
         }
     }
 
-    // ── ホバー検知 (_panelH に追従する Item 内に限定) ────────────
-    Item {
-        width:  parent.width
-        height: root._panelH
-        anchors.top: parent.top
-
-        HoverHandler {
-            onHoveredChanged: {
-                if (hovered) FileDropState.startHover()
-                else         FileDropState.endHover()
-            }
-        }
-    }
-
     // ── メインウィジェット ────────────────────────────────────────
     Rectangle {
         id: _widget
@@ -121,6 +107,14 @@ PanelWindow {
                     if (newW > _widget._w)
                         _widget._w = newW  // ファイル追加時のみ拡張
                 }
+            }
+        }
+
+        // HoverHandler を _widget 本体に置く: 子アイテムにホバーしても hovered=true を維持
+        HoverHandler {
+            onHoveredChanged: {
+                if (hovered) FileDropState.startHover()
+                else         FileDropState.endHover()
             }
         }
 
@@ -469,14 +463,12 @@ PanelWindow {
                         implicitWidth:  32
                         implicitHeight: 32
                         radius:         Theme.radiusMd
-                        color:          _trashHov.hovered
+                        color:          _trashMouse.containsMouse
                                         ? Qt.rgba(1, 0.2, 0.33, 0.25)
                                         : Qt.rgba(1, 0.2, 0.33, 0.12)
                         border.color:   Qt.rgba(1, 0.2, 0.33, 0.4)
                         border.width:   1
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-                        HoverHandler { id: _trashHov }
 
                         Text {
                             anchors.centerIn: parent
@@ -487,8 +479,10 @@ PanelWindow {
                         }
 
                         MouseArea {
+                            id:           _trashMouse
                             anchors.fill: parent
                             cursorShape:  Qt.PointingHandCursor
+                            hoverEnabled: true
                             onClicked:    FileDropState.removeSelected()
                         }
                     }
@@ -498,10 +492,8 @@ PanelWindow {
                         implicitWidth:  32
                         implicitHeight: 32
                         radius:         Theme.radiusMd
-                        color:          _collapseHov.hovered ? Theme.bgHover : "transparent"
+                        color:          _collapseMouse.containsMouse ? Theme.bgHover : "transparent"
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-                        HoverHandler { id: _collapseHov }
 
                         Text {
                             anchors.centerIn: parent
@@ -512,8 +504,10 @@ PanelWindow {
                         }
 
                         MouseArea {
+                            id:           _collapseMouse
                             anchors.fill: parent
                             cursorShape:  Qt.PointingHandCursor
+                            hoverEnabled: true
                             onClicked:    FileDropState.endHover()
                         }
                     }
