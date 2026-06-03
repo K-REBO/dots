@@ -54,6 +54,9 @@
     # ============
     nautilus                    # GNOMEファイルマネージャ
     gvfs                        # Nautilus用仮想ファイルシステム
+    gdk-pixbuf                  # PNG/JPEG等の画像サムネイル生成
+    ffmpegthumbnailer           # 動画サムネイル生成
+    evince                      # PDFサムネイル生成
 
     # ============
     # コミュニケーション
