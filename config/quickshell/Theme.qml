@@ -66,6 +66,10 @@ QtObject {
     readonly property real paddingLg: 18
     readonly property real gap:       10
 
+    // ── Workspace Icons ──────────────────────────────────────────
+    // "svg" = Colloid-Dark SVGアイコン / "nerdfont" = Nerd Fontグリフ
+    readonly property string wsIconMode: "svg"
+
     // ── Typography ───────────────────────────────────────────────
     // ewwと同じフォントファミリー
     readonly property string fontFamily:     "JetBrainsMono NF"
