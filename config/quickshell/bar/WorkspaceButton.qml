@@ -35,6 +35,7 @@ Rectangle {
                                        return { svg: _iconBase + "system-file-manager.svg",  nf: "󰉋" }
         if (id.includes("obsidian"))   return { svg: _iconBase + "obsidian.svg",             nf: "󱓧" }
         if (id.includes("mpv"))        return { svg: _iconBase + "mpv.svg",                  nf: "󰕧" }
+        if (id.includes("steam"))      return { svg: _iconBase + "steam.svg",                nf: "󰓓" }
         return                                { svg: _iconBase + "application-default-icon.svg", nf: "󰀏" }
     }
 

@@ -140,7 +140,7 @@
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = false;
+    alsa.support32Bit = true;
     pulse.enable = true;
   };
 
@@ -159,6 +159,12 @@
   # ====================
   programs.zsh.enable = true;
   programs.firefox.enable = true;
+
+  # Steam
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+  };
 
   # AppImage サポート
   programs.appimage = {
@@ -291,7 +297,7 @@
     # 新形式: hardware.graphics
     graphics = {
       enable = true;
-      enable32Bit = false;
+      enable32Bit = true;
       #extraPackages = with pkgs; [
        # amdvlk
        # rocm-opencl-icd
