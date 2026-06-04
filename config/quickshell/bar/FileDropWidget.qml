@@ -10,6 +10,28 @@ PanelWindow {
 
     required property var screen
 
+    // ── macOS Dark Mode palette ────────────────────────────────────
+    readonly property color _bg:        Qt.rgba(0.11, 0.11, 0.12, 0.92)
+    readonly property color _surface:   Qt.rgba(0.17, 0.17, 0.18, 0.96)
+    readonly property color _border:    Qt.rgba(1, 1, 1, 0.10)
+    readonly property color _borderAct: Qt.rgba(0.04, 0.51, 1.0, 0.55)
+    readonly property color _dragBg:    Qt.rgba(0.04, 0.51, 1.0, 0.18)
+    readonly property color _blue:      "#0A84FF"
+    readonly property color _red:       "#FF453A"
+    readonly property color _green:     "#30D158"
+    readonly property color _yellow:    "#FFD60A"
+    readonly property color _text:      Qt.rgba(1, 1, 1, 0.88)
+    readonly property color _textSec:   Qt.rgba(1, 1, 1, 0.55)
+    readonly property color _textTer:   Qt.rgba(1, 1, 1, 0.35)
+    readonly property color _cardSelBg: Qt.rgba(0.04, 0.51, 1.0, 0.20)
+    readonly property color _btnBluHov: Qt.rgba(0.04, 0.51, 1.0, 0.18)
+    readonly property color _btnRedHov: Qt.rgba(1.0, 0.27, 0.23, 0.18)
+    readonly property color _btnNeuHov: Qt.rgba(1, 1, 1, 0.10)
+    readonly property real  _rWidget:   14
+    readonly property real  _rCard:     10
+    readonly property real  _rBtn:      8
+    readonly property string _fontBody: "JetBrainsMono NFP"
+
     anchors { top: true; left: true }
     margins {
         top:  Theme.barMargin
@@ -64,7 +86,7 @@ PanelWindow {
     // ── 視覚高さアニメーション ────────────────────────────────────
     property real _panelH: Theme.pillH
     Behavior on _panelH {
-        NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
+        NumberAnimation { duration: 280; easing.type: Easing.OutExpo }
     }
 
     Connections {
@@ -106,8 +128,8 @@ PanelWindow {
                 const url = urls[i].toString()
                 if (url.startsWith("file://")) {
                     const path = decodeURIComponent(url.slice(7))
-                    // /tmp/drag-drop/ 以下は自分のカードからの自己ドロップ → 複製を防ぐためスキップ
-                    if (path.startsWith("/tmp/drag-drop/")) continue
+                    // storage 以下は自分のカードからの自己ドロップ → 複製を防ぐためスキップ
+                    if (FileDropState._dropBase && path.startsWith(FileDropState._dropBase + "/")) continue
                     FileDropState.addFile(path)
                     hasExternal = true
                 }
@@ -137,7 +159,7 @@ PanelWindow {
                               + 20
         property real _w: _pillW
         Behavior on _w {
-            NumberAnimation { duration: Theme.animNormal; easing.type: Easing.OutCubic }
+            NumberAnimation { duration: 260; easing.type: Easing.OutExpo }
         }
         width: _w
 
@@ -166,12 +188,10 @@ PanelWindow {
             }
         }
 
-        radius:       Theme.radiusMd
+        radius:       root._rWidget
         clip:         true
-        color:        _drop.containsDrag
-                      ? Qt.rgba(0.04, 0.22, 0.30, 0.92)
-                      : Theme.bgLight
-        border.color: (_drop.containsDrag || FileDropState.hovered) ? Theme.cyan : Theme.border
+        color:        root._bg
+        border.color: (_drop.containsDrag || FileDropState.hovered) ? root._borderAct : root._border
         border.width: 1
         Behavior on color        { ColorAnimation { duration: Theme.animFast } }
         Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
@@ -195,9 +215,7 @@ PanelWindow {
                         font.pixelSize: Theme.fontMd
                         width:          Theme.fontMd
                         horizontalAlignment: Text.AlignHCenter
-                        color: _drop.containsDrag        ? Theme.cyan
-                             : FileDropState.count > 0  ? Theme.blue
-                             : Theme.fg
+                        color: (_drop.containsDrag || FileDropState.count > 0) ? root._blue : root._textTer
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
 
@@ -210,15 +228,15 @@ PanelWindow {
                         implicitWidth:  _badgeNum.implicitWidth + 8
                         implicitHeight: 18
                         radius:         Theme.radiusFull
-                        color:          Theme.blue
+                        color:          root._blue
 
                         Text {
                             id:             _badgeNum
                             anchors.centerIn: parent
                             text:           FileDropState.count
-                            font.family:    Theme.fontFamily
+                            font.family:    root._fontBody
                             font.pixelSize: Theme.fontXs - 2
-                            color:          "#07070e"
+                            color:          "#FFFFFF"
                             font.bold:      true
                         }
                     }
@@ -234,7 +252,7 @@ PanelWindow {
             Rectangle {
                 Layout.fillWidth: true
                 height:  1
-                color:   Theme.border
+                color:   root._border
                 opacity: FileDropState.hovered ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
             }
@@ -270,79 +288,42 @@ PanelWindow {
         id: _dropHintComp
 
         Item {
-            implicitWidth:  240
-            implicitHeight: _col.implicitHeight + 24
+            implicitWidth:  260
+            implicitHeight: 130
+
+            // ドロップゾーン枠
+            Rectangle {
+                anchors { fill: parent; margins: 8 }
+                radius: 10
+                color:        _drop.containsDrag ? Qt.rgba(0.04, 0.51, 1.0, 0.06) : "transparent"
+                border.width: 1
+                border.color: _drop.containsDrag ? root._borderAct : Qt.rgba(1, 1, 1, 0.18)
+                Behavior on color        { ColorAnimation { duration: Theme.animFast } }
+                Behavior on border.color { ColorAnimation { duration: Theme.animFast } }
+            }
 
             ColumnLayout {
-                id:       _col
-                anchors { top: parent.top; topMargin: 12; horizontalCenter: parent.horizontalCenter }
-                spacing:  10
+                anchors.centerIn: parent
+                spacing: 8
 
-                // inbox アイコン（大）
+                // トレイアイコン（大）
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text:           " "
                     font.family:    Theme.iconFontFamily
                     font.pixelSize: Theme.fontXl
-                    color:          _drop.containsDrag ? Theme.cyan : Theme.fgSub
+                    color:          _drop.containsDrag ? root._blue : root._textTer
                     Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 }
 
-                // "Drop" ヒント行
-                RowLayout {
+                // ヒントテキスト
+                Text {
                     Layout.alignment: Qt.AlignHCenter
-                    spacing: Theme.paddingXs
-
-                    Text {
-                        text:           "󰳽"
-                        font.family:    Theme.iconFontFamily
-                        font.pixelSize: Theme.fontSm
-                        color:          Theme.fgSub
-                    }
-                    Text {
-                        text:           "Drop"
-                        font.family:    Theme.fontFamily
-                        font.pixelSize: Theme.fontSm
-                        color:          Theme.fgSub
-                    }
-
-                    // ドラッグ中のファイル名プレビュー
-                    RowLayout {
-                        visible: _drop.containsDrag
-                        spacing: 4
-
-                        Text {
-                            text:           " "
-                            font.family:    Theme.iconFontFamily
-                            font.pixelSize: Theme.fontSm
-                            color:          Theme.cyan
-                        }
-                        Text {
-                            text:           _drop.containsDrag ? "ファイル" : ""
-                            font.family:    Theme.fontFamily
-                            font.pixelSize: Theme.fontSm
-                            color:          Theme.cyan
-                        }
-                    }
-                }
-
-                // 緑の "+" ボタン
-                Rectangle {
-                    Layout.alignment:  Qt.AlignHCenter
-                    Layout.bottomMargin: 4
-                    width:  36
-                    height: 36
-                    radius: 18
-                    color:  Theme.green
-
-                    Text {
-                        anchors.centerIn: parent
-                        text:           "+"
-                        font.family:    Theme.fontFamily
-                        font.pixelSize: Theme.fontLg
-                        color:          Theme.bg
-                        font.bold:      true
-                    }
+                    text:           _drop.containsDrag ? "離してドロップ" : "ここにドロップ"
+                    font.family:    root._fontBody
+                    font.pixelSize: Theme.fontSm
+                    color:          _drop.containsDrag ? root._blue : root._textSec
+                    Behavior on color { ColorAnimation { duration: Theme.animFast } }
                 }
             }
         }
@@ -382,11 +363,11 @@ PanelWindow {
 
                                 implicitWidth:  90
                                 implicitHeight: 100
-                                radius:         Theme.radiusMd
+                                radius:         root._rCard
                                 color:          FileDropState.isSelected(index)
-                                               ? Theme.bgPillBlue : Qt.rgba(0.10, 0.11, 0.20, 0.95)
+                                               ? root._cardSelBg : root._surface
                                 border.color:   FileDropState.isSelected(index)
-                                               ? Theme.blue : Theme.border
+                                               ? root._blue : root._border
                                 border.width:   1
                                 Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
@@ -408,7 +389,7 @@ PanelWindow {
                                     Rectangle {
                                         Layout.fillWidth:  true
                                         Layout.fillHeight: true
-                                        color:             _card.isImage ? "transparent" : "#e8eaf6"
+                                        color:             _card.isImage ? "transparent" : Qt.rgba(0.28, 0.28, 0.30, 1.0)
                                         radius:            4
                                         clip:              true
 
@@ -429,10 +410,10 @@ PanelWindow {
                                             visible:      !_card.isImage && model.preview !== ""
                                             anchors { fill: parent; margins: 3 }
                                             text:         model.preview
-                                            font.family:  Theme.fontFamily
+                                            font.family:  root._fontBody
                                             font.pixelSize: 4
                                             wrapMode:     Text.Wrap
-                                            color:        "#3a3d5c"
+                                            color:        Qt.rgba(0.7, 0.7, 0.73, 0.85)
                                             clip:         true
                                         }
 
@@ -448,7 +429,7 @@ PanelWindow {
                                                     Layout.fillWidth: true
                                                     height: 2
                                                     radius: 1
-                                                    color:  index === 0 ? "#9096b8" : "#c5c8d8"
+                                                    color:  index === 0 ? Qt.rgba(0.5, 0.5, 0.53, 0.9) : Qt.rgba(0.35, 0.35, 0.37, 0.7)
                                                 }
                                             }
                                             Item { Layout.fillHeight: true }
@@ -460,9 +441,9 @@ PanelWindow {
                                         Layout.fillWidth:    true
                                         horizontalAlignment: Text.AlignHCenter
                                         text:                _card.fileName
-                                        font.family:         Theme.fontFamily
+                                        font.family:         root._fontBody
                                         font.pixelSize:      Theme.fontXs - 3
-                                        color:               Theme.fg
+                                        color:               root._text
                                         elide:               Text.ElideMiddle
                                     }
                                 }
@@ -474,14 +455,14 @@ PanelWindow {
                                     width:  18
                                     height: 18
                                     radius: 9
-                                    color:  Theme.blue
+                                    color:  root._blue
 
                                     Text {
                                         anchors.centerIn: parent
                                         text:           "󰄬"
                                         font.family:    Theme.iconFontFamily
                                         font.pixelSize: 10
-                                        color:          "#07070e"
+                                        color:          "#FFFFFF"
                                     }
                                 }
 
@@ -502,12 +483,9 @@ PanelWindow {
                     Rectangle {
                         implicitWidth:  32
                         implicitHeight: 32
-                        radius:         Theme.radiusMd
-                        color:          _tailMouse.containsMouse
-                                        ? Qt.rgba(0.00, 0.83, 1.00, 0.20)
-                                        : Qt.rgba(0.00, 0.83, 1.00, 0.10)
-                        border.color:   Qt.rgba(0.00, 0.83, 1.00, 0.40)
-                        border.width:   1
+                        radius:         root._rBtn
+                        color:          _tailMouse.containsMouse ? root._btnBluHov : "transparent"
+                        border.width:   0
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                         Text {
@@ -515,7 +493,7 @@ PanelWindow {
                             text:           "󰛶"
                             font.family:    Theme.iconFontFamily
                             font.pixelSize: Theme.fontSm
-                            color:          Theme.cyan
+                            color:          root._blue
                         }
 
                         MouseArea {
@@ -544,12 +522,9 @@ PanelWindow {
                     Rectangle {
                         implicitWidth:  32
                         implicitHeight: 32
-                        radius:         Theme.radiusMd
-                        color:          _trashMouse.containsMouse
-                                        ? Qt.rgba(1, 0.2, 0.33, 0.25)
-                                        : Qt.rgba(1, 0.2, 0.33, 0.12)
-                        border.color:   Qt.rgba(1, 0.2, 0.33, 0.4)
-                        border.width:   1
+                        radius:         root._rBtn
+                        color:          _trashMouse.containsMouse ? root._btnRedHov : "transparent"
+                        border.width:   0
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                         Text {
@@ -557,7 +532,7 @@ PanelWindow {
                             text:           "󰆴"
                             font.family:    Theme.iconFontFamily
                             font.pixelSize: Theme.fontSm
-                            color:          Theme.red
+                            color:          root._red
                         }
 
                         MouseArea {
@@ -573,8 +548,8 @@ PanelWindow {
                     Rectangle {
                         implicitWidth:  32
                         implicitHeight: 32
-                        radius:         Theme.radiusMd
-                        color:          _collapseMouse.containsMouse ? Theme.bgHover : "transparent"
+                        radius:         root._rBtn
+                        color:          _collapseMouse.containsMouse ? root._btnNeuHov : "transparent"
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                         Text {
@@ -582,7 +557,7 @@ PanelWindow {
                             text:           ""
                             font.family:    Theme.iconFontFamily
                             font.pixelSize: Theme.fontSm
-                            color:          Theme.fgSub
+                            color:          root._textSec
                         }
 
                         MouseArea {
@@ -620,8 +595,8 @@ PanelWindow {
                     Rectangle {
                         implicitWidth:  28
                         implicitHeight: 28
-                        radius:         Theme.radiusMd
-                        color:          _backMouse.containsMouse ? Theme.bgHover : "transparent"
+                        radius:         root._rBtn
+                        color:          _backMouse.containsMouse ? root._btnNeuHov : "transparent"
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                         Text {
@@ -629,7 +604,7 @@ PanelWindow {
                             text:           "󰁍"
                             font.family:    Theme.iconFontFamily
                             font.pixelSize: Theme.fontSm
-                            color:          Theme.fgSub
+                            color:          root._textSec
                         }
 
                         MouseArea {
@@ -643,22 +618,28 @@ PanelWindow {
 
                     Text {
                         text:           "Taildropで送信"
-                        font.family:    Theme.fontFamily
+                        font.family:    root._fontBody
                         font.pixelSize: Theme.fontSm
-                        font.bold:      true
-                        color:          Theme.fg
+                        font.weight:    Font.Medium
+                        color:          root._text
                     }
 
                     Item { Layout.fillWidth: true }
 
                     Text {
-                        visible:     root._statusMsg !== ""
-                        text:        root._statusMsg
-                        font.family: Theme.fontFamily
+                        visible: root._statusMsg !== ""
+                                 || (root._sending && FileDropState.sendProgress !== "")
+                        text:    (root._sending && FileDropState.sendProgress !== "")
+                                 ? FileDropState.sendProgress
+                                 : root._statusMsg
+                        font.family: root._fontBody
                         font.pixelSize: Theme.fontXs - 2
-                        color: root._statusMsg.startsWith("失敗") ? Theme.red
-                             : root._sending                     ? Theme.yellow
-                             :                                     Theme.green
+                        font.weight: Font.Light
+                        color: root._statusMsg.startsWith("失敗") ? root._red
+                             : root._sending                     ? root._yellow
+                             :                                     root._green
+                        elide:              Text.ElideRight
+                        Layout.maximumWidth: 200
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
                 }
@@ -666,7 +647,7 @@ PanelWindow {
                 Rectangle {
                     Layout.fillWidth: true
                     height:           1
-                    color:            Theme.border
+                    color:            root._border
                 }
 
                 // フェッチ中インジケーター
@@ -680,7 +661,7 @@ PanelWindow {
                         text:           "󰔟"
                         font.family:    Theme.iconFontFamily
                         font.pixelSize: Theme.fontMd
-                        color:          Theme.fgSub
+                        color:          root._textTer
                     }
                 }
 
@@ -699,15 +680,15 @@ PanelWindow {
                             text:           "󰤭"
                             font.family:    Theme.iconFontFamily
                             font.pixelSize: Theme.fontLg
-                            color:          Theme.fgDim
+                            color:          root._textTer
                         }
 
                         Text {
                             Layout.alignment: Qt.AlignHCenter
                             text:           "オンラインのピアがいません"
-                            font.family:    Theme.fontFamily
+                            font.family:    root._fontBody
                             font.pixelSize: Theme.fontXs
-                            color:          Theme.fgSub
+                            color:          root._textSec
                         }
                     }
                 }
@@ -719,10 +700,10 @@ PanelWindow {
                     delegate: Rectangle {
                         Layout.fillWidth: true
                         implicitHeight:   36
-                        radius:           Theme.radiusMd
+                        radius:           root._rBtn
                         opacity:          model.online ? 1.0 : 0.4
                         color:            _peerMouse.containsMouse && !root._sending && model.online
-                                          ? Theme.bgPillCyanHov : "transparent"
+                                          ? root._btnBluHov : "transparent"
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
 
                         RowLayout {
@@ -734,30 +715,30 @@ PanelWindow {
                                 width:  8
                                 height: 8
                                 radius: 4
-                                color:  model.online ? Theme.green : Theme.fgDim
+                                color:  model.online ? root._green : root._textTer
                             }
 
                             Text {
                                 text:           "󰍹"
                                 font.family:    Theme.iconFontFamily
                                 font.pixelSize: Theme.fontSm
-                                color:          model.online ? Theme.cyan : Theme.fgDim
+                                color:          model.online ? root._blue : root._textTer
                             }
 
                             Text {
                                 text:           model.name
-                                font.family:    Theme.fontFamily
+                                font.family:    root._fontBody
                                 font.pixelSize: Theme.fontSm
-                                color:          Theme.fg
+                                color:          root._text
                                 Layout.fillWidth: true
                                 elide:          Text.ElideRight
                             }
 
                             Text {
                                 text:           model.ip
-                                font.family:    Theme.fontFamily
+                                font.family:    root._fontBody
                                 font.pixelSize: Theme.fontXs - 2
-                                color:          Theme.fgSub
+                                color:          root._textSec
                             }
                         }
 

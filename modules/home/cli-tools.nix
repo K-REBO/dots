@@ -66,7 +66,7 @@
 
     # ウィンドウフォーカス
     hyprselect
-	
+
 
     # キー入力表示（Wayland）
     wshowkeys
@@ -79,6 +79,9 @@
 
 	# timg(sixel image viewer)
 	timg
+
+	## SL
+	sl
 
   ] ++ [
     # Nix関連 (flake inputsから取得して競合を回避)

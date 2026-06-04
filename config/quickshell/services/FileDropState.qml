@@ -18,6 +18,9 @@ QtObject {
         onTriggered: root.hovered = false
     }
 
+    // XDG_RUNTIME_DIR/drag-drop — 起動時に _scanProc の最初の出力行で確定
+    property string _dropBase: ""
+
     function clearSelection() { selectedIndices = [] }
 
     function toggleSelect(idx) {
@@ -68,8 +71,10 @@ QtObject {
 
     Component.onCompleted: {
         _scanProc.command = ["bash", "-c",
-            "mkdir -p /tmp/drag-drop/storage /tmp/drag-drop/trash && " +
-            "find /tmp/drag-drop/storage -mindepth 2 -maxdepth 2 -type f -printf '%P\\n' 2>/dev/null"]
+            "XRT=\"${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/drag-drop\" && " +
+            "echo \"$XRT\" && " +
+            "mkdir -p \"$XRT/storage\" \"$XRT/trash\" && " +
+            "find \"$XRT/storage\" -mindepth 2 -maxdepth 2 -type f -printf '%P\\n' 2>/dev/null"]
         _scanProc.running = true
     }
 
@@ -78,10 +83,15 @@ QtObject {
     property Process _scanProc: Process {
         stdout: SplitParser {
             onRead: line => {
+                // 最初の出力行: XRT パス（_dropBase の確定）
+                if (root._dropBase === "") {
+                    root._dropBase = line.trim()
+                    return
+                }
                 const rel = line.trim()           // "20260603_142530_456/foo.txt"
                 if (!rel || !rel.includes("/")) return
                 const name = rel.split("/").pop() // "foo.txt"
-                const path = "/tmp/drag-drop/storage/" + rel
+                const path = root._dropBase + "/storage/" + rel
                 const idx  = root.files.count
                 // 起動時スキャン: ファイルはすでに存在するので ready: true
                 root.files.append({ name: name, path: path, preview: "", ready: true })
@@ -94,7 +104,7 @@ QtObject {
 
     function addFile(srcPath) {
         const name  = srcPath.replace(/^.*\//, "")
-        const dir   = "/tmp/drag-drop/storage/" + _generatePrefix()
+        const dir   = root._dropBase + "/storage/" + _generatePrefix()
         const dest  = dir + "/" + name
         const isImg = _isImageFile(name)
         const idx   = files.count
@@ -117,8 +127,8 @@ QtObject {
         const parts   = item.path.split("/")
         const dirName = parts[parts.length - 2]
         _enqueue(["mv", "--",
-            "/tmp/drag-drop/storage/" + dirName,
-            "/tmp/drag-drop/trash/" + dirName])
+            root._dropBase + "/storage/" + dirName,
+            root._dropBase + "/trash/" + dirName])
         files.remove(idx)
         selectedIndices = selectedIndices
             .filter(i => i !== idx)
@@ -133,8 +143,8 @@ QtObject {
                 const parts   = item.path.split("/")
                 const dirName = parts[parts.length - 2]
                 _enqueue(["mv", "--",
-                    "/tmp/drag-drop/storage/" + dirName,
-                    "/tmp/drag-drop/trash/" + dirName])
+                    root._dropBase + "/storage/" + dirName,
+                    root._dropBase + "/trash/" + dirName])
                 files.remove(i)
             }
         }
@@ -142,6 +152,8 @@ QtObject {
     }
 
     // ── Taildrop 送信 ────────────────────────────────────────────────
+    property string sendProgress: ""
+
     // peerIP: "100.x.x.x", paths: string[] (空なら全ファイル)
     // onDone(success: bool, msg: string)
     function sendViaTaildrop(peerIP, paths, onDone) {
@@ -174,13 +186,21 @@ QtObject {
             onRead: line => {
                 if (!line.startsWith("__EXIT:")) return
                 const code = parseInt(line.slice(7))
+                root.sendProgress = ""
                 const cb   = root._sendProc._onDone
                 root._sendProc._onDone = null
                 if (cb) cb(code === 0, code === 0 ? "" : "exit " + code)
             }
         }
+        stderr: SplitParser {
+            onRead: line => {
+                const t = line.trim()
+                if (t) root.sendProgress = t
+            }
+        }
         onRunningChanged: {
             if (!running && _onDone) {
+                root.sendProgress = ""
                 const cb = _onDone; _onDone = null
                 if (cb) cb(false, "プロセスエラー")
             }
