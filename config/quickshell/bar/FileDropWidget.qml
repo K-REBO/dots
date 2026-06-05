@@ -210,11 +210,9 @@ PanelWindow {
                     spacing: Theme.paddingXs
 
                     Text {
-                        text:           " "
+                        text:           ""
                         font.family:    Theme.iconFontFamily
                         font.pixelSize: Theme.fontMd
-                        width:          Theme.fontMd
-                        horizontalAlignment: Text.AlignHCenter
                         color: (_drop.containsDrag || FileDropState.count > 0) ? root._blue : root._textTer
                         Behavior on color { ColorAnimation { duration: Theme.animFast } }
                     }
