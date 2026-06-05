@@ -71,7 +71,7 @@ RowLayout {
         text:           "(" + BatteryService.timeLeft + ")"
         font.family:    Theme.fontFamily
         font.pixelSize: Theme.fontSm - 1
-        color:          Theme.fgDim
+        color:          Theme.yellow
     }
 
     // ── ホバーで展開するプロファイル選択 ──────────────────────────
