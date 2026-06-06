@@ -38,4 +38,13 @@ ShellRoot {
             screen: modelData
         }
     }
+
+    // ── GitHub Issues ウィジェット（各スクリーンに1つ）───────────
+    Variants {
+        model: Quickshell.screens
+        delegate: GithubIssues {
+            required property var modelData
+            screen: modelData
+        }
+    }
 }

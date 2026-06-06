@@ -184,6 +184,20 @@ PanelWindow {
                 }
             }
 
+            // GitHub Issues（スペーサー: 視覚は GithubIssues PanelWindow が担当）
+            Item {
+                id:             _ghSpacer
+                implicitWidth:  GithubIssuesState.pillWidth
+                implicitHeight: Theme.pillH
+
+                function _sync() {
+                    var p = mapToItem(null, width, 0)
+                    GithubIssuesState.marginRight = root.screen.width - Theme.barMargin - p.x
+                }
+                onXChanged:     Qt.callLater(_sync)
+                onWidthChanged: Qt.callLater(_sync)
+            }
+
             // テンプレート（スペーサー: 視覚は TemplateWidget PanelWindow が担当）
             Item {
                 id:             _tmplSpacer
@@ -200,7 +214,20 @@ PanelWindow {
 
             Connections {
                 target:   CalendarState
-                function onClockPillWidthChanged() { Qt.callLater(_tmplSpacer._sync) }
+                function onClockPillWidthChanged() {
+                    Qt.callLater(_tmplSpacer._sync)
+                    Qt.callLater(_ghSpacer._sync)
+                }
+            }
+
+            Connections {
+                target:   TemplateState
+                function onPillWidthChanged() { Qt.callLater(_ghSpacer._sync) }
+            }
+
+            Connections {
+                target:   GithubIssuesState
+                function onPillWidthChanged() { Qt.callLater(_tmplSpacer._sync) }
             }
 
             // 日時
