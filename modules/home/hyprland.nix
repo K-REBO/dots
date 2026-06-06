@@ -155,6 +155,8 @@ in
         "$mainMod, D, exec, ${pkgs.vicinae}/bin/vicinae toggle"
         "$mainMod, J, layoutmsg, togglesplit"
         "$mainMod, L, exec, ${pkgs.hyprlock}/bin/hyprlock"
+		# フルスクリーン
+		"$mainMod, F, fullscreen"
         # Emacs風フォーカス移動
         "$mainMod, p, movefocus, u"
         "$mainMod, n, movefocus, d"

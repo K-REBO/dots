@@ -343,7 +343,8 @@
    (yaml-ts-mode       . eglot-ensure) ; yaml-language-server
    (markdown-mode      . eglot-ensure) ; marksman
    (css-ts-mode        . eglot-ensure) ; vscode-css-language-server
-   (css-mode           . eglot-ensure)  ; vscode-css-language-server
+   (css-mode           . eglot-ensure) ; vscode-css-language-server
+   (scss-mode          . eglot-ensure) ; vscode-css-language-server
    (typst-ts-mode      . eglot-ensure)) ; tinymist
   :config
   ;; nix-ts-mode → nil LSP サーバー
@@ -764,3 +765,49 @@
   (define-key calfw-calendar-mode-map (kbd "RET")      #'my/obsidian-calendar-open-or-create)
   (define-key calfw-calendar-mode-map (kbd "<return>")  #'my/obsidian-calendar-open-or-create)
   (define-key calfw-calendar-mode-map (kbd "<mouse-1>") #'my/obsidian-calendar-open-or-create))
+
+;; ============================================================
+;; sh-mode: .zsh を zsh 方言として関連付け（組み込み）
+;; ============================================================
+(use-package sh-script
+  :ensure nil
+  :mode ("\\.zsh\\'" . sh-mode)
+  :hook (sh-mode . (lambda ()
+                     (when (and buffer-file-name
+                                (string-match "\\.zsh\\'" buffer-file-name))
+                       (sh-set-shell "zsh" t nil)))))
+
+;; ============================================================
+;; fish-mode: Fish shell スクリプト
+;; ============================================================
+(use-package fish-mode
+  :mode "\\.fish\\'")
+
+;; ============================================================
+;; cuda-mode: CUDA C/C++ (.cu / .cuh)
+;; ============================================================
+(use-package cuda-mode
+  :mode (("\\.cu\\'"  . cuda-mode)
+         ("\\.cuh\\'" . cuda-mode)))
+
+;; ============================================================
+;; cython-mode: Cython (.pyx / .pxd)
+;; ============================================================
+(use-package cython-mode
+  :mode (("\\.pyx\\'" . cython-mode)
+         ("\\.pxd\\'" . cython-mode)))
+
+;; ============================================================
+;; scss-mode: SCSS スタイルシート
+;; ============================================================
+(use-package scss-mode
+  :mode "\\.scss\\'"
+  :custom
+  (scss-compile-at-save nil))
+
+;; ============================================================
+;; csv-mode: CSV ファイルの表示・編集
+;; C-c C-a でカラム揃え、C-c C-u で元に戻す
+;; ============================================================
+(use-package csv-mode
+  :mode "\\.csv\\'")

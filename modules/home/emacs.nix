@@ -29,6 +29,7 @@
       nix-ts-mode
       zig-mode
       svelte-mode
+      qml-mode
       markdown-mode
       obsidian
       calfw
@@ -45,6 +46,11 @@
       beacon
       swiper
       ace-window
+      fish-mode
+      cuda-mode
+      cython-mode
+      scss-mode
+      csv-mode
     ];
   };
 
