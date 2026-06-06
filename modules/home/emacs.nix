@@ -102,8 +102,19 @@
   services.emacs = {
     enable = true;
     package = config.programs.emacs.finalPackage;
-    defaultEditor = true;          # EDITOR=emacsclient（git 等で使用）
+    defaultEditor = false;         # EDITOR は下記で -c フラグ付きに手動設定
     startWithUserSession = true;  # default.target 依存（graphical-session.target は Hyprland で未起動）
+  };
+
+  # $EDITOR 呼び出し時は常に新規フレームを作成し、既存の作業を邪魔しない
+  home.sessionVariables = {
+    EDITOR = "emacsclient -c -a \"\"";
+    VISUAL = "emacsclient -c -a \"\"";
+  };
+
+  systemd.user.sessionVariables = {
+    EDITOR = "emacsclient -c -a \"\"";
+    VISUAL = "emacsclient -c -a \"\"";
   };
 
   home.file.".emacs.d/init.el".source = ../../config/emacs/init.el;
