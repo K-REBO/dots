@@ -29,4 +29,13 @@ ShellRoot {
             screen: modelData
         }
     }
+
+    // ── TemplateWidget（各スクリーンに1つ）──────────────────────
+    Variants {
+        model: Quickshell.screens
+        delegate: TemplateWidget {
+            required property var modelData
+            screen: modelData
+        }
+    }
 }

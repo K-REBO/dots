@@ -16,6 +16,7 @@ Taildrop        1.0 Taildrop.qml
 FileDrop        1.0 FileDrop.qml
 FileDropPopup   1.0 FileDropPopup.qml
 FileDropWidget  1.0 FileDropWidget.qml
+TemplateWidget  1.0 TemplateWidget.qml
 Volume          1.0 Volume.qml
 WorkspaceButton 1.0 WorkspaceButton.qml
 Workspaces      1.0 Workspaces.qml
