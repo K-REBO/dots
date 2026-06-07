@@ -16,6 +16,7 @@ Taildrop        1.0 Taildrop.qml
 FileDrop        1.0 FileDrop.qml
 FileDropPopup   1.0 FileDropPopup.qml
 FileDropWidget  1.0 FileDropWidget.qml
+SystemStats     1.0 SystemStats.qml
 TemplateWidget  1.0 TemplateWidget.qml
 GithubIssues    1.0 GithubIssues.qml
 Volume          1.0 Volume.qml

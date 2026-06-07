@@ -11,3 +11,4 @@ singleton FileDropState    1.0 FileDropState.qml
 singleton TemplateState       1.0 TemplateState.qml
 singleton GithubIssuesState  1.0 GithubIssuesState.qml
 singleton TlpService          1.0 TlpService.qml
+singleton SystemStatsService  1.0 SystemStatsService.qml

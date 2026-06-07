@@ -86,6 +86,19 @@ PanelWindow {
                 }
             }
 
+            // CPU / メモリ
+            Rectangle {
+                implicitHeight: Theme.pillH
+                implicitWidth:  _stats.implicitWidth + 20
+                radius:         Theme.radiusWs
+                color:          Theme.bgLight
+
+                SystemStats {
+                    id:               _stats
+                    anchors.centerIn: parent
+                }
+            }
+
             // 音量
             Rectangle {
                 implicitHeight: Theme.pillH
