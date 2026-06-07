@@ -11,7 +11,9 @@ Network         1.0 Network.qml
 Pill            1.0 Pill.qml
 PowerMenu       1.0 PowerMenu.qml
 Recorder        1.0 Recorder.qml
-SleepTime       1.0 SleepTime.qml
+SleepTime           1.0 SleepTime.qml
+SleepTimeDropdown   1.0 SleepTimeDropdown.qml
+BatteryDropdown     1.0 BatteryDropdown.qml
 Taildrop        1.0 Taildrop.qml
 FileDrop        1.0 FileDrop.qml
 FileDropPopup   1.0 FileDropPopup.qml
