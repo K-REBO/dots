@@ -4,7 +4,17 @@ import ".."
 import "../services"
 import Quickshell
 
-// ── テンプレートウィジェット（pill + dropdown 一体型）─────────────
+// ═══════════════════════════════════════════════════════════════════
+// TemplateWidget — pill + dropdown 一体型ウィジェットのテンプレート
+// ※ このファイルは現在バーから外れています。新ウィジェットの雛形として使用してください。
+//
+// 使い方:
+//   1. TemplateWidget.qml → MyWidget.qml にコピー
+//   2. TemplateState.qml  → MyWidgetState.qml にコピー（TemplateState → MyWidgetState に置換）
+//   3. services/qmldir に `singleton MyWidgetState 1.0 MyWidgetState.qml` を追加
+//   4. bar/qmldir に `MyWidget 1.0 MyWidget.qml` を追加
+//   5. Bar.qml の右セクションにスペーサー Item を追加（_tmplSpacer パターンを参考）
+//   6. shell.qml に Variants ブロックを追加
 //
 // 構造:
 //   Bar.qml に透明スペーサー（TemplateState.pillWidth）を置いて

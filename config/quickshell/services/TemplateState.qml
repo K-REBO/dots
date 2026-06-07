@@ -1,3 +1,5 @@
+// TemplateWidget 用の状態管理 Singleton。新ウィジェット作成時の雛形。
+// TemplateWidget.qml のコメントを参照。
 pragma Singleton
 
 import QtQuick

@@ -17,8 +17,7 @@ PanelWindow {
         top:   Theme.barMargin + (Theme.barHeight - Theme.pillH) / 2
         right: GithubIssuesState.marginRight > 0
                ? GithubIssuesState.marginRight
-               : (Theme.barMargin + 14 + CalendarState.clockPillWidth + Theme.gap
-                  + TemplateState.pillWidth + Theme.gap)
+               : (Theme.barMargin + 14 + CalendarState.clockPillWidth + Theme.gap)
     }
 
     readonly property real _expandedW:  300

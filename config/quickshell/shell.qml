@@ -48,15 +48,6 @@ ShellRoot {
         }
     }
 
-    // ── TemplateWidget（各スクリーンに1つ）──────────────────────
-    Variants {
-        model: Quickshell.screens
-        delegate: TemplateWidget {
-            required property var modelData
-            screen: modelData
-        }
-    }
-
     // ── GitHub Issues ウィジェット（各スクリーンに1つ）───────────
     Variants {
         model: Quickshell.screens
