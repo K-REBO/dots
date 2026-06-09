@@ -811,3 +811,20 @@
 ;; ============================================================
 (use-package csv-mode
   :mode "\\.csv\\'")
+
+;; ============================================================
+;; emacsclient: git コミット等の外部エディタ連携
+;; ============================================================
+;; C-x # (server-edit) 後にクライアントフレームを自動削除
+(add-hook 'server-done-hook
+          (lambda ()
+            (let ((frame (selected-frame)))
+              (when (and (frame-parameter frame 'client)
+                         (> (length (frame-list)) 1))
+                (delete-frame frame)))))
+
+;; C-x k でサーバーバッファを閉じた場合も server-edit を呼んで git を解放
+(defun my/server-edit-on-kill ()
+  (when server-buffer-clients
+    (server-edit)))
+(add-hook 'kill-buffer-hook #'my/server-edit-on-kill)

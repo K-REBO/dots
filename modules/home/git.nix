@@ -23,7 +23,7 @@
       };
 
       core = {
-        editor = "vim";
+        editor = "emacsclient -c -a ''";
         pager = "delta";
       };
 
