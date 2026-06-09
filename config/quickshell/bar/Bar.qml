@@ -70,7 +70,14 @@ PanelWindow {
 
         // ── 右: ウィジェット群 ─────────────────────────────────────
         RowLayout {
+            id:      _rightRL
             spacing: Theme.gap
+
+            // innerRL の幅が変わるとグローバル位置が変わるため全 spacer を再 sync
+            onWidthChanged: {
+                Qt.callLater(_batSpacer._sync)
+                Qt.callLater(_sleepSpacer._sync)
+            }
 
             // Taildrop
             Rectangle {
@@ -138,23 +145,15 @@ PanelWindow {
                 }
             }
 
-            // バッテリー（ピルはバー内、ドロップダウンは BatteryDropdown PanelWindow）
-            Rectangle {
-                id:             _batPill
+            // バッテリー（スペーサー: 視覚は Battery PanelWindow が担当）
+            Item {
+                id:             _batSpacer
+                implicitWidth:  BatteryState.pillWidth
                 implicitHeight: Theme.pillH
-                implicitWidth:  _bat.implicitWidth + 20
-                radius:         Theme.radiusWs
-                color:          Theme.bgLight
-                border.color:   BatteryService.acOnline ? Theme.red : Theme.blue
-                border.width:   (BatteryService.acOnline || BatteryState.open) ? (BatteryService.acOnline ? 2 : 1) : 0
-                Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
-
-                Battery { id: _bat; anchors.centerIn: parent }
 
                 function _sync() {
                     var p = mapToItem(null, 0, 0)
                     BatteryState.marginLeft = Theme.barMargin + p.x
-                    BatteryState.pillWidth  = width
                 }
                 onXChanged:            Qt.callLater(_sync)
                 onWidthChanged:        Qt.callLater(_sync)
@@ -164,23 +163,15 @@ PanelWindow {
             // IME（自己完結コンポーネント）
             Ime {}
 
-            // スリープタイム（ピルはバー内、ドロップダウンは SleepTimeDropdown PanelWindow）
-            Rectangle {
-                id:             _sleepPill
+            // スリープタイム（スペーサー: 視覚は SleepTime PanelWindow が担当）
+            Item {
+                id:             _sleepSpacer
+                implicitWidth:  SleepTimeState.pillWidth
                 implicitHeight: Theme.pillH
-                implicitWidth:  _sleep.implicitWidth + 20
-                radius:         Theme.radiusWs
-                color:          Theme.bgLight
-                border.color:   Theme.yellow
-                border.width:   SleepTimeState.open ? 1 : 0
-                Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
-
-                SleepTime { id: _sleep; anchors.centerIn: parent }
 
                 function _sync() {
                     var p = mapToItem(null, 0, 0)
                     SleepTimeState.marginLeft = Theme.barMargin + p.x
-                    SleepTimeState.pillWidth  = width
                 }
                 onXChanged:            Qt.callLater(_sync)
                 onWidthChanged:        Qt.callLater(_sync)

@@ -21,19 +21,19 @@ ShellRoot {
         }
     }
 
-    // ── Battery ドロップダウン（各スクリーンに1つ）──────────────────
+    // ── Battery ウィジェット（各スクリーンに1つ）──────────────────────
     Variants {
         model: Quickshell.screens
-        delegate: BatteryDropdown {
+        delegate: Battery {
             required property var modelData
             screen: modelData
         }
     }
 
-    // ── SleepTime ドロップダウン（各スクリーンに1つ）────────────────
+    // ── SleepTime ウィジェット（各スクリーンに1つ）────────────────────
     Variants {
         model: Quickshell.screens
-        delegate: SleepTimeDropdown {
+        delegate: SleepTime {
             required property var modelData
             screen: modelData
         }
