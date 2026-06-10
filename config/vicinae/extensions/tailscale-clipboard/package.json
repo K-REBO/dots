@@ -1,0 +1,65 @@
+{
+  "$schema": "https://raw.githubusercontent.com/vicinaehq/vicinae/refs/heads/main/extra/schemas/extension.json",
+  "name": "tailscale-clipboard",
+  "title": "Tailscale Clipboard",
+  "description": "Send clipboard text to other Tailscale devices via Taildrop",
+  "icon": "extension-icon.png",
+  "author": "bido",
+  "license": "MIT",
+  "categories": ["System"],
+  "preferences": [
+    {
+      "name": "favorites",
+      "title": "Favorites",
+      "description": "お気に入り端末のHostNameをカンマ区切りで指定（例: macbook,thinkpad）",
+      "type": "textfield",
+      "required": false,
+      "default": ""
+    },
+    {
+      "name": "showOffline",
+      "title": "Show Offline",
+      "description": "オフライン端末も一覧に表示する",
+      "label": "オフライン端末も表示する",
+      "type": "checkbox",
+      "required": false,
+      "default": false
+    }
+  ],
+  "commands": [
+    {
+      "name": "send-clipboard",
+      "title": "Send Clipboard via Tailscale",
+      "subtitle": "Tailscale Clipboard",
+      "description": "クリップボードの内容をTailscale端末へ送信する",
+      "mode": "view"
+    },
+    {
+      "name": "send-clipboard-iphone",
+      "title": "Send Clipboard to iPhone",
+      "subtitle": "Tailscale Clipboard",
+      "description": "クリップボードの内容をiPhoneへ即送信する",
+      "mode": "no-view",
+      "preferences": [
+        {
+          "name": "target",
+          "title": "Target HostName",
+          "description": "送信先のTailscale HostName",
+          "type": "textfield",
+          "required": false,
+          "default": "iphone"
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "@vicinae/api": "^0.21.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "build": "vici build",
+    "dev": "vici develop"
+  }
+}
