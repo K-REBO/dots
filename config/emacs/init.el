@@ -214,6 +214,17 @@
 ;; zsh alias: emacs='emacs -nw' でターミナル起動をデフォルトとする
 ;; ============================================================
 
+;; fcitx5 が日本語テキスト確定後に M-c (内部値 134217827) を追加送信し
+;; xterm-translate-bracketed-paste が wrong-type-argument で落ちる問題を修正
+;; テキスト自体は確定前に挿入済みのため、このイベントを捨てても問題ない
+(with-eval-after-load 'xterm
+  (advice-add 'xterm-translate-bracketed-paste
+              :around
+              (lambda (orig event)
+                (condition-case nil
+                    (funcall orig event)
+                  (wrong-type-argument nil)))))
+
 ;; 背景透過: doom-dracula がセットする背景色をテーマロード後に上書きし、
 ;; ターミナルエミュレータ側の透過設定を活かす
 (defun my/terminal-transparent-bg ()

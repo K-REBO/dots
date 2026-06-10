@@ -106,15 +106,20 @@
     startWithUserSession = true;  # default.target 依存（graphical-session.target は Hyprland で未起動）
   };
 
-  # $EDITOR 呼び出し時は常に新規フレームを作成し、既存の作業を邪魔しない
+  # EDITOR: ターミナル内で開く（gh/git 等の CLI ツール向け; -nw = no window）
+  # VISUAL: GUI フレームを新規作成（ファイルマネージャ等の GUI アプリ向け; -c）
+  # gh は GH_EDITOR → VISUAL → EDITOR の順に参照するため GH_EDITOR で明示上書き
+  # -a "" はクォートが hm-session-vars.sh で壊れるため省略（daemon は systemd で常時起動）
   home.sessionVariables = {
-    EDITOR = "emacsclient -c -a \"\"";
-    VISUAL = "emacsclient -c -a \"\"";
+    EDITOR = "emacsclient -nw";
+    VISUAL = "emacsclient -c";
+    GH_EDITOR = "emacsclient -nw";
   };
 
   systemd.user.sessionVariables = {
-    EDITOR = "emacsclient -c -a \"\"";
-    VISUAL = "emacsclient -c -a \"\"";
+    EDITOR = "emacsclient -nw";
+    VISUAL = "emacsclient -c";
+    GH_EDITOR = "emacsclient -nw";
   };
 
   home.file.".emacs.d/init.el".source = ../../config/emacs/init.el;
