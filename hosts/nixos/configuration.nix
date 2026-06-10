@@ -7,6 +7,7 @@
     ../../modules/nixos/thinkpad-p16s.nix
     ../../modules/nixos/winapps.nix
     ../../modules/nixos/wifi-audio-mute.nix
+    ../../modules/nixos/hazkey.nix
   ];
 
   # ====================

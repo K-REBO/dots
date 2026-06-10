@@ -60,10 +60,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-hazkey = {
+      url = "github:aster-void/nix-hazkey";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = { self, nixpkgs, home-manager, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, obsidian-vault-cli, ... }@inputs: let
     system = "x86_64-linux";
+
+    # Hazkey + Zenzai (azooKeyベースの日本語入力 + LLMかな漢字変換) を有効にするか
+    # USE flag的なオン/オフ切り替え: false にすると mozc のみの旧構成に戻る
+    # (modules/nixos/hazkey.nix, modules/home/fcitx5.nix で参照)
+    enableHazkey = true;
 
     # nixpkgs-unstable より新しいバージョンを使いたい場合はコメントを外してバージョンとhashを更新する
     # yt-dlpOverlay = final: prev: {
@@ -97,7 +107,7 @@
   in {
     # NixOS configuration
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
+      specialArgs = { inherit inputs enableHazkey; };
       modules = [
         { nixpkgs.hostPlatform = system; }
         ./hosts/nixos/configuration.nix
@@ -107,7 +117,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.extraSpecialArgs = { inherit inputs; };
+          home-manager.extraSpecialArgs = { inherit inputs enableHazkey; };
           home-manager.users.bido = { ... }: {
             imports = [
               ./home.nix
@@ -134,7 +144,7 @@
     # Home-Manager configuration (standalone - for testing without rebuild)
     homeConfigurations."bido" = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
-      extraSpecialArgs = { inherit inputs; };
+      extraSpecialArgs = { inherit inputs enableHazkey; };
       modules = [
         ./home.nix
         wayland-fcitx5-indicator.homeManagerModules.default

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, enableHazkey, ... }:
 
 {
   # fcitx5入力メソッド
@@ -14,7 +14,12 @@
 
   # dots/config/fcitx5/ の設定ファイルを使用
   xdg.configFile."fcitx5/config".source = ../../config/fcitx5/config;
-  xdg.configFile."fcitx5/profile".source = ../../config/fcitx5/profile;
+  # enableHazkey=true: Hazkey(Zenzai)をデフォルトIMにし、mozcは切り替え用に残す
+  # enableHazkey=false: 従来通りmozcのみの構成
+  xdg.configFile."fcitx5/profile".source =
+    if enableHazkey
+    then ../../config/fcitx5/profile-hazkey
+    else ../../config/fcitx5/profile;
   xdg.configFile."fcitx5/conf".source = ../../config/fcitx5/conf;
 
   # systemd user serviceで管理（起動失敗時に自動再起動）
