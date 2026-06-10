@@ -36,7 +36,9 @@ PanelWindow {
         id: _widget
         anchors { top: parent.top; left: parent.left }
 
-        implicitWidth: _pillRow.implicitWidth + 20
+        // pillRow（時刻表示の有無で幅が変わる）と dropdown 内容、
+        // 広い方に合わせることで dropdown の崩れを防ぐ
+        implicitWidth: Math.max(_pillRow.implicitWidth, _dropContent.implicitWidth) + 20
         height: BatteryState.open
                 ? (Theme.pillH + 1 + _dropContent.implicitHeight + 16)
                 : Theme.pillH
@@ -162,6 +164,7 @@ PanelWindow {
                         readonly property color accent:    modelData.accent
 
                         Layout.fillWidth: true
+                        implicitWidth:    _rowContent.implicitWidth + 20
                         implicitHeight:   28
                         radius:           Theme.radiusSm
                         color: {
@@ -187,6 +190,7 @@ PanelWindow {
                         }
 
                         RowLayout {
+                            id: _rowContent
                             anchors { fill: parent; leftMargin: 10; rightMargin: 10 }
                             spacing: 6
 
