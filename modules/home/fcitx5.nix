@@ -1,5 +1,13 @@
-{ config, pkgs, enableHazkey, ... }:
+{ config, pkgs, enableHazkey, osConfig ? null, ... }:
 
+let
+  # NixOSのi18n.inputMethodで構成されたfcitx5(addon込み)パッケージ
+  # standalone home-manager評価時はosConfigが無いのでpkgs.fcitx5にフォールバック
+  fcitx5Package =
+    if osConfig != null
+    then osConfig.i18n.inputMethod.package
+    else pkgs.fcitx5;
+in
 {
   # fcitx5入力メソッド
   # 注意: fcitx5のコア設定はNixOSシステムレベル（configuration.nix）で行われています
@@ -33,7 +41,8 @@
     };
     Service = {
       Type = "simple";
-      ExecStart = "fcitx5 -d --replace";
+      # -d (daemonize)を指定するとfork+親終了によりType=simpleのcgroupごとkillされるため付けない
+      ExecStart = "${fcitx5Package}/bin/fcitx5 --replace";
       Restart = "on-failure";
       RestartSec = "3";
     };
