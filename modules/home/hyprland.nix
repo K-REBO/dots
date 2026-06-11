@@ -237,15 +237,9 @@ in
     # submap と新形式 windowrule ブロックは extraConfig に記述
     extraConfig = ''
       layerrule {
-        name = swaync-notification-no-blur
-        match:namespace = ^swaync-notification-window$
+        name = quickshell-notification-no-blur
+        match:namespace = ^quickshell-notification$
         blur = false
-      }
-
-      layerrule {
-        name = swaync-control-center-blur
-        match:namespace = ^swaync-control-center$
-        blur = true
       }
 
       windowrule {

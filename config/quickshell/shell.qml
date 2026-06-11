@@ -56,4 +56,18 @@ ShellRoot {
             screen: modelData
         }
     }
+
+    // ── 通知ベル（各スクリーンに1つ）──────────────────────────────
+    Variants {
+        model: Quickshell.screens
+        delegate: Notifications {
+            required property var modelData
+            screen: modelData
+        }
+    }
+
+    // ── 通知トースト（プライマリスクリーンに1つ）──────────────────
+    NotificationPopup {
+        screen: Quickshell.screens[0]
+    }
 }

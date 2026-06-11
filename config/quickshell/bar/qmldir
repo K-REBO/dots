@@ -21,6 +21,8 @@ FileDropWidget  1.0 FileDropWidget.qml
 RunCat          1.0 RunCat.qml
 TemplateWidget  1.0 TemplateWidget.qml
 GithubIssues    1.0 GithubIssues.qml
+Notifications     1.0 Notifications.qml
+NotificationPopup 1.0 NotificationPopup.qml
 Volume          1.0 Volume.qml
 WorkspaceButton 1.0 WorkspaceButton.qml
 Workspaces      1.0 Workspaces.qml

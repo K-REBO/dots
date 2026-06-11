@@ -14,4 +14,5 @@ singleton TemplateState       1.0 TemplateState.qml
 singleton GithubIssuesState  1.0 GithubIssuesState.qml
 singleton TlpService          1.0 TlpService.qml
 singleton SystemStatsService  1.0 SystemStatsService.qml
+singleton NotificationState   1.0 NotificationState.qml
 singleton RunCatService        1.0 RunCatService.qml
