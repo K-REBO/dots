@@ -1,12 +1,18 @@
-{ config, pkgs, enableHazkey, osConfig ? null, ... }:
+{ config, pkgs, lib, inputs, enableHazkey, osConfig ? null, ... }:
 
 let
   # NixOSのi18n.inputMethodで構成されたfcitx5(addon込み)パッケージ
-  # standalone home-manager評価時はosConfigが無いのでpkgs.fcitx5にフォールバック
+  # standalone home-manager評価時はosConfigが無いため、configuration.nixの
+  # i18n.inputMethod.fcitx5.addons と同じ構成をここで再現してフォールバックする。
+  # (以前はpkgs.fcitx5(addonなし)にフォールバックしており、mozc/hazkeyアドオンが
+  #  ロードされず profile の入力メソッドが invalid として除去されてしまっていた)
   fcitx5Package =
     if osConfig != null
     then osConfig.i18n.inputMethod.package
-    else pkgs.fcitx5;
+    else pkgs.qt6Packages.fcitx5-with-addons.override {
+      addons = with pkgs; [ fcitx5-mozc fcitx5-gtk ]
+        ++ lib.optional enableHazkey inputs.nix-hazkey.packages.${pkgs.system}.fcitx5-hazkey;
+    };
 in
 {
   # fcitx5入力メソッド
