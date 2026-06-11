@@ -12,7 +12,8 @@
   },
   "favorites": [
     "clipboard:history",
-    "core:search-emojis"
+    "core:search-emojis",
+    "@bido/tailscale-clipboard:send-clipboard-iphone"
   ],
   "providers": {
     "clipboard": {
