@@ -96,10 +96,27 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: Theme.paddingXs
 
+                            // 読み込み中スピナー
                             Text {
-                                text: GithubIssuesState.loading
-                                      ? "..."
-                                      : GithubIssuesState.issues.length + "件"
+                                visible:        GithubIssuesState.loading
+                                text:           "󰔟"
+                                font.family:    Theme.fontFamily
+                                font.pixelSize: Theme.fontSm
+                                color:          Theme.fgSub
+                                opacity:        GithubIssuesState.open ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+
+                                RotationAnimation on rotation {
+                                    running: GithubIssuesState.loading
+                                    loops:   Animation.Infinite
+                                    from: 0; to: 360; duration: 900
+                                }
+                            }
+
+                            // issue 件数
+                            Text {
+                                visible:        !GithubIssuesState.loading
+                                text:           GithubIssuesState.issues.length + "件"
                                 font.family:    Theme.fontFamily
                                 font.pixelSize: Theme.fontSm
                                 color:          Theme.fg
