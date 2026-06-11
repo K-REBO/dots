@@ -206,25 +206,6 @@ PanelWindow {
                 }
             }
 
-            // 通知ベル（スペーサー: 視覚は Notifications PanelWindow が担当）
-            Item {
-                id:             _notifSpacer
-                implicitWidth:  NotificationState.pillWidth
-                implicitHeight: Theme.pillH
-
-                function _sync() {
-                    var p = mapToItem(null, width, 0)
-                    NotificationState.marginRight = root.screen.width - Theme.barMargin - p.x
-                }
-                onXChanged:     Qt.callLater(_sync)
-                onWidthChanged: Qt.callLater(_sync)
-            }
-
-            Connections {
-                target:   CalendarState
-                function onClockPillWidthChanged() { Qt.callLater(_notifSpacer._sync) }
-            }
-
             // GitHub Issues（スペーサー: 視覚は GithubIssues PanelWindow が担当）
             Item {
                 id:             _ghSpacer
@@ -259,6 +240,20 @@ PanelWindow {
                     id:               _clk
                     anchors.centerIn: parent
                 }
+            }
+
+            // 通知ベル（スペーサー: 視覚は Notifications PanelWindow が担当、最右）
+            Item {
+                id:             _notifSpacer
+                implicitWidth:  NotificationState.pillWidth
+                implicitHeight: Theme.pillH
+
+                function _sync() {
+                    var p = mapToItem(null, width, 0)
+                    NotificationState.marginRight = root.screen.width - Theme.barMargin - p.x
+                }
+                onXChanged:     Qt.callLater(_sync)
+                onWidthChanged: Qt.callLater(_sync)
             }
         }
     }

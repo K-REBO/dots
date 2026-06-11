@@ -19,8 +19,7 @@ PanelWindow {
         top:   Theme.barMargin + (Theme.barHeight - Theme.pillH) / 2
         right: NotificationState.marginRight > 0
                ? NotificationState.marginRight
-               : (Theme.barMargin + 14 + CalendarState.clockPillWidth + Theme.gap
-                  + GithubIssuesState.pillWidth + Theme.gap)
+               : (Theme.barMargin + 14)
     }
 
     readonly property real _expandedW:  320
