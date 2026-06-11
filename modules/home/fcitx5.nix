@@ -20,6 +20,16 @@ in
     qt6Packages.fcitx5-configtool  # 設定ツール
   ];
 
+  # NixOSのi18n.inputMethod.fcitx5がXDG autostartエントリ
+  # (/etc/xdg/autostart/org.fcitx.Fcitx5.desktop)を自動生成するが、
+  # 下記のsystemd.user.services.fcitx5と二重起動し、D-Bus名(org.fcitx.Fcitx5)を
+  # --replaceで奪い合った結果systemdサービス側がinactiveに追いやられるため、
+  # ユーザーautostartにHidden=trueを置いて無効化する
+  xdg.configFile."autostart/org.fcitx.Fcitx5.desktop".text = ''
+    [Desktop Entry]
+    Hidden=true
+  '';
+
   # dots/config/fcitx5/ の設定ファイルを使用
   xdg.configFile."fcitx5/config".source = ../../config/fcitx5/config;
   # enableHazkey=true: Hazkey(Zenzai)をデフォルトIMにし、mozcは切り替え用に残す
