@@ -102,6 +102,12 @@ PanelWindow {
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
 
+                // CPU使用率に応じた枠線（50%以上で黄色、80%以上で赤）
+                border.width: SystemStatsService.cpuPercent >= 50 ? 2 : 0
+                border.color: SystemStatsService.cpuPercent >= 80 ? Theme.red : Theme.yellow
+                Behavior on border.color { ColorAnimation { duration: Theme.animNormal } }
+                Behavior on border.width { NumberAnimation { duration: Theme.animFast } }
+
                 RunCat {
                     id:               _runcat
                     anchors.centerIn: parent
