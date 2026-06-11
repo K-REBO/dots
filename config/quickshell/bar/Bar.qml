@@ -31,7 +31,7 @@ PanelWindow {
         // ── 左: パワーメニュー ─────────────────────────────────────
         Rectangle {
             implicitHeight: Theme.pillH
-            implicitWidth:  _pm.implicitWidth + 28
+            implicitWidth:  _pm.implicitWidth + 20
             radius:         Theme.radiusMd
             color:          _pmHov.hovered ? Theme.bgHover : Theme.bgLight
             Behavior on color { ColorAnimation { duration: Theme.animFast } }
@@ -77,6 +77,7 @@ PanelWindow {
             onWidthChanged: {
                 Qt.callLater(_batSpacer._sync)
                 Qt.callLater(_sleepSpacer._sync)
+                Qt.callLater(_ghSpacer._sync)
                 Qt.callLater(_notifSpacer._sync)
             }
 

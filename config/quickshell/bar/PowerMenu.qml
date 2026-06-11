@@ -5,7 +5,7 @@ import Quickshell.Io
 
 RowLayout {
     id: root
-    spacing: Theme.paddingSm
+    spacing: Theme.paddingXs
 
     property bool expanded: false
 
