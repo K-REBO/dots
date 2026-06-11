@@ -2,6 +2,16 @@
 {
   home.packages = with pkgs; [ vicinae ];
 
+  # VicinaeのQIcon::fromTheme()は /etc/profiles/per-user/<user>/share/icons (home-managerの
+  # アイコンテーマ) を解決できず、Firefox等のアプリアイコンが汎用アイコンになってしまう。
+  # ~/.icons はQt/GTKどちらからも参照される検索パスなので、Colloid-Darkとその
+  # Inherits チェーン (Tela-dark, Papirus-Dark, hicolor, breeze) をシンボリックリンクして解決する。
+  home.file = lib.listToAttrs (map (name: {
+    name = ".icons/${name}";
+    value.source = config.lib.file.mkOutOfStoreSymlink
+      "/etc/profiles/per-user/${config.home.username}/share/icons/${name}";
+  }) [ "Colloid-Dark" "Tela-dark" "Papirus-Dark" "hicolor" "breeze" ]);
+
   xdg.configFile."vicinae/config.jsonc".source = ../../config/vicinae/config.jsonc;
   xdg.configFile."vicinae/settings.json" = {
     source = ../../config/vicinae/settings.json;

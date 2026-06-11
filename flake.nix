@@ -117,6 +117,7 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.backupFileExtension = "backup";
           home-manager.extraSpecialArgs = { inherit inputs enableHazkey; };
           home-manager.users.bido = { ... }: {
             imports = [
