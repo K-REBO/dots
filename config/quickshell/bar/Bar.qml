@@ -93,15 +93,15 @@ PanelWindow {
                 }
             }
 
-            // CPU / メモリ
+            // RunCat (CPU負荷で走るNyanCat)
             Rectangle {
                 implicitHeight: Theme.pillH
-                implicitWidth:  _stats.implicitWidth + 20
+                implicitWidth:  _runcat.implicitWidth + 20
                 radius:         Theme.radiusWs
                 color:          Theme.bgLight
 
-                SystemStats {
-                    id:               _stats
+                RunCat {
+                    id:               _runcat
                     anchors.centerIn: parent
                 }
             }

@@ -108,11 +108,11 @@ PanelWindow {
 
                 Repeater {
                     model: [
-                        { label: "5分",   seconds: 300  },
-                        { label: "15分",  seconds: 900  },
-                        { label: "30分",  seconds: 1800 },
-                        { label: "1時間", seconds: 3600 },
-                        { label: "無効",  seconds: 0    },
+                        { label: "5m",   seconds: 300  },
+                        { label: "15m",  seconds: 900  },
+                        { label: "30m",  seconds: 1800 },
+                        { label: "1h", seconds: 3600 },
+                        { label: "off",  seconds: 0    },
                     ]
 
                     delegate: Rectangle {

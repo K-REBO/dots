@@ -11,11 +11,11 @@ QtObject {
 
     function _updateLabel() {
         switch (seconds) {
-            case 0:    label = "無効";  break
-            case 300:  label = "5分";   break
-            case 900:  label = "15分";  break
-            case 1800: label = "30分";  break
-            case 3600: label = "1時間"; break
+            case 0:    label = "off";  break
+            case 300:  label = "5m";   break
+            case 900:  label = "15m";  break
+            case 1800: label = "30m";  break
+            case 3600: label = "1h"; break
             default:   label = Math.floor(seconds / 60) + "分"
         }
     }
