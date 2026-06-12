@@ -5,8 +5,8 @@
     cowsay
   ];
 
-  # カスタムcowファイルを配置
-  home.file.".local/share/cows/unta.cow".source = ../../assets/unta.cow;
+  # assets/cow/ 配下のcowファイルをまとめて配置（追加時にこのファイルの更新は不要）
+  home.file.".local/share/cows".source = ../../assets/cow;
 
   # COWPATHを設定してカスタムcowを利用可能に
   home.sessionVariables = {
