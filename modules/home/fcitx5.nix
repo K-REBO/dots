@@ -46,6 +46,22 @@ in
     else ../../config/fcitx5/profile;
   xdg.configFile."fcitx5/conf".source = ../../config/fcitx5/conf;
 
+  # NixOSのi18n.inputMethod.fcitx5がenvironment.systemPackages経由で
+  # fcitx5-with-addonsパッケージのD-Busアクティベーションファイル
+  # (.../share/dbus-1/services/org.fcitx.Fcitx5.service, --replaceなしのfcitx5を起動)
+  # をシステムのD-Busセッションバスに登録してしまう。これが下記
+  # systemd.user.services.fcitx5と起動順序次第でD-Bus名(org.fcitx.Fcitx5)を
+  # --replaceで奪い合い、結果としてsystemdサービス側が名前の所有権を失って
+  # 自己終了(exit 0)し、Restart=on-failureでは復帰しないままになる
+  # (例: hyprland起動直後にfcitx5が消える)。
+  # dbus-brokerは$XDG_DATA_HOME/dbus-1/servicesをsystem-pathより優先するため、
+  # ここで同名ファイルを上書きし、activation時はsystemdサービスをstartするだけにする
+  xdg.dataFile."dbus-1/services/org.fcitx.Fcitx5.service".text = ''
+    [D-BUS Service]
+    Name=org.fcitx.Fcitx5
+    Exec=${pkgs.systemd}/bin/systemctl --user start fcitx5.service
+  '';
+
   # systemd user serviceで管理（起動失敗時に自動再起動）
   systemd.user.services.fcitx5 = {
     Unit = {
