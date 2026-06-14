@@ -17,6 +17,9 @@ in
   # Mozilla account recovery key
   "mozilla-recovery-key.age".publicKeys = users;
 
+  # Discord Bridge CLI 用環境変数 (DISCORD_TOKEN, DISCORD_SERVER_ID)
+  "discord-bridge.env.age".publicKeys = all;
+
   # SSH private key example
   # "ssh-key.age".publicKeys = users;
 

@@ -21,6 +21,14 @@
     mode = "0600";
   };
 
+  # Discord Bridge CLI 用環境変数 (~/.env として復号、zshの起動時にsourceされる)
+  age.secrets.discord-bridge-env = {
+    file = ../../secrets/discord-bridge.env.age;
+    path = "/home/bido/.env";
+    owner = "bido";
+    mode = "0400";
+  };
+
 
   # ====================
   # Boot
