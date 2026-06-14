@@ -112,12 +112,19 @@
   };
 
   # ログインマネージャ（ly）
+  # 配色は config/quickshell/Theme.qml（デザインシステム）と統一し、
+  # hyprlock（ロック画面, config/hypr/hyprlock.conf）とも揃えている。
+  # 注: full_color未指定だとlyは旧8色モードで動作し、fg=7はCYANになる
+  # （WHITEは8）ため、full_color=trueにしてTheme.qmlのbg/fgをtruecolorで指定する。
   services.displayManager.ly = {
     enable = true;
     settings = {
-      clock = "%Y-%m-%d";
-      fg = 7;
-      bg = 0;
+      clock = "%H:%M  %Y-%m-%d";
+      full_color = true;
+      fg = "0x00DDE3FF"; # Theme.fg
+      bg = "0x0007070E"; # Theme.bg
+      border_fg = "0x006870A0"; # Theme.fgSub
+      error_fg = "0x01FF5577"; # Theme.red (bold)
       session_log = "/dev/null";
     };
   };

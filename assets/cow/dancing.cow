@@ -1,6 +1,6 @@
 $the_cow = <<"EOC";
        $thoughts
-        $thoughts \\(*_*)
-  )  )Z
-  / \\
+        $thoughts(*_*)
+          )  )Z
+          / \\
 EOC
