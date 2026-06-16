@@ -311,7 +311,7 @@ in
     hyprpanel
   ];
 
-  xdg.configFile."hypr/hypridle.conf".source = ../../config/hypr/hypridle.conf;
+  xdg.configFile."hypr/hypridle.conf" = { source = ../../config/hypr/hypridle.conf; force = true; };
   xdg.configFile."hypr/hyprlock.conf".source = ../../config/hypr/hyprlock.conf;
   xdg.configFile."hypr/wallpapers".source = ../../config/hypr/wallpapers;
   xdg.configFile."hypr/scripts".source = ../../config/hypr/scripts;

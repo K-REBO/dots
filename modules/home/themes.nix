@@ -90,7 +90,7 @@ in
     # Qt統合
     pkgs.libsForQt5.qtstyleplugins
     pkgs.qt6.qtwayland
-    pkgs.libsForQt5.qt5.qtwayland
+    pkgs.qt5.qtwayland
   ];
 
   # ダークモード設定
