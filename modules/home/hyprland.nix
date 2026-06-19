@@ -311,7 +311,17 @@ in
     hyprpanel
   ];
 
-  xdg.configFile."hypr/hypridle.conf" = { source = ../../config/hypr/hypridle.conf; force = true; };
+  # hypridle.conf は dpms-timeout スクリプトが動的に書き換えるため xdg.configFile 管理外にする。
+  # home-manager switch のたびにシンボリックリンクが復元されると設定が失われるため、
+  # activation でシンボリックリンクの場合のみデフォルト実ファイルへ差し替える。
+  home.activation.hypridleConf = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    _hc="$HOME/.config/hypr/hypridle.conf"
+    if [ ! -e "$_hc" ] || [ -L "$_hc" ]; then
+      $DRY_RUN_CMD mkdir -p "$(dirname "$_hc")"
+      $DRY_RUN_CMD cp --no-preserve=all ${../../config/hypr/hypridle.conf} "$_hc"
+    fi
+  '';
+
   xdg.configFile."hypr/hyprlock.conf".source = ../../config/hypr/hyprlock.conf;
   xdg.configFile."hypr/wallpapers".source = ../../config/hypr/wallpapers;
   xdg.configFile."hypr/scripts".source = ../../config/hypr/scripts;

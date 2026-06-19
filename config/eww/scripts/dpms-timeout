@@ -55,10 +55,10 @@ listener {
 EOF
   fi
 
-  pkill -x hypridle 2>/dev/null
-  sleep 0.1
+  pkill -x hypridle 2>/dev/null || true
+  # hypridle の完全終了を待ってから再起動
+  while pgrep -x hypridle > /dev/null 2>&1; do sleep 0.05; done
   hypridle &
-  eww update dpms-label="$(label)"
 }
 
 case "$1" in
