@@ -217,6 +217,23 @@
     xwayland.enable = true;  # X11アプリ互換性
   };
 
+  # UWSM セッションサービスの nixos-rebuild switch 時の誤再起動を防ぐ。
+  # UWSMパッケージが更新されると /etc/systemd/user/wayland-wm@.service の
+  # ExecStart（Nixストアパス）が変わり、switch-to-configuration が
+  # 実行中のインスタンス wayland-wm@hyprland.desktop.service を
+  # 再起動しようとしてHyprlandが強制終了しログアウトされる。
+  # X-RestartIfChanged=false でその再起動をスキップさせる。
+  environment.etc = {
+    "systemd/user/wayland-wm@.service.d/no-restart.conf".text = ''
+      [Service]
+      X-RestartIfChanged=false
+    '';
+    "systemd/user/wayland-session-bindpid@.service.d/no-restart.conf".text = ''
+      [Service]
+      X-RestartIfChanged=false
+    '';
+  };
+
 
   # XDG Desktop Portal (スクリーンシェア、ファイルピッカー等)
   xdg.portal = {
