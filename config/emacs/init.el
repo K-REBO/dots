@@ -681,6 +681,105 @@
          (year  (string-to-number (format-time-string "%Y" now))))
     (my/obsidian-daily-note-for-date month day year)))
 
+;; ── Frontmatter検索 (C-c o F) ─────────────────────────────────────────────
+
+(defvar my/obsidian--fm-cache nil)
+
+(defun my/obsidian--build-fm-cache ()
+  "全 vault ファイルの YAML frontmatter をスキャンしてキャッシュを構築する。
+{ field-name-string -> { value-string -> [rel-path ...] } } を返す。"
+  (let ((result (make-hash-table :test 'equal)))
+    (maphash
+     (lambda (abs-path _meta)
+       (when (file-readable-p abs-path)
+         (let* ((snippet (with-temp-buffer
+                           (insert-file-contents abs-path nil 0 4096)
+                           (buffer-string)))
+                (fm (ignore-errors
+                      (obsidian-find-yaml-front-matter-in-string snippet))))
+           (when (hash-table-p fm)
+             (let ((rel (file-relative-name abs-path obsidian-directory)))
+               (maphash
+                (lambda (field raw-val)
+                  (let* ((fh   (or (gethash field result)
+                                   (let ((h (make-hash-table :test 'equal)))
+                                     (puthash field h result) h)))
+                         (vals (cond
+                                ((vectorp raw-val) (append raw-val nil))
+                                ((listp   raw-val)  raw-val)
+                                (t                  (list (format "%s" raw-val))))))
+                    (dolist (v vals)
+                      (let* ((vs    (format "%s" v))
+                             (files (or (gethash vs fh) [])))
+                        (puthash vs (vconcat files (vector rel)) fh)))))
+                fm))))))
+     obsidian-vault-cache)
+    (setq my/obsidian--fm-cache result)))
+
+(defun my/obsidian-frontmatter-search (rebuild)
+  "YAML frontmatter フィールド→値で絞り込んでファイルを開く。
+prefix arg REBUILD でキャッシュを強制再構築。tags フィールドは階層展開。"
+  (interactive "P")
+  (when (or rebuild (null my/obsidian--fm-cache))
+    (my/obsidian--build-fm-cache))
+  (let* ((fields (sort (hash-table-keys my/obsidian--fm-cache) #'string<))
+         (field  (completing-read "Field: " fields nil t))
+         (val-ht (gethash field my/obsidian--fm-cache))
+         (values (sort (hash-table-keys val-ht) #'string<))
+         (value  (completing-read (format "[%s] Value: " field) values nil t))
+         (files  (append (gethash value val-ht) nil)))
+    (when (equal field "tags")
+      (let ((prefix (concat value "/")))
+        (maphash (lambda (tag tag-files)
+                   (when (string-prefix-p prefix tag)
+                     (setq files (append files (append tag-files nil)))))
+                 val-ht)))
+    (setq files (seq-uniq files #'equal))
+    (if (null files)
+        (message "No files found for %s=%s" field value)
+      (let ((chosen (if (= (length files) 1)
+                        (car files)
+                      (completing-read
+                       (format "[%s:%s] (%d files): " field value (length files))
+                       (sort files #'string<) nil t))))
+        (obsidian-find-point-in-file chosen 0)))))
+
+;; ── 階層タグ検索 (C-c o T を置き換え) ────────────────────────────────────
+
+(defun my/obsidian-tag-search ()
+  "タグ選択でファイルを開く。親タグ選択時は子タグ(parent/child)も展開。"
+  (interactive)
+  (let* ((tag-ht   (obsidian-tags-hashtable))
+         (all-tags (sort (hash-table-keys tag-ht) #'string<))
+         (selected (completing-read "Tag: " all-tags nil t))
+         (prefix   (concat selected "/"))
+         (files    (append (gethash selected tag-ht) nil)))
+    (maphash (lambda (tag tag-files)
+               (when (string-prefix-p prefix tag)
+                 (setq files (append files (append tag-files nil)))))
+             tag-ht)
+    (setq files (seq-uniq files #'equal))
+    (if (null files)
+        (message "No files tagged: %s" selected)
+      (let ((chosen (if (= (length files) 1)
+                        (car files)
+                      (completing-read
+                       (format "[%s] (%d files): " selected (length files))
+                       (sort files #'string<) nil t))))
+        (obsidian-find-point-in-file chosen 0)))))
+
+;; ── RET でリンク追跡 ───────────────────────────────────────────────────────
+
+(defun my/obsidian-follow-or-newline ()
+  "[[WikiLink]] や [md](link) の上では obsidian-follow-link-at-point を呼ぶ。
+それ以外は通常の markdown-enter-key にフォールスルー。"
+  (interactive)
+  (if (or (markdown-wiki-link-p) (markdown-link-p))
+      (obsidian-follow-link-at-point)
+    (call-interactively #'markdown-enter-key)))
+
+;; ──────────────────────────────────────────────────────────────────────────
+
 (use-package obsidian
   :demand t
   :custom
@@ -699,11 +798,13 @@
          ("C-c o j" . obsidian-jump)
          ("C-c o l" . obsidian-insert-wikilink)
          ("C-c o t" . obsidian-insert-tag)
-         ("C-c o T" . obsidian-tag-find)
+         ("C-c o T" . my/obsidian-tag-search)
+         ("C-c o F" . my/obsidian-frontmatter-search)
          ("C-c o s" . obsidian-search)
          (:map obsidian-mode-map
           ("C-c o b" . obsidian-backlink-jump)
-          ("C-c o f" . obsidian-follow-link-at-point))))
+          ("C-c o f" . obsidian-follow-link-at-point)
+          ("RET"     . my/obsidian-follow-or-newline))))
 
 ;; ============================================================
 ;; calfw: Obsidian デイリーノートカレンダー
