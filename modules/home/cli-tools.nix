@@ -6,6 +6,7 @@
     # ファイル管理・表示
     bat           # catの代替（シンタックスハイライト）
     eza           # lsの代替
+	fd            # findの代替
     dust          # duの代替（ディスク使用量）
     hexyl         # hexダンプ
     duf           # duの代替 (直感的)
@@ -55,7 +56,11 @@
     # LLM agent cliツール
     # claude-code  # curlでnativeでインストール
 	rtk           # rtk is CLI proxy to reduces LLM token cost
-    gemini-cli
+
+	## gemini cli is deprecated now. antigravity-cli is replacement for gemini-cli
+	antigravity-cli
+    # gemini-cli
+
 	github-copilot-cli
 
     # SNS
