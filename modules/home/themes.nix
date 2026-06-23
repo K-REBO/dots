@@ -69,7 +69,7 @@ in
   # Qtテーマ（GTKテーマを使用）
   qt = {
     enable = true;
-    platformTheme.name = "gtk";
+    platformTheme.name = "gtk3";
     style.name = "adwaita-dark";
   };
 
@@ -103,8 +103,6 @@ in
 
   # 環境変数
   home.sessionVariables = {
-    # Qt
-    QT_QPA_PLATFORMTHEME = "gtk2";
     QT_STYLE_OVERRIDE = "adwaita-dark";
   };
 
