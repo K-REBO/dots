@@ -1,5 +1,20 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
+let
+  # UWSM template unit drop-ins to prevent nixos-rebuild switch from
+  # restarting the running Wayland session. Provided as a package via
+  # systemd.packages so that (a) the NixOS etc builder does not inject
+  # a restricted PATH=... into the drop-in, and (b) the builder does not
+  # fail when creating multiple @-named subdirs under the same parent.
+  uwsmNoRestartDropins = pkgs.runCommand "uwsm-no-restart-dropins" {} ''
+    mkdir -p $out/share/systemd/user/wayland-wm@.service.d
+    printf '[Service]\nX-RestartIfChanged=false\n' \
+      > $out/share/systemd/user/wayland-wm@.service.d/no-restart.conf
+    mkdir -p $out/share/systemd/user/wayland-session-bindpid@.service.d
+    printf '[Service]\nX-RestartIfChanged=false\n' \
+      > $out/share/systemd/user/wayland-session-bindpid@.service.d/no-restart.conf
+  '';
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -222,17 +237,9 @@
   # ExecStart（Nixストアパス）が変わり、switch-to-configuration が
   # 実行中のインスタンス wayland-wm@hyprland.desktop.service を
   # 再起動しようとしてHyprlandが強制終了しログアウトされる。
-  # X-RestartIfChanged=false でその再起動をスキップさせる。
-  environment.etc = {
-    "systemd/user/wayland-wm@.service.d/no-restart.conf".text = ''
-      [Service]
-      X-RestartIfChanged=false
-    '';
-    "systemd/user/wayland-session-bindpid@.service.d/no-restart.conf".text = ''
-      [Service]
-      X-RestartIfChanged=false
-    '';
-  };
+  # systemd.packages で提供することで PATH 注入を避け、etc builder の
+  # @名サブディレクトリ作成バグも回避する（uwsmNoRestartDropins は let で定義）。
+  systemd.packages = [ uwsmNoRestartDropins ];
 
 
   # XDG Desktop Portal (スクリーンシェア、ファイルピッカー等)
