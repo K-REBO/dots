@@ -55,6 +55,16 @@
       flake = false;
     };
 
+    chuoprint-cli-src = {
+      url = "path:/home/bido/projects/chuoprint-cli";
+      flake = false;
+    };
+
+    chois-cli-src = {
+      url = "path:/home/bido/projects/CHOIS-cli";
+      flake = false;
+    };
+
     obsidian-vault-cli = {
       url = "github:K-REBO/obsidian-vault-cli";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -93,6 +103,8 @@
       (import ./overlays/twitter-cli.nix)
       (import ./overlays/tp-render.nix inputs)
       (import ./overlays/gh-grass.nix inputs)
+      (import ./overlays/chuoprint-cli.nix inputs)
+      (import ./overlays/chois-cli.nix inputs)
       (import ./overlays/apple-color-emoji.nix)
       (import ./overlays/alacritty-sixel.nix)
       nur.overlays.default
