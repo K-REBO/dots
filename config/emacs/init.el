@@ -688,32 +688,38 @@
 (defun my/obsidian--build-fm-cache ()
   "全 vault ファイルの YAML frontmatter をスキャンしてキャッシュを構築する。
 { field-name-string -> { value-string -> [rel-path ...] } } を返す。"
-  (let ((result (make-hash-table :test 'equal)))
-    (maphash
-     (lambda (abs-path _meta)
-       (when (file-readable-p abs-path)
-         (let* ((snippet (with-temp-buffer
-                           (insert-file-contents abs-path nil 0 4096)
-                           (buffer-string)))
-                (fm (ignore-errors
-                      (obsidian-find-yaml-front-matter-in-string snippet))))
-           (when (hash-table-p fm)
-             (let ((rel (file-relative-name abs-path obsidian-directory)))
-               (maphash
-                (lambda (field raw-val)
-                  (let* ((fh   (or (gethash field result)
-                                   (let ((h (make-hash-table :test 'equal)))
-                                     (puthash field h result) h)))
-                         (vals (cond
-                                ((vectorp raw-val) (append raw-val nil))
-                                ((listp   raw-val)  raw-val)
-                                (t                  (list (format "%s" raw-val))))))
-                    (dolist (v vals)
-                      (let* ((vs    (format "%s" v))
-                             (files (or (gethash vs fh) [])))
-                        (puthash vs (vconcat files (vector rel)) fh)))))
-                fm))))))
-     obsidian-vault-cache)
+  (let ((result    (make-hash-table :test 'equal))
+        (vault-dir (expand-file-name obsidian-directory))
+        (total 0) (parsed 0))
+    (dolist (abs-path (directory-files-recursively vault-dir "\\.md\\'"))
+      (cl-incf total)
+      (when (file-readable-p abs-path)
+        (let* ((snippet (with-temp-buffer
+                          (insert-file-contents abs-path)
+                          (buffer-string)))
+               (fm (condition-case err
+                       (obsidian-find-yaml-front-matter-in-string snippet)
+                     (error (message "obsidian FM: parse error %s: %s" abs-path err) nil))))
+          (when (hash-table-p fm)
+            (cl-incf parsed)
+            (let ((rel (file-relative-name abs-path vault-dir)))
+              (maphash
+               (lambda (field raw-val)
+                 (let* ((field-str (format "%s" field))
+                        (fh   (or (gethash field-str result)
+                                  (let ((h (make-hash-table :test 'equal)))
+                                    (puthash field-str h result) h)))
+                        (vals (cond
+                               ((vectorp raw-val) (append raw-val nil))
+                               ((listp   raw-val)  raw-val)
+                               (t                  (list (format "%s" raw-val))))))
+                   (dolist (v vals)
+                     (let* ((vs    (format "%s" v))
+                            (files (or (gethash vs fh) [])))
+                       (puthash vs (vconcat files (vector rel)) fh)))))
+               fm))))))
+    (message "obsidian FM cache: %d fields (%d/%d files with frontmatter)"
+             (hash-table-count result) parsed total)
     (setq my/obsidian--fm-cache result)))
 
 (defun my/obsidian-frontmatter-search (rebuild)
@@ -747,9 +753,13 @@ prefix arg REBUILD でキャッシュを強制再構築。tags フィールド�
 ;; ── 階層タグ検索 (C-c o T を置き換え) ────────────────────────────────────
 
 (defun my/obsidian-tag-search ()
-  "タグ選択でファイルを開く。親タグ選択時は子タグ(parent/child)も展開。"
+  "タグ選択でファイルを開く。親タグ選択時は子タグ(parent/child)も展開。
+FM キャッシュを使用するため obsidian-vault-cache の初期化タイミングに依存しない。"
   (interactive)
-  (let* ((tag-ht   (obsidian-tags-hashtable))
+  (when (null my/obsidian--fm-cache)
+    (my/obsidian--build-fm-cache))
+  (let* ((tag-ht  (or (gethash "tags" my/obsidian--fm-cache)
+                       (make-hash-table :test 'equal)))
          (all-tags (sort (hash-table-keys tag-ht) #'string<))
          (selected (completing-read "Tag: " all-tags nil t))
          (prefix   (concat selected "/"))
