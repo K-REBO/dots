@@ -56,12 +56,12 @@
     };
 
     chuoprint-cli-src = {
-      url = "path:/home/bido/projects/chuoprint-cli";
+      url = "git+ssh://git@github.com/K-REBO/chuoprint-cli";
       flake = false;
     };
 
     chois-cli-src = {
-      url = "path:/home/bido/projects/CHOIS-cli";
+      url = "git+ssh://git@github.com/K-REBO/CHOIS-cli";
       flake = false;
     };
 

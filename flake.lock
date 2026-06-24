@@ -23,6 +23,38 @@
         "type": "github"
       }
     },
+    "chois-cli-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782279619,
+        "narHash": "sha256-WxDCuWEosfkkbeFapQugyh8+UUB75+JLnA7iZoQG0SA=",
+        "ref": "refs/heads/master",
+        "rev": "024d62e464eadd0e1c6a8a86066980b265b0d493",
+        "revCount": 15,
+        "type": "git",
+        "url": "ssh://git@github.com/K-REBO/CHOIS-cli"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/K-REBO/CHOIS-cli"
+      }
+    },
+    "chuoprint-cli-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782279526,
+        "narHash": "sha256-i9NtXTWDwjUxTwQrEjymYGtD7NAKAyzUwt01MTXuTow=",
+        "ref": "refs/heads/master",
+        "rev": "394aa85d49c10b521228b1dba1de382c0474fc6c",
+        "revCount": 7,
+        "type": "git",
+        "url": "ssh://git@github.com/K-REBO/chuoprint-cli"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/K-REBO/chuoprint-cli"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1781825982,
@@ -90,11 +122,11 @@
         "rust-analyzer-src": "rust-analyzer-src"
       },
       "locked": {
-        "lastModified": 1782036485,
-        "narHash": "sha256-ZnsNxobD7iHArxSYWHW7xhRq61kNGHtalYObLyTuOJ8=",
+        "lastModified": 1782208688,
+        "narHash": "sha256-oEax2Unvaq0wD8tZs+Kk3zzeUduOegVYW8R9nM5S3Os=",
         "owner": "nix-community",
         "repo": "fenix",
-        "rev": "dd2c80d0b88463ccc0402c86e9e72dbb354ac091",
+        "rev": "5d0542f6ba83f9366095b0e9966b0377c4c1cb31",
         "type": "github"
       },
       "original": {
@@ -238,11 +270,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782097659,
-        "narHash": "sha256-ayv+XM8Y9DG/QcWuR7SSd5b9YRdN4DSotftZM8/dUV8=",
+        "lastModified": 1782233665,
+        "narHash": "sha256-h/xOtrByoA/Ak1lWHn0O1lVZz4qWYbwOSLQ8YSwQO0I=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "8f3bc611923787774852b09b556d62dfd97ebaf2",
+        "rev": "062581938b4a378a82dfbb294b494808157153a1",
         "type": "github"
       },
       "original": {
@@ -416,11 +448,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1782097265,
-        "narHash": "sha256-+Zd4tOg/QCNE10lRQ3fSh10VKZGqMN5UaFPRh4OCjKA=",
+        "lastModified": 1782280855,
+        "narHash": "sha256-KN9khznLUm4+YyjK6kg5jAwLB0P24wRghNA89/GUGuc=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "7b6fa89566363cc71ee118ea2f51e5ed8e00e1d3",
+        "rev": "e4ae8cdce75785d5064439fb621d3bc0402ec611",
         "type": "github"
       },
       "original": {
@@ -454,6 +486,8 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "chois-cli-src": "chois-cli-src",
+        "chuoprint-cli-src": "chuoprint-cli-src",
         "crane": "crane",
         "deploy-rs": "deploy-rs",
         "fenix": "fenix",
@@ -473,11 +507,11 @@
     "rust-analyzer-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1781975540,
-        "narHash": "sha256-ODHXraP8Sobq7inJ7HqS7PR6/7cuNwQAaeCV+HmbSj0=",
+        "lastModified": 1782126558,
+        "narHash": "sha256-HLXplzCGoc5mBVXdJriEsfX0gLDNXZ+O5urcdTmLP+E=",
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "c229d592b2cc38511c016ab2abaa6e3d1b9faa90",
+        "rev": "ff5fcc70d9bcdc54db365114e2f7b1c18056ed4f",
         "type": "github"
       },
       "original": {
