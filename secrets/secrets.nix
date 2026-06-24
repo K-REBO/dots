@@ -20,6 +20,9 @@ in
   # Discord Bridge CLI 用環境変数 (DISCORD_TOKEN, DISCORD_SERVER_ID)
   "discord-bridge.env.age".publicKeys = all;
 
+  # 中央大学系CLI共有認証情報 (chuo.toml: [auth] id/password)
+  "chuo-credentials.age".publicKeys = users;
+
   # SSH private key example
   # "ssh-key.age".publicKeys = users;
 

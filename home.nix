@@ -13,6 +13,7 @@
   imports = [
     # CLIツール
     ./modules/home/cli-tools.nix
+    ./modules/home/chuo.nix
     ./modules/home/cowsay.nix
     ./modules/home/fortune.nix
     ./modules/home/shell.nix

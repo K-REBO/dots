@@ -23,6 +23,7 @@ in
     ../../modules/nixos/winapps.nix
     ../../modules/nixos/wifi-audio-mute.nix
     ../../modules/nixos/hazkey.nix
+    ../../modules/nixos/chuo.nix
   ];
 
   # ====================
