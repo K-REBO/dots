@@ -26,11 +26,11 @@
     "chois-cli-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1782279619,
-        "narHash": "sha256-WxDCuWEosfkkbeFapQugyh8+UUB75+JLnA7iZoQG0SA=",
+        "lastModified": 1782281072,
+        "narHash": "sha256-XaBCHL4/NiXExf3qY3uRGej7DkevkyZi/1XH30q1X4g=",
         "ref": "refs/heads/master",
-        "rev": "024d62e464eadd0e1c6a8a86066980b265b0d493",
-        "revCount": 15,
+        "rev": "08f60fb45da6c5fbb609954a3756ebe413a15cfc",
+        "revCount": 16,
         "type": "git",
         "url": "ssh://git@github.com/K-REBO/CHOIS-cli"
       },
