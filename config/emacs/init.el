@@ -788,6 +788,57 @@ FM キャッシュを使用するため obsidian-vault-cache の初期化タイ�
       (obsidian-follow-link-at-point)
     (call-interactively #'markdown-enter-key)))
 
+;; ── バックリンク (Obsidian 仕様準拠) ─────────────────────────────────────
+
+;; Obsidian の wikilink 解決規則:
+;;   [[hello]]            → vault 内の hello.md（ディレクトリ不問）
+;;   [[hello.md]]         → 同上（拡張子あり）
+;;   [[subdir/hello]]     → vault 相対パスで一致
+;; vault cache 構築タイミングによってリンクが絶対パスに解決されない場合があるため
+;; ベースファイル名・拡張子省略・相対パスの3パターンをすべて照合する。
+
+(defun my/obsidian--link-resolves-to-p (link targ)
+  "LINK（vault cache 保存値）が TARG（絶対パス）を指すか確認する。"
+  (let* ((vault     (expand-file-name obsidian-directory))
+         (targ-base (file-name-nondirectory targ))
+         (targ-rel  (file-relative-name targ vault)))
+    (or
+     ;; 解決済み: 絶対パスが一致
+     (equal link targ)
+     ;; 未解決: ベースファイル名のみ "hello.md"
+     (equal link targ-base)
+     ;; 拡張子省略 "hello"
+     (equal link (file-name-sans-extension targ-base))
+     ;; vault 相対パス（拡張子あり・なし両対応）
+     (equal (file-name-sans-extension link)
+            (file-name-sans-extension targ-rel)))))
+
+(defun my/obsidian-backlinks (&optional file)
+  "Obsidian 仕様のリンク解決で FILE へのバックリンクを返す。
+[[hello]] は vault 内の hello.md にマッチする（ディレクトリ不問）。"
+  (let* ((targ (or file (buffer-file-name)))
+         (resp (make-hash-table :test 'equal)))
+    (maphash
+     (lambda (host meta)
+       (when-let ((lmap (gethash 'links meta)))
+         (maphash
+          (lambda (link info)
+            (when (my/obsidian--link-resolves-to-p link targ)
+              (puthash host info resp)))
+          lmap)))
+     obsidian-vault-cache)
+    resp))
+
+(defun my/obsidian-backlink-jump (&optional file)
+  "バックリンクを選択して該当ファイルに移動する。
+obsidian-backlink-jump の上位互換: ファイル名のみの [[wikilink]] も解決する。"
+  (interactive)
+  (let ((linkmap (my/obsidian-backlinks file)))
+    (if (> (length (hash-table-keys linkmap)) 0)
+        (let ((choice (obsidian--backlinks-completion-fn linkmap)))
+          (find-file (obsidian-expand-file-name choice)))
+      (message "No backlinks found."))))
+
 ;; ──────────────────────────────────────────────────────────────────────────
 
 (use-package obsidian
@@ -812,7 +863,7 @@ FM キャッシュを使用するため obsidian-vault-cache の初期化タイ�
          ("C-c o F" . my/obsidian-frontmatter-search)
          ("C-c o s" . obsidian-search)
          (:map obsidian-mode-map
-          ("C-c o b" . obsidian-backlink-jump)
+          ("C-c o b" . my/obsidian-backlink-jump)
           ("C-c o f" . obsidian-follow-link-at-point)
           ("RET"     . my/obsidian-follow-or-newline))))
 

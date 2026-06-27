@@ -21,7 +21,7 @@ in
   "discord-bridge.env.age".publicKeys = all;
 
   # 中央大学系CLI共有認証情報 (chuo.toml: [auth] id/password)
-  "chuo-credentials.age".publicKeys = users;
+  "chuo-credentials.age".publicKeys = all;
 
   # SSH private key example
   # "ssh-key.age".publicKeys = users;

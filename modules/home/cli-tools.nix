@@ -59,7 +59,7 @@
 
 	## gemini cli is deprecated now. antigravity-cli is replacement for gemini-cli
 	antigravity-cli
-	opencode-ai
+	opencode
     # gemini-cli
 
 	github-copilot-cli
