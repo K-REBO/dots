@@ -26,11 +26,11 @@
     "chois-cli-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1782283191,
-        "narHash": "sha256-vydT1M9/PqONOQWremVEXLrcojpY3QhOdSelc7ClW2s=",
+        "lastModified": 1782713888,
+        "narHash": "sha256-JF+y9lgvwS7oM8pPZcPrMpAZf97ng4HIJg99kY6QHQE=",
         "ref": "refs/heads/master",
-        "rev": "4539f1339cac391a6fa1440872e952c2fe016f06",
-        "revCount": 19,
+        "rev": "19c016598d9253a32c561eb1f751d10d45ecc5da",
+        "revCount": 21,
         "type": "git",
         "url": "ssh://git@github.com/K-REBO/CHOIS-cli"
       },
@@ -42,11 +42,11 @@
     "chuoprint-cli-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1782283006,
-        "narHash": "sha256-9OLMhcx0dH9F+VPaVQomrcGU2NbvKeIQ2SAndTxvMG0=",
+        "lastModified": 1782709261,
+        "narHash": "sha256-X6Kj3z9prFKx6MH38FhwOcs46yRJc/12Edx7l3POfsQ=",
         "ref": "refs/heads/master",
-        "rev": "61ba745e499540a2db91a828d35bbfbab689d6cb",
-        "revCount": 8,
+        "rev": "988edb50df419998650e9b46cfe43b500645d0f8",
+        "revCount": 9,
         "type": "git",
         "url": "ssh://git@github.com/K-REBO/chuoprint-cli"
       },
@@ -448,11 +448,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1782706624,
-        "narHash": "sha256-2LeAFA9MYydZGRZGs+rWRHdK+8cHnlySlE4stooeFuQ=",
+        "lastModified": 1782713760,
+        "narHash": "sha256-JR43dM5Zsjc3EvnmlPq/QGmazfxzeqL5nHtu9F+As+g=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "d61de5533c70c287d59575ffb94410dd508d4d1f",
+        "rev": "ab09d180ade56e9170dc2175b0e0621d2eca84f5",
         "type": "github"
       },
       "original": {
