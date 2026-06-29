@@ -22,8 +22,8 @@
     nerd-fonts.fira-code         # オプション
     nerd-fonts.hack              # オプション
 
-    # GNOME用
-    cantarell-fonts
+    # GNOME用（afdko 5.0.1との非互換でビルド失敗するためコメントアウト）
+    # cantarell-fonts
 
     # プログラミング用
     source-code-pro              # VSCodeで使用
