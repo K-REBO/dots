@@ -841,6 +841,33 @@ obsidian-backlink-jump の上位互換: ファイル名のみの [[wikilink]] �
 
 ;; ──────────────────────────────────────────────────────────────────────────
 
+;; ── 保存時に YAML frontmatter の updated フィールドを更新 ──────────────────
+
+(defun my/obsidian-update-frontmatter-date ()
+  "YAML frontmatter の updated: フィールドを今日の日付 (yyyy-mm-dd) に書き換える。
+frontmatter がなければ何もしない。updated フィールドがなければ created: の直後に挿入する。"
+  (when (and (bound-and-true-p obsidian-mode)
+             (buffer-file-name)
+             (string-match-p "\\.md\\'" (buffer-file-name)))
+    (let ((today (format-time-string "%Y-%m-%d")))
+      (save-excursion
+        (goto-char (point-min))
+        (when (looking-at "---[ \t]*\n")
+          (let* ((fm-start (point))
+                 (fm-end   (and (re-search-forward "^---[ \t]*$" nil t)
+                                (point))))
+            (when fm-end
+              (goto-char fm-start)
+              (if (re-search-forward "^updated:.*$" fm-end t)
+                  ;; 既存の updated: を上書き
+                  (replace-match (concat "updated: " today))
+                ;; なければ frontmatter 末尾の --- 直前に挿入
+                (goto-char fm-end)
+                (beginning-of-line)
+                (insert "updated: " today "\n")))))))))
+
+(add-hook 'before-save-hook #'my/obsidian-update-frontmatter-date)
+
 (use-package obsidian
   :demand t
   :custom
