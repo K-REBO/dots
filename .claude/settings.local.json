@@ -69,7 +69,8 @@
       "Bash(xkbcli compile-keymap --layout us 2>/dev/null | grep -A2 \"I256\\\\|AudioMicMute\" | head -20)",
       "Bash(xkbcli compile-keymap --layout us 2>/dev/null | grep -i \"inet\\\\|include\" | head -10)",
       "Bash(xkbcli compile-keymap --layout us 2>&1 | wc -l; xkbcli compile-keymap --layout us --rules evdev --model pc105 2>&1 | grep -c \"AudioMicMute\\\\|I256\")",
-      "Bash(sudo chown root:wheel /sys/devices/platform/thinkpad_acpi/leds/platform::micmute/brightness && ls -la /sys/class/leds/platform::micmute/brightness)"
+      "Bash(sudo chown root:wheel /sys/devices/platform/thinkpad_acpi/leds/platform::micmute/brightness && ls -la /sys/class/leds/platform::micmute/brightness)",
+      "WebFetch(domain:tabelog.com)"
     ]
   }
 }

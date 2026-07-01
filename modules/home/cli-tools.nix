@@ -38,6 +38,8 @@
     # ファイル操作
     kondo         # プロジェクトクリーナー
     miniserve     # HTTPファイルサーバー
+    ffsend        # Firefox Send互換のファイル送信CLI
+    entr          # ファイル変更監視・コマンド自動実行
 
     # ドキュメント
     typst         # typst-cli
