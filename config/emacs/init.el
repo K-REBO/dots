@@ -1013,6 +1013,24 @@ frontmatter がなければ何もしない。updated フィールドがなけれ
   :mode "\\.csv\\'")
 
 ;; ============================================================
+;; gnuplot-generic-mode: gnuplot スクリプトの簡易シンタックスハイライト
+;; フル機能の gnuplot-mode パッケージは使わず、組み込みの define-generic-mode で
+;; コメント・文字列・主要キーワードのみを軽量にハイライト
+;; ============================================================
+(define-generic-mode 'gnuplot-generic-mode
+  '(?\#)
+  '("plot" "splot" "set" "unset" "show" "using" "with" "title" "notitle"
+    "index" "every" "smooth" "axes" "fit" "via" "print" "pause" "load"
+    "call" "reset" "replot" "if" "else" "do" "for" "while" "exit" "quit"
+    "undefine" "array" "stats" "eval" "system" "save")
+  '(("\\_<\\(lines\\|points\\|linespoints\\|dots\\|impulses\\|steps\\|boxes\\|vectors\\|filledcurves\\|histograms\\)\\_>" . font-lock-type-face)
+    ("\\_<\\(xlabel\\|ylabel\\|zlabel\\|xrange\\|yrange\\|zrange\\|terminal\\|output\\|style\\|grid\\|key\\|logscale\\|xtics\\|ytics\\|palette\\|linetype\\|lt\\|linecolor\\|lc\\|linewidth\\|lw\\|pointtype\\|pt\\|pointsize\\|ps\\)\\_>" . font-lock-builtin-face)
+    ("\\_<\\(sin\\|cos\\|tan\\|exp\\|log\\|log10\\|sqrt\\|abs\\|floor\\|ceil\\|rand\\|int\\)\\_>" . font-lock-function-name-face))
+  '("\\.gp\\'" "\\.gnuplot\\'" "\\.plt\\'" "\\.plot\\'")
+  nil
+  "gnuplot スクリプト用の簡易 major mode")
+
+;; ============================================================
 ;; emacsclient: git コミット等の外部エディタ連携
 ;; ============================================================
 ;; C-x # (server-edit) 後にクライアントフレームを自動削除
