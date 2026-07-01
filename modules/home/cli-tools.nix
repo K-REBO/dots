@@ -100,6 +100,9 @@
 
     # Obsidian LiveSync vault CLI (AIエージェント向け暗号化vaultアクセス)
     inputs.obsidian-vault-cli.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+    # Discord CLI (discord_cli; discord_bridge同梱、Gatewayボット本体は未使用)
+    inputs.discord-bridge.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # batの設定

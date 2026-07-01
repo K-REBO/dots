@@ -75,6 +75,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    discord-bridge = {
+      url = "github:K-REBO/discord_bridge";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = { self, nixpkgs, home-manager, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, obsidian-vault-cli, ... }@inputs: let
