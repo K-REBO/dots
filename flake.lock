@@ -26,11 +26,11 @@
     "chois-cli-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1782713888,
-        "narHash": "sha256-JF+y9lgvwS7oM8pPZcPrMpAZf97ng4HIJg99kY6QHQE=",
+        "lastModified": 1782786330,
+        "narHash": "sha256-IdW8yC04mH7rDRYOulR+Fc6xN2/wg/GvE94aebDqNZ0=",
         "ref": "refs/heads/master",
-        "rev": "19c016598d9253a32c561eb1f751d10d45ecc5da",
-        "revCount": 21,
+        "rev": "f5f9fdff4232cd5a92e53723b8d1a514b36f2942",
+        "revCount": 22,
         "type": "git",
         "url": "ssh://git@github.com/K-REBO/CHOIS-cli"
       },
@@ -448,11 +448,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1782713760,
-        "narHash": "sha256-JR43dM5Zsjc3EvnmlPq/QGmazfxzeqL5nHtu9F+As+g=",
+        "lastModified": 1782714260,
+        "narHash": "sha256-BsKuX8TFlDcoD1+lL7U3wAR5ucaGFLbVoFpKD29MCmc=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "ab09d180ade56e9170dc2175b0e0621d2eca84f5",
+        "rev": "1096528ccbbd6127bb3b4eef62f431c392e59369",
         "type": "github"
       },
       "original": {
