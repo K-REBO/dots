@@ -192,6 +192,20 @@ in
   programs.zsh.enable = true;
   programs.firefox.enable = true;
 
+  # root (nixos-rebuild switch実行時) でもbidoのGitHub鍵でgit+ssh flake inputを
+  # フェッチできるようにする。sudo実行時はrootのSSHエージェント/鍵が無いため、
+  # bidoの鍵を絶対パスで直接参照させる。
+  programs.ssh.extraConfig = ''
+    Host github.com
+      HostName github.com
+      User git
+      IdentityFile /home/bido/.ssh/github
+  '';
+  programs.ssh.knownHosts."github.com" = {
+    hostNames = [ "github.com" ];
+    publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl";
+  };
+
   # Steam
   programs.steam = {
     enable = true;

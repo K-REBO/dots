@@ -34,7 +34,7 @@
           --prefix LD_LIBRARY_PATH : ${fontconfig.lib}/lib
       '';
     })
-    musescore                   # 楽譜作成
+    # musescore                 # 楽譜作成 (nixpkgs側のmakeCWrapperビルド不具合により一時無効化)
 
     # ============
     # ダウンローダー
