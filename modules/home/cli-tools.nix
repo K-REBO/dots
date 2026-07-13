@@ -1,8 +1,5 @@
 { config, pkgs, inputs, ... }:
 
-let
-  google-map-bookmark = pkgs.callPackage ../../pkgs/google-map-bookmark { };
-in
 {
   # Phase 1: CLIツール
   home.packages = with pkgs; [
@@ -106,9 +103,6 @@ in
 
     # Discord CLI (discord_cli; discord_bridge同梱、Gatewayボット本体は未使用)
     inputs.discord-bridge.packages.${pkgs.stdenv.hostPlatform.system}.default
-
-    # Google Maps ブックマーク登録CLI (Playwrightでブラウザ自動操作)
-    google-map-bookmark
   ];
 
   # batの設定
