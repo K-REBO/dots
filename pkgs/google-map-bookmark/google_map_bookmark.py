@@ -70,6 +70,14 @@ def ensure_place_detail_open(page) -> None:
     """検索結果が一覧表示の場合、先頭候補のお店を開いて詳細パネルを表示する。"""
     if "/maps/place/" in page.url:
         return
+    # クエリが一意な候補にヒットすると、一覧を経由せず直接詳細ページへ
+    # リダイレクトされることがある。その遷移が完了するのを少し待ってから
+    # 一覧用ロケータの待機にフォールバックする。
+    try:
+        page.wait_for_url(re.compile(r"/maps/place/"), timeout=5_000)
+        return
+    except PlaywrightTimeoutError:
+        pass
     first_result = page.locator('a[href*="/maps/place/"]').first
     first_result.wait_for(state="visible", timeout=UI_TIMEOUT_MS)
     first_result.click()
