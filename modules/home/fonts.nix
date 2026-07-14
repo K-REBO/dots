@@ -90,6 +90,20 @@
         </edit>
       </match>
 
+      <!-- Nerd Font (UbuntuMono Nerd Font等) にないCJK文字をフォールバックする際、
+           fontconfigの自動探索ではNoto *CJK KR/SC/TC/HKがJPより先に選ばれてしまう
+           (Han unificationにより「習」等の字形が中国語/韓国語風になる)。
+           クエリのfamilyリストに明示的にJP版を追加し、確実にJPが選ばれるようにする -->
+      <match target="pattern">
+        <test name="family" compare="contains"><string>Nerd Font</string></test>
+        <edit name="family" mode="append" binding="weak">
+          <string>Noto Sans Mono CJK JP</string>
+        </edit>
+        <edit name="family" mode="append" binding="weak">
+          <string>Noto Sans CJK JP</string>
+        </edit>
+      </match>
+
       <!-- 日本語フォント優先順位 -->
       <alias>
         <family>sans-serif</family>
