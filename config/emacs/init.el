@@ -526,6 +526,8 @@
   (markdown-hide-markup nil)
   ;; RET でリストを継続（indent-and-new-item が必要）
   (markdown-indent-on-enter 'indent-and-new-item)
+  ;; [[wikilink]] を認識させる（markdown-wiki-link-p / obsidian-follow-link-at-point が依存、デフォルト nil）
+  (markdown-enable-wiki-links t)
   :config
   ;; ``` 入力時に閉じブロックを自動挿入してカーソルを中に置く
   (defun my/markdown-electric-code-block ()
@@ -853,7 +855,8 @@ frontmatter がなければ何もしない。updated フィールドがなけれ
       (save-excursion
         (goto-char (point-min))
         (when (looking-at "---[ \t]*\n")
-          (let* ((fm-start (point))
+          (goto-char (match-end 0))
+          (let* ((fm-start (point-min))
                  (fm-end   (and (re-search-forward "^---[ \t]*$" nil t)
                                 (point))))
             (when fm-end
