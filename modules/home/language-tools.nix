@@ -46,6 +46,9 @@
 
     # zig
     zig
+
+    # Lean 4 (elan: rustup相当のバージョン管理ツール。lean-toolchainファイルで自動切り替え)
+    elan
   ];
 
   # mise設定（既にshell.nixで初期化済み）

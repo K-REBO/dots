@@ -51,6 +51,10 @@
       cython-mode
       scss-mode
       csv-mode
+
+      # Lean 4
+      lsp-mode
+      (pkgs.emacsPackages.callPackage ../../pkgs/emacs-lean4-mode { })
     ];
   };
 
