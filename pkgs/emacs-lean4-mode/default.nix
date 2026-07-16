@@ -13,8 +13,11 @@ melpaBuild {
 
   packageRequires = [ dash compat magit-section lsp-mode ];
 
+  # data/ (abbreviations.json 等) を含めないと lean4-input.el の
+  # 入力補完がロード時にファイル欠落エラーを起こす
   recipe = builtins.toFile "lean4-mode-recipe" ''
-    (lean4-mode :fetcher github :repo "leanprover-community/lean4-mode")
+    (lean4-mode :fetcher github :repo "leanprover-community/lean4-mode"
+                :files (:defaults "data"))
   '';
 
   meta = {
