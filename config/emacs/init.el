@@ -687,42 +687,89 @@
 
 (defvar my/obsidian--fm-cache nil)
 
+(defvar my/obsidian--file-fm-table (make-hash-table :test 'equal)
+  "rel-path -> (mtime . frontmatter-hashtable) の永続キャッシュ。
+yaml-parse-string は1ファイルあたり数十〜百msかかり vault 全体(1000+
+ファイル)のフルスキャンは数十秒に及ぶため、mtime が変わっていない
+ファイルは再解析せず使い回す。")
+
+(defconst my/obsidian--fm-cache-file
+  (expand-file-name "obsidian-fm-cache.el" user-emacs-directory)
+  "my/obsidian--file-fm-table の永続化先。")
+
+(defun my/obsidian--load-file-fm-table ()
+  (when (file-readable-p my/obsidian--fm-cache-file)
+    (condition-case err
+        (with-temp-buffer
+          (insert-file-contents my/obsidian--fm-cache-file)
+          (setq my/obsidian--file-fm-table (read (current-buffer))))
+      (error (message "obsidian FM cache load error: %s" (error-message-string err))))))
+
+(defun my/obsidian--save-file-fm-table ()
+  (with-temp-file my/obsidian--fm-cache-file
+    (prin1 my/obsidian--file-fm-table (current-buffer))))
+
 (defun my/obsidian--build-fm-cache ()
   "全 vault ファイルの YAML frontmatter をスキャンしてキャッシュを構築する。
-{ field-name-string -> { value-string -> [rel-path ...] } } を返す。"
-  (let ((result    (make-hash-table :test 'equal))
-        (vault-dir (expand-file-name obsidian-directory))
-        (total 0) (parsed 0))
-    (dolist (abs-path (directory-files-recursively vault-dir "\\.md\\'"))
+mtime が前回と同じファイルは再解析せず my/obsidian--file-fm-table の
+値を使い回す差分更新。{ field-name-string -> { value-string ->
+[rel-path ...] } } を my/obsidian--fm-cache に設定する。"
+  (when (zerop (hash-table-count my/obsidian--file-fm-table))
+    (my/obsidian--load-file-fm-table))
+  (let* ((vault-dir (expand-file-name obsidian-directory))
+         (seen  (make-hash-table :test 'equal))
+         (total 0) (parsed 0) (reused 0))
+    (dolist (abs-path (directory-files-recursively
+                        vault-dir "\\.md\\'" nil
+                        (lambda (dir) (not (string-prefix-p "." (file-name-nondirectory (directory-file-name dir)))))))
       (cl-incf total)
       (when (file-readable-p abs-path)
-        (let* ((snippet (with-temp-buffer
-                          (insert-file-contents abs-path)
-                          (buffer-string)))
-               (fm (condition-case err
-                       (obsidian-find-yaml-front-matter-in-string snippet)
-                     (error (message "obsidian FM: parse error %s: %s" abs-path err) nil))))
-          (when (hash-table-p fm)
-            (cl-incf parsed)
-            (let ((rel (file-relative-name abs-path vault-dir)))
-              (maphash
-               (lambda (field raw-val)
-                 (let* ((field-str (format "%s" field))
-                        (fh   (or (gethash field-str result)
-                                  (let ((h (make-hash-table :test 'equal)))
-                                    (puthash field-str h result) h)))
-                        (vals (cond
-                               ((vectorp raw-val) (append raw-val nil))
-                               ((listp   raw-val)  raw-val)
-                               (t                  (list (format "%s" raw-val))))))
-                   (dolist (v vals)
-                     (let* ((vs    (format "%s" v))
-                            (files (or (gethash vs fh) [])))
-                       (puthash vs (vconcat files (vector rel)) fh)))))
-               fm))))))
-    (message "obsidian FM cache: %d fields (%d/%d files with frontmatter)"
-             (hash-table-count result) parsed total)
-    (setq my/obsidian--fm-cache result)))
+        (let* ((rel   (file-relative-name abs-path vault-dir))
+               (mtime (float-time (file-attribute-modification-time (file-attributes abs-path))))
+               (cached (gethash rel my/obsidian--file-fm-table)))
+          (puthash rel t seen)
+          (if (and cached (= (car cached) mtime))
+              (cl-incf reused)
+            (let* ((snippet (with-temp-buffer
+                              (insert-file-contents abs-path)
+                              (buffer-string)))
+                   (fm (condition-case err
+                           (obsidian-find-yaml-front-matter-in-string snippet)
+                         (error (message "obsidian FM: parse error %s: %s" abs-path err) nil))))
+              (when (hash-table-p fm)
+                (cl-incf parsed))
+              (puthash rel (cons mtime fm) my/obsidian--file-fm-table))))))
+    ;; vault から削除されたファイルのエントリを除去
+    (let (stale)
+      (maphash (lambda (rel _) (unless (gethash rel seen) (push rel stale)))
+               my/obsidian--file-fm-table)
+      (dolist (rel stale) (remhash rel my/obsidian--file-fm-table)))
+    (my/obsidian--save-file-fm-table)
+    ;; file-fm-table から逆引きインデックスを再構築
+    (let ((result (make-hash-table :test 'equal)))
+      (maphash
+       (lambda (rel cached)
+         (let ((fm (cdr cached)))
+           (when (hash-table-p fm)
+             (maphash
+              (lambda (field raw-val)
+                (let* ((field-str (format "%s" field))
+                       (fh   (or (gethash field-str result)
+                                 (let ((h (make-hash-table :test 'equal)))
+                                   (puthash field-str h result) h)))
+                       (vals (cond
+                              ((vectorp raw-val) (append raw-val nil))
+                              ((listp   raw-val)  raw-val)
+                              (t                  (list (format "%s" raw-val))))))
+                  (dolist (v vals)
+                    (let* ((vs    (format "%s" v))
+                           (files (or (gethash vs fh) [])))
+                      (puthash vs (vconcat files (vector rel)) fh)))))
+              fm))))
+       my/obsidian--file-fm-table)
+      (setq my/obsidian--fm-cache result))
+    (message "obsidian FM cache: %d fields (%d parsed, %d reused, %d total)"
+             (hash-table-count my/obsidian--fm-cache) parsed reused total)))
 
 (defun my/obsidian-frontmatter-search (rebuild)
   "YAML frontmatter フィールド→値で絞り込んでファイルを開く。
@@ -887,8 +934,6 @@ frontmatter がなければ何もしない。updated フィールドがなけれ
          ("C-c o n" . my/obsidian-new-note)
          ("C-c o u" . my/obsidian-unique-note)
          ("C-c o j" . obsidian-jump)
-         ("C-c o l" . obsidian-insert-wikilink)
-         ("C-c o t" . obsidian-insert-tag)
          ("C-c o T" . my/obsidian-tag-search)
          ("C-c o F" . my/obsidian-frontmatter-search)
          ("C-c o s" . obsidian-search)
