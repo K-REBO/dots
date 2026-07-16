@@ -943,6 +943,7 @@ frontmatter がなければ何もしない。updated フィールドがなけれ
 (defun my/obsidian-calendar ()
   (interactive)
   (calfw-open-calendar-buffer
+   :date (calendar-current-date)
    :contents-sources
    (list (make-calfw-source
           :name  "Obsidian"
@@ -964,7 +965,14 @@ frontmatter がなければ何もしない。updated フィールドがなけれ
                   (or clr1 clr2 "gray50"))))
   (define-key calfw-calendar-mode-map (kbd "RET")      #'my/obsidian-calendar-open-or-create)
   (define-key calfw-calendar-mode-map (kbd "<return>")  #'my/obsidian-calendar-open-or-create)
-  (define-key calfw-calendar-mode-map (kbd "<mouse-1>") #'my/obsidian-calendar-open-or-create))
+  (define-key calfw-calendar-mode-map (kbd "<mouse-1>") #'my/obsidian-calendar-open-or-create)
+  ;; 文字移動キー(C-a/C-e/C-p/C-n/C-f/C-b)を日付ベースの移動に上書き
+  (define-key calfw-calendar-mode-map (kbd "C-n") #'calfw-navi-next-week-command)
+  (define-key calfw-calendar-mode-map (kbd "C-p") #'calfw-navi-previous-week-command)
+  (define-key calfw-calendar-mode-map (kbd "C-a") #'calfw-navi-goto-week-begin-command)
+  (define-key calfw-calendar-mode-map (kbd "C-e") #'calfw-navi-goto-week-end-command)
+  (define-key calfw-calendar-mode-map (kbd "C-f") #'calfw-navi-next-day-command)
+  (define-key calfw-calendar-mode-map (kbd "C-b") #'calfw-navi-previous-day-command))
 
 ;; ============================================================
 ;; sh-mode: .zsh を zsh 方言として関連付け（組み込み）

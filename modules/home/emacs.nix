@@ -122,7 +122,9 @@
     GH_EDITOR = "emacsclient -nw";
   };
 
-  home.file.".emacs.d/init.el".source = ../../config/emacs/init.el;
+  # シンボリックリンク（nix store外の実パスを参照）にすることで、init.el 編集時にrebuild不要にする
+  home.file.".emacs.d/init.el".source =
+    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.config/nix/config/emacs/init.el";
 
   xdg.desktopEntries.emacs = {
     name = "Emacs";
