@@ -52,6 +52,12 @@
       scss-mode
       csv-mode
 
+      # location note の地図表示検証用
+      # eat: sixel対応ターミナルエミュレータ、pure elisp（TTYフレームでは画像オブジェクトが使えず background フォールバックに劣化するため不採用と判明、参考として残置）
+      eat
+      # kitty-graphics.el: overlay座標へ直接sixelバイトをemitする方式。Emacsの画像オブジェクトを介さないためTTYフレームの制約を回避できる見込み
+      (pkgs.emacsPackages.callPackage ../../pkgs/emacs-kitty-graphics { })
+
       # Lean 4
       lsp-mode
       (pkgs.emacsPackages.callPackage ../../pkgs/emacs-lean4-mode { })

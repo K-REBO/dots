@@ -945,10 +945,119 @@ frontmatter がなければ何もしない。updated フィールドがなけれ
          ("C-c o T" . my/obsidian-tag-search)
          ("C-c o F" . my/obsidian-frontmatter-search)
          ("C-c o s" . obsidian-search)
+         ("C-c o m" . my/location-show-all-map)
          (:map obsidian-mode-map
           ("C-c o b" . my/obsidian-backlink-jump)
           ("C-c o f" . obsidian-follow-link-at-point)
           ("RET"     . my/obsidian-follow-or-newline))))
+
+;; ============================================================
+;; location ノート: 全ノートの frontmatter の location: を集めて
+;; 1枚の地図に合成し kitty-graphics.el (Sixel) で表示する（graph-view相当）
+;; +/- でズームイン・アウト、g で再取得
+;; ============================================================
+
+(defconst my/location-map-all-script
+  (expand-file-name ".scripts/location_map_all.sh" obsidian-directory)
+  "全ノートの location: を1枚の地図に合成するスクリプトのパス。")
+
+;; frontmatter の location 値（"lat,lng" / [lat, lng] / YAML list 等）を
+;; (lat . lon) の文字列コンスに正規化する
+(defun my/location--parse-value (loc)
+  (let* ((loc-str (cond
+                    ((vectorp loc) (mapconcat (lambda (x) (format "%s" x)) (append loc nil) ","))
+                    ((listp loc)   (mapconcat (lambda (x) (format "%s" x)) loc ","))
+                    (t             (format "%s" loc))))
+         (parts (split-string loc-str "[, \t]+" t)))
+    (unless (>= (length parts) 2)
+      (user-error "location の書式が不正です: %s" loc-str))
+    (cons (nth 0 parts) (nth 1 parts))))
+
+(defvar-local my/location-map--points nil
+  "現在表示中の地図の座標リスト（\"lat,lon\" 文字列のリスト）。")
+(defvar-local my/location-map--zoom nil
+  "現在表示中の地図のズームレベル。")
+
+(define-derived-mode location-map-mode special-mode "LocationMap"
+  "location地図表示用バッファのモード。+ / - でズーム、g で再取得。")
+
+(define-key location-map-mode-map (kbd "+") #'my/location-map-zoom-in)
+(define-key location-map-mode-map (kbd "=") #'my/location-map-zoom-in)
+(define-key location-map-mode-map (kbd "-") #'my/location-map-zoom-out)
+(define-key location-map-mode-map (kbd "g") #'my/location-map-refresh)
+
+;; POINTS（"lat,lon"文字列のリスト）を ZOOM（nilなら自動fit-bounds）で
+;; 描画し *location-map* バッファに表示する
+(defun my/location-map--render (points &optional zoom)
+  (require 'kitty-graphics)
+  (unless (bound-and-true-p kitty-graphics-mode)
+    (kitty-graphics-mode 1))
+  (let* ((points-file (make-temp-file "location-points-"))
+         (zoom-flag (if zoom (format "-z %d" zoom) ""))
+         (cmd (format "%s %s < %s 2>&1"
+                      (shell-quote-argument my/location-map-all-script)
+                      zoom-flag
+                      (shell-quote-argument points-file)))
+         out lines used-zoom png)
+    (unwind-protect
+        (progn
+          (with-temp-file points-file
+            (insert (mapconcat #'identity points "\n") "\n"))
+          (setq out (string-trim (shell-command-to-string cmd))))
+      (delete-file points-file))
+    (setq lines (split-string out "\n"))
+    (when (= (length lines) 2)
+      (setq used-zoom (string-to-number (nth 0 lines)))
+      (setq png (nth 1 lines)))
+    (unless (and png (file-exists-p png))
+      (user-error "地図の取得に失敗しました: %s" out))
+    (let ((buf (get-buffer-create "*location-map*")))
+      (with-current-buffer buf
+        (unless (derived-mode-p 'location-map-mode)
+          (location-map-mode))
+        (setq my/location-map--points points)
+        (setq my/location-map--zoom used-zoom)
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (kitty-gfx-display-image png)))
+      (pop-to-buffer buf))
+    used-zoom))
+
+(defun my/location-show-all-map ()
+  "Vault内の全ノートの location: frontmatter を集めて1枚の地図に表示する（graph-view相当）。
+my/obsidian--fm-cache（C-c o T / C-c o F と共有）を使うため、初回はキャッシュ構築が走る。
+表示後は *location-map* バッファで +/- ズーム、g で再取得できる。"
+  (interactive)
+  (when (null my/obsidian--fm-cache)
+    (my/obsidian--build-fm-cache))
+  (let* ((loc-ht (gethash "location" my/obsidian--fm-cache))
+         (values (and loc-ht (hash-table-keys loc-ht)))
+         (points (delq nil
+                       (mapcar (lambda (v)
+                                 (condition-case nil
+                                     (let ((p (my/location--parse-value v)))
+                                       (format "%s,%s" (car p) (cdr p)))
+                                   (error nil)))
+                               values))))
+    (unless points
+      (user-error "location: frontmatter を持つノートが見つかりません"))
+    (my/location-map--render points nil)))
+
+(defun my/location-map-zoom-in ()
+  "*location-map* バッファの地図をズームインして再描画する。"
+  (interactive)
+  (my/location-map--render my/location-map--points (1+ (or my/location-map--zoom 16))))
+
+(defun my/location-map-zoom-out ()
+  "*location-map* バッファの地図をズームアウトして再描画する。"
+  (interactive)
+  (my/location-map--render my/location-map--points (max 1 (1- (or my/location-map--zoom 16)))))
+
+(defun my/location-map-refresh ()
+  "location: を持つ全ノートを再集計し、自動フィットで地図を再描画する。"
+  (interactive)
+  (my/obsidian--build-fm-cache)
+  (my/location-show-all-map))
 
 ;; ============================================================
 ;; calfw: Obsidian デイリーノートカレンダー
