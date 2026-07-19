@@ -196,6 +196,11 @@ in
   # フェッチできるようにする。sudo実行時はrootのSSHエージェント/鍵が無いため、
   # bidoの鍵を絶対パスで直接参照させる。
   programs.ssh.extraConfig = ''
+    # TP-LINK T2U nano (RTL8821AU) のWiFiドライバ/ルーターがTOS/DSCPマーク付き
+    # パケットをドロップし、SSH接続がタイムアウトする問題への対処
+    Host *
+      IPQoS none
+
     Host github.com
       HostName github.com
       User git
