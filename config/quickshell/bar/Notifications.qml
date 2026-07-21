@@ -104,24 +104,37 @@ PanelWindow {
 
                 // 全消去ボタン（中央寄せ、展開時のみ表示）
                 Rectangle {
-                    visible:        NotificationState.open && NotificationState.history.length > 0
+                    visible:          NotificationState.open && NotificationState.history.length > 0
                     anchors.centerIn: parent
-                    implicitWidth:  26
-                    implicitHeight: 24
-                    radius:         Theme.radiusSm
-                    color:          _clearHov.hovered ? Theme.bgPillHov : "transparent"
-                    opacity:        NotificationState.open ? 1 : 0
+                    implicitWidth:    _clearRow.implicitWidth + Theme.paddingSm * 2
+                    implicitHeight:   25
+                    radius:           Theme.radiusSm
+                    color:            _clearHov.hovered ? Theme.bgPillHov : Theme.bgPill
+                    opacity:          NotificationState.open ? 1 : 0
                     Behavior on color   { ColorAnimation  { duration: Theme.animFast } }
                     Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
 
                     HoverHandler { id: _clearHov }
 
-                    Text {
+                    RowLayout {
+                        id: _clearRow
                         anchors.centerIn: parent
-                        text:           "󰆴"
-                        font.family:    Theme.iconFontFamily
-                        font.pixelSize: Theme.fontSm
-                        color:          Theme.red
+                        spacing: 4
+
+                        Text {
+                            text:           "󰆴"
+                            font.family:    Theme.iconFontFamily
+                            font.pixelSize: Theme.fontMd
+                            color:          Theme.red
+                        }
+
+                        Text {
+                            text:           "DELETE"
+                            font.family:    Theme.fontFamily
+                            font.pixelSize: Theme.fontXs
+                            font.bold:      true
+                            color:          Theme.red
+                        }
                     }
 
                     MouseArea {
