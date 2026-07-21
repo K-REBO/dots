@@ -171,19 +171,24 @@
 ;; ============================================================
 ;; Rainbow Delimiters: 対応する括弧を深さごとに色分け
 ;; truecolor ターミナルでも機能するよう after-init で明示的に色を設定
+;; 9色は xterm 216色キューブに丸め込み済みの値を直接指定（emacs -nw で
+;; 近似誤差なく描画される）。隣接 depth の色相差が約160°になるよう、
+;; depth への割り当て順を色相環上でかけ離して選んである。
 ;; ============================================================
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode)
   :config
   (add-hook 'after-init-hook
             (lambda ()
-              (set-face-foreground 'rainbow-delimiters-depth-1-face "#ff79c6")
-              (set-face-foreground 'rainbow-delimiters-depth-2-face "#ffb86c")
-              (set-face-foreground 'rainbow-delimiters-depth-3-face "#f1fa8c")
-              (set-face-foreground 'rainbow-delimiters-depth-4-face "#50fa7b")
-              (set-face-foreground 'rainbow-delimiters-depth-5-face "#8be9fd")
-              (set-face-foreground 'rainbow-delimiters-depth-6-face "#bd93f9")
-              (set-face-foreground 'rainbow-delimiters-depth-7-face "#ff5555"))))
+              (set-face-foreground 'rainbow-delimiters-depth-1-face "#ff5f5f")
+              (set-face-foreground 'rainbow-delimiters-depth-2-face "#00ffaf")
+              (set-face-foreground 'rainbow-delimiters-depth-3-face "#ff00af")
+              (set-face-foreground 'rainbow-delimiters-depth-4-face "#00af00")
+              (set-face-foreground 'rainbow-delimiters-depth-5-face "#d787ff")
+              (set-face-foreground 'rainbow-delimiters-depth-6-face "#afff00")
+              (set-face-foreground 'rainbow-delimiters-depth-7-face "#8787ff")
+              (set-face-foreground 'rainbow-delimiters-depth-8-face "#ffaf00")
+              (set-face-foreground 'rainbow-delimiters-depth-9-face "#00afff"))))
 
 ;; ============================================================
 ;; Beacon: スクロール後にカーソル位置をフラッシュで強調
