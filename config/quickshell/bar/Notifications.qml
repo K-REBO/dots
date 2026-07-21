@@ -102,6 +102,35 @@ PanelWindow {
                     }
                 }
 
+                // 全消去ボタン（中央寄せ、展開時のみ表示）
+                Rectangle {
+                    visible:        NotificationState.open && NotificationState.history.length > 0
+                    anchors.centerIn: parent
+                    implicitWidth:  26
+                    implicitHeight: 24
+                    radius:         Theme.radiusSm
+                    color:          _clearHov.hovered ? Theme.bgPillHov : "transparent"
+                    opacity:        NotificationState.open ? 1 : 0
+                    Behavior on color   { ColorAnimation  { duration: Theme.animFast } }
+                    Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
+
+                    HoverHandler { id: _clearHov }
+
+                    Text {
+                        anchors.centerIn: parent
+                        text:           "󰆴"
+                        font.family:    Theme.iconFontFamily
+                        font.pixelSize: Theme.fontSm
+                        color:          Theme.red
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape:  Qt.PointingHandCursor
+                        onClicked:    NotificationState.clearHistory()
+                    }
+                }
+
                 // ベルアイコン（右寄せ）
                 Text {
                     id: _bellIcon
@@ -157,7 +186,7 @@ PanelWindow {
                 opacity:            NotificationState.open ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: Theme.animFast } }
 
-                // ── ヘッダー: タイトル + DNDトグル + 全消去 ──────
+                // ── ヘッダー: タイトル + DNDトグル ────────────────
                 RowLayout {
                     Layout.fillWidth: true
                     spacing:          8
@@ -191,32 +220,6 @@ PanelWindow {
                             anchors.fill: parent
                             cursorShape:  Qt.PointingHandCursor
                             onClicked:    NotificationState.toggleDnd()
-                        }
-                    }
-
-                    // 全消去
-                    Rectangle {
-                        visible:        NotificationState.history.length > 0
-                        implicitWidth:  26
-                        implicitHeight: 24
-                        radius:         Theme.radiusSm
-                        color:          _clearHov.hovered ? Theme.bgPillHov : "transparent"
-                        Behavior on color { ColorAnimation { duration: Theme.animFast } }
-
-                        HoverHandler { id: _clearHov }
-
-                        Text {
-                            anchors.centerIn: parent
-                            text:           "󰆴"
-                            font.family:    Theme.iconFontFamily
-                            font.pixelSize: Theme.fontSm
-                            color:          Theme.red
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape:  Qt.PointingHandCursor
-                            onClicked:    NotificationState.clearHistory()
                         }
                     }
                 }

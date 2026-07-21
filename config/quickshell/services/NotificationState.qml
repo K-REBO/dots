@@ -140,6 +140,11 @@ QtObject {
     }
 
     function clearHistory() {
+        for (const key in root._live) {
+            root._live[key].notification.dismiss()
+        }
+        root._live   = {}
+        root.popups  = []
         root.history = []
     }
 
