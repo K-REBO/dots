@@ -2,7 +2,8 @@
 STATE="$HOME/.local/share/hypridle/dpms-timeout"
 CONFIG="$HOME/.config/hypr/hypridle.conf"
 DEFAULT=300
-LOCK_TIMEOUT=3000
+# ロック後、バックライトを消すまでの追加の待ち時間
+DPMS_AFTER_LOCK=300
 
 get() { [ -f "$STATE" ] && cat "$STATE" || echo $DEFAULT; }
 
@@ -25,30 +26,27 @@ set_dpms() {
 
   rm -f "$CONFIG"
   if [ "$t" = "0" ]; then
+    # off: 自動ロック/画面オフを完全に無効化
     cat > "$CONFIG" <<EOF
 general {
     before_sleep_cmd = loginctl lock-session
     after_sleep_cmd = hyprctl dispatch dpms on
-}
-listener {
-    timeout = $LOCK_TIMEOUT
-    on-timeout = hyprlock
-    on-resume = hyprctl dispatch dpms on
 }
 EOF
   else
+    # bar で選んだ時間 = ロックまでの時間。バックライトオフはその少し後に連動させる
     cat > "$CONFIG" <<EOF
 general {
     before_sleep_cmd = loginctl lock-session
     after_sleep_cmd = hyprctl dispatch dpms on
 }
 listener {
-    timeout = $LOCK_TIMEOUT
+    timeout = $t
     on-timeout = hyprlock
     on-resume = hyprctl dispatch dpms on
 }
 listener {
-    timeout = $t
+    timeout = $((t + DPMS_AFTER_LOCK))
     on-timeout = hyprctl dispatch dpms off
     on-resume = hyprctl dispatch dpms on
 }
