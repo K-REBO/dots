@@ -174,21 +174,23 @@
 ;; 9色は xterm 216色キューブに丸め込み済みの値を直接指定（emacs -nw で
 ;; 近似誤差なく描画される）。隣接 depth の色相差が約160°になるよう、
 ;; depth への割り当て順を色相環上でかけ離して選んである。
+;; 彩度100%の原色だと目が疲れるため、Dracula本家と同じ明度帯(L≈76)に
+;; 揃えたパステル調にしている。
 ;; ============================================================
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode)
   :config
   (add-hook 'after-init-hook
             (lambda ()
-              (set-face-foreground 'rainbow-delimiters-depth-1-face "#ff5f5f")
-              (set-face-foreground 'rainbow-delimiters-depth-2-face "#00ffaf")
-              (set-face-foreground 'rainbow-delimiters-depth-3-face "#ff00af")
-              (set-face-foreground 'rainbow-delimiters-depth-4-face "#00af00")
+              (set-face-foreground 'rainbow-delimiters-depth-1-face "#ff8787")
+              (set-face-foreground 'rainbow-delimiters-depth-2-face "#87ffd7")
+              (set-face-foreground 'rainbow-delimiters-depth-3-face "#ff87d7")
+              (set-face-foreground 'rainbow-delimiters-depth-4-face "#87ff87")
               (set-face-foreground 'rainbow-delimiters-depth-5-face "#d787ff")
-              (set-face-foreground 'rainbow-delimiters-depth-6-face "#afff00")
+              (set-face-foreground 'rainbow-delimiters-depth-6-face "#d7ff87")
               (set-face-foreground 'rainbow-delimiters-depth-7-face "#8787ff")
-              (set-face-foreground 'rainbow-delimiters-depth-8-face "#ffaf00")
-              (set-face-foreground 'rainbow-delimiters-depth-9-face "#00afff"))))
+              (set-face-foreground 'rainbow-delimiters-depth-8-face "#ffd787")
+              (set-face-foreground 'rainbow-delimiters-depth-9-face "#87d7ff"))))
 
 ;; ============================================================
 ;; Beacon: スクロール後にカーソル位置をフラッシュで強調
