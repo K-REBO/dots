@@ -77,6 +77,7 @@ PanelWindow {
             onWidthChanged: {
                 Qt.callLater(_batSpacer._sync)
                 Qt.callLater(_sleepSpacer._sync)
+                Qt.callLater(_volSpacer._sync)
                 Qt.callLater(_ghSpacer._sync)
                 Qt.callLater(_notifSpacer._sync)
             }
@@ -114,17 +115,20 @@ PanelWindow {
                 }
             }
 
-            // 音量
-            Rectangle {
+            // 音量（スペーサー: 視覚は Volume PanelWindow が担当）
+            // pill の右端を基準に dropdown が左へ展開するため marginRight 方式
+            // （右隣の WiFi 等ウィジェットに重ならないようにするため）。
+            Item {
+                id:             _volSpacer
+                implicitWidth:  VolumeState.pillWidth
                 implicitHeight: Theme.pillH
-                implicitWidth:  _vol.implicitWidth + 20
-                radius:         Theme.radiusWs
-                color:          Theme.bgLight
 
-                Volume {
-                    id:              _vol
-                    anchors.centerIn: parent
+                function _sync() {
+                    var p = mapToItem(null, width, 0)
+                    VolumeState.marginRight = root.screen.width - Theme.barMargin - p.x
                 }
+                onXChanged:     Qt.callLater(_sync)
+                onWidthChanged: Qt.callLater(_sync)
             }
 
             // WiFi

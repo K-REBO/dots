@@ -16,3 +16,4 @@ singleton TlpService          1.0 TlpService.qml
 singleton SystemStatsService  1.0 SystemStatsService.qml
 singleton NotificationState   1.0 NotificationState.qml
 singleton RunCatService        1.0 RunCatService.qml
+singleton VolumeState          1.0 VolumeState.qml

@@ -39,6 +39,15 @@ ShellRoot {
         }
     }
 
+    // ── Volume ウィジェット（各スクリーンに1つ）────────────────────
+    Variants {
+        model: Quickshell.screens
+        delegate: Volume {
+            required property var modelData
+            screen: modelData
+        }
+    }
+
     // ── FileDropウィジェット（各スクリーンに1つ）────────────────
     Variants {
         model: Quickshell.screens
