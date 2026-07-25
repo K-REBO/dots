@@ -41,7 +41,7 @@ QtObject {
 
     // ── Workspace accent (per-ws) ────────────────────────────────
     readonly property var wsColors: [
-        "#DC143C","#00FFFF","#FFD700","#0000FF",
+        "#DC143C","#00FFFF","#FFD700","#FFA500",
         "#00FF00","#FF00FF","#FFFF00","#FF1493","#FF4500","#00FFFF",
     ]
     function wsColor(id) { return Qt.color(wsColors[(id - 1) % 10]) }
