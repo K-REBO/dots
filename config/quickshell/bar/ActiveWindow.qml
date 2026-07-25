@@ -21,6 +21,7 @@ RowLayout {
             nautilus:   "󰉓",  dolphin:    "󱔎",
             gimp:        "",  inkscape:    "",
             blender:    "󰂫",  emacs:      "",
+            bitwig:     "󰝚",
             slack:       "",  zoom:        "",
         }
         const lower = (cls || "").toLowerCase()
