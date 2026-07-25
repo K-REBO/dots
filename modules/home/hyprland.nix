@@ -262,6 +262,13 @@ in
       }
 
       windowrule {
+        name = bitwig-file-dialog-center
+        match:class = ^Show-file-dialog-gtk3$
+        float = true
+        center = 1
+      }
+
+      windowrule {
         name = fix-xwayland-drags
         match:class = ^$
         match:title = ^$
@@ -308,7 +315,6 @@ in
     brightnessctl
     playerctl
     wireplumber
-    hyprpanel
   ];
 
   # hypridle.conf は dpms-timeout スクリプトが動的に書き換えるため xdg.configFile 管理外にする。
