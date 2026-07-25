@@ -36,7 +36,16 @@ PanelWindow {
         height: _widget.height
     }
 
-    Binding { target: VolumeState; property: "pillWidth"; value: _widget.width }
+    // _widget.width をそのまま流すと、開閉アニメーションの中間値が毎フレーム
+    // Bar.qml 側の _volSpacer.implicitWidth に伝わり、_rightRL.onWidthChanged
+    // が連鎖して他の全 spacer(Notifications 含む)の位置再計算を誘発し、
+    // Volume を開閉するだけで無関係な Notifications までカクつく原因になって
+    // いた。アニメーションの目標値のみを反映し、中間フレームは伝播させない。
+    Binding {
+        target:   VolumeState
+        property: "pillWidth"
+        value:    VolumeState.open ? root._expandedW : root._collapsedW
+    }
 
     // ── ウィジェット本体 ──────────────────────────────────────────
     Rectangle {
