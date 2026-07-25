@@ -113,6 +113,7 @@
       (import ./overlays/apple-color-emoji.nix)
       (import ./overlays/alacritty-sixel.nix)
       nur.overlays.default
+      (import ./overlays/rtk.nix)
       inputs.fenix.overlays.default
     ];
 
