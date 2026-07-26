@@ -33,6 +33,9 @@
     # clisp
     # ecl
 
+    # Scheme
+    steel         # Rust製Scheme処理系
+
     # ビルドツール
     cmake
     gnumake
