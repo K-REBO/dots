@@ -15,293 +15,297 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     package = null;  # NixOSモジュールのパッケージを使用
-    configType = "hyprlang";
+    # Hyprland 0.55以降hyprlang(.conf)形式は非推奨化され、数リリースで段階的に廃止予定のため
+    # 新形式のLua設定(hyprland.lua)に移行する
+    # https://hypr.land/news/26_lua/
+    configType = "lua";
 
     # UWSM使用時はsystemd統合を無効化（必須）
     systemd.enable = false;
     xwayland.enable = true;
 
-    settings = {
-      monitor = [
-        ",preferred,auto,auto"
-        "eDP-1,2560x1600@60,0x0,1"
-      ];
-
-      "exec-once" = [
-        # Emacsデーモンはdefault.target起動時にWAYLAND_DISPLAYが未設定のため、
-        # Hyprland起動後に再起動してWayland環境を引き継がせる
-        "systemctl --user restart emacs.service"
-        "${pkgs.awww}/bin/awww-daemon"
-        "${pkgs.awww}/bin/awww img $HOME/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg"
-        "${pkgs.quickshell}/bin/quickshell"
-
-        # eww は quickshell に移行済み（復元時はコメントを外す）
-        # "${config.programs.eww.package}/bin/eww open bar"
-        # "~/.config/eww/scripts/volume listen"
-        # "~/.config/eww/scripts/micmute sync"
-        # "~/.config/eww/scripts/wifi listen"
-        # "~/.config/eww/scripts/bluetooth listen"
-        # "~/.config/eww/scripts/battery listen"
-        # "~/.config/eww/scripts/ime listen"
-
-        "${pkgs.hypridle}/bin/hypridle"
-        "${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator"
-        # reboot後のBitwig起動を高速化するためキーファイルをページキャッシュに読み込む
-        "${bitwigWarmup}"
-      ];
-
-      env = [
-        "XCURSOR_SIZE,24"
-        "HYPRCURSOR_SIZE,24"
-        "XCURSOR_THEME,Bibata-Modern-Classic"
-        "QT_IM_MODULE,fcitx"
-        "XMODIFIERS,@im=fcitx"
-        "SDL_IM_MODULE,fcitx"
-      ];
-
-      "$mainMod" = "SUPER";
-
-      ecosystem = {
-        no_update_news = true;
-      };
-
-      general = {
-        gaps_in = 3;
-        gaps_out = 2;
-        border_size = 1;
-        "col.active_border" = "rgba(ff6600ee)";
-        "col.inactive_border" = "rgba(595959aa)";
-        resize_on_border = false;
-        allow_tearing = false;
-        layout = "dwindle";
-      };
-
-      decoration = {
-        rounding = 12;
-        rounding_power = 2;
-        active_opacity = 1.0;
-        inactive_opacity = 1.0;
-        shadow = {
-          enabled = true;
-          range = 4;
-          render_power = 3;
-          color = "rgba(1a1a1aee)";
-        };
-        blur = {
-          enabled = true;
-          size = 3;
-          passes = 1;
-          vibrancy = 0.1696;
-        };
-      };
-
-      animations = {
-        enabled = "yes, please :)";
-        bezier = [
-          "easeOutQuint,0.23,1,0.32,1"
-          "easeInOutCubic,0.65,0.05,0.36,1"
-          "linear,0,0,1,1"
-          "almostLinear,0.5,0.5,0.75,1.0"
-          "quick,0.15,0,0.1,1"
-        ];
-        animation = [
-          "global, 1, 10, default"
-          "border, 1, 5.39, easeOutQuint"
-          "windows, 1, 4.79, easeOutQuint"
-          "windowsIn, 1, 4.1, easeOutQuint, popin 87%"
-          "windowsOut, 1, 1.49, linear, popin 87%"
-          "fadeIn, 1, 1.73, almostLinear"
-          "fadeOut, 1, 1.46, almostLinear"
-          "fade, 1, 3.03, quick"
-          "layers, 1, 3.81, easeOutQuint"
-          "layersIn, 1, 4, easeOutQuint, fade"
-          "layersOut, 1, 1.5, linear, fade"
-          "fadeLayersIn, 1, 1.79, almostLinear"
-          "fadeLayersOut, 1, 1.39, almostLinear"
-          "workspaces, 1, 1.94, almostLinear, fade"
-          "workspacesIn, 1, 1.21, almostLinear, fade"
-          "workspacesOut, 1, 1.94, almostLinear, fade"
-        ];
-      };
-
-      workspace = "r[1-10],";
-
-      dwindle = {
-        preserve_split = true;
-      };
-
-      master.new_status = "master";
-
-      misc = {
-        force_default_wallpaper = 0;
-        disable_hyprland_logo = true;
-      };
-
-      input = {
-        kb_layout = "us";
-        kb_rules = "evdev";
-        follow_mouse = 1;
-        sensitivity = 0;
-        touchpad.natural_scroll = false;
-      };
-
-      device = {
-        name = "epic-mouse-v1";
-        sensitivity = -0.5;
-      };
-
-      bind = [
-        # 基本操作
-        "$mainMod, Return, exec, ${pkgs.alacritty}/bin/alacritty"
-        "$mainMod, Q, killactive,"
-        "$mainMod, E, exec, ${pkgs.kdePackages.dolphin}/bin/dolphin"
-        "$mainMod, space, togglefloating,"
-        "$mainMod, D, exec, ${pkgs.vicinae}/bin/vicinae toggle"
-        "$mainMod, J, layoutmsg, togglesplit"
-        "$mainMod, L, exec, ${pkgs.hyprlock}/bin/hyprlock"
-		# フルスクリーン
-		"$mainMod, F, fullscreen"
-        # Emacs風フォーカス移動
-        "$mainMod, p, movefocus, u"
-        "$mainMod, n, movefocus, d"
-        "$mainMod, f, movefocus, r"
-        "$mainMod, b, movefocus, l"
-        # Emacs風ウィンドウ移動
-        "$mainMod SHIFT, p, movewindow, u"
-        "$mainMod SHIFT, n, movewindow, d"
-        "$mainMod SHIFT, f, movewindow, r"
-        "$mainMod SHIFT, b, movewindow, l"
-        # 矢印キー
-        "$mainMod, left, movefocus, l"
-        "$mainMod, right, movefocus, r"
-        "$mainMod, up, movefocus, u"
-        "$mainMod, down, movefocus, d"
-        # ワークスペース切り替え
-        "$mainMod, 1, workspace, 1"
-        "$mainMod, 2, workspace, 2"
-        "$mainMod, 3, workspace, 3"
-        "$mainMod, 4, workspace, 4"
-        "$mainMod, 5, workspace, 5"
-        "$mainMod, 6, workspace, 6"
-        "$mainMod, 7, workspace, 7"
-        "$mainMod, 8, workspace, 8"
-        "$mainMod, 9, workspace, 9"
-        "$mainMod, 0, workspace, 10"
-        # ウィンドウをワークスペースへ移動
-        "$mainMod SHIFT, 1, movetoworkspace, 1"
-        "$mainMod SHIFT, 2, movetoworkspace, 2"
-        "$mainMod SHIFT, 3, movetoworkspace, 3"
-        "$mainMod SHIFT, 4, movetoworkspace, 4"
-        "$mainMod SHIFT, 5, movetoworkspace, 5"
-        "$mainMod SHIFT, 6, movetoworkspace, 6"
-        "$mainMod SHIFT, 7, movetoworkspace, 7"
-        "$mainMod SHIFT, 8, movetoworkspace, 8"
-        "$mainMod SHIFT, 9, movetoworkspace, 9"
-        "$mainMod SHIFT, 0, movetoworkspace, 10"
-        # スクラッチパッド
-        "$mainMod, S, togglespecialworkspace, magic"
-        "$mainMod SHIFT, S, movetoworkspace, special:magic"
-        # マウスホイールでワークスペース
-        "$mainMod, mouse_down, workspace, e+1"
-        "$mainMod, mouse_up, workspace, e-1"
-        # スクリーンショット
-        ", Print, exec, ${pkgs.grimblast}/bin/grimblast save area"
-        "SHIFT, Print, exec, /home/bido/.config/hypr/scripts/toggle_recorder.sh"
-        # hyprselect
-        "$mainMod,i,exec,${pkgs.hyprselect}/bin/hyprselect --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(48, 9, 11,0.6)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200"
-        # リサイズモード開始
-        ''$mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgba(ff0000ee)"''
-        "$mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:border_size 5"
-        "$mainMod, R, submap, resize"
-      ];
-
-      bindel = [
-        ",XF86AudioRaiseVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-        ",XF86AudioLowerVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-        ",XF86AudioMute, exec, ${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        ",XF86MonBrightnessUp, exec, ${pkgs.brightnessctl}/bin/brightnessctl s 10%+"
-        ",XF86MonBrightnessDown, exec, ${pkgs.brightnessctl}/bin/brightnessctl s 10%-"
-      ];
-
-      bindl = [
-        ",XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && (wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null | grep -q MUTED && echo 1 || echo 0) > /sys/class/leds/platform::micmute/brightness 2>/dev/null || true"
-        ", XF86AudioNext, exec, ${pkgs.playerctl}/bin/playerctl next"
-        ", XF86AudioPause, exec, ${pkgs.playerctl}/bin/playerctl play-pause"
-        ", XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause"
-        ", XF86AudioPrev, exec, ${pkgs.playerctl}/bin/playerctl previous"
-      ];
-
-      bindm = [
-        "$mainMod, mouse:272, movewindow"
-        "$mainMod, mouse:273, resizewindow"
-      ];
-
-    };
-
-    # submap と新形式 windowrule ブロックは extraConfig に記述
+    # home-managerのsettings属性はhyprlang形式専用のため、
+    # Lua設定は全てextraConfig（生のLuaソース）として記述する
     extraConfig = ''
-      layerrule {
-        name = quickshell-notification-no-blur
-        match:namespace = ^quickshell-notification$
-        blur = false
-      }
+      ------------------
+      ---- MONITORS ----
+      ------------------
+      hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+      hl.monitor({ output = "eDP-1", mode = "2560x1600@60", position = "0x0", scale = "1" })
 
-      windowrule {
-        name = suppress-maximize-events
-        match:class = .*
-        suppress_event = maximize
-      }
+      -------------------
+      ---- AUTOSTART ----
+      -------------------
+      hl.on("hyprland.start", function()
+        -- Emacsデーモンはdefault.target起動時にWAYLAND_DISPLAYが未設定のため、
+        -- Hyprland起動後に再起動してWayland環境を引き継がせる
+        hl.exec_cmd("systemctl --user restart emacs.service")
+        hl.exec_cmd("${pkgs.awww}/bin/awww-daemon")
+        hl.exec_cmd("${pkgs.awww}/bin/awww img $HOME/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg")
+        hl.exec_cmd("${pkgs.quickshell}/bin/quickshell")
 
-      windowrule {
-        name = bitwig-splash-pin
-        match:class = ^show-splash-gtk$
-        pin = true
-        float = true
-      }
+        -- eww は quickshell に移行済み（復元時はコメントを外す）
+        -- hl.exec_cmd("${config.programs.eww.package}/bin/eww open bar")
 
-      windowrule {
-        name = nautilus-float
-        match:class = ^org\.gnome\.Nautilus$
-        float = true
-      }
+        hl.exec_cmd("${pkgs.hypridle}/bin/hypridle")
+        hl.exec_cmd("${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator")
+        -- reboot後のBitwig起動を高速化するためキーファイルをページキャッシュに読み込む
+        hl.exec_cmd("${bitwigWarmup}")
+      end)
 
-      windowrule {
-        name = bitwig-file-dialog-center
-        match:class = ^Show-file-dialog-gtk3$
-        float = true
-        center = 1
-      }
+      -------------------------------
+      ---- ENVIRONMENT VARIABLES ----
+      -------------------------------
+      hl.env("XCURSOR_SIZE", "24")
+      hl.env("HYPRCURSOR_SIZE", "24")
+      hl.env("XCURSOR_THEME", "Bibata-Modern-Classic")
+      hl.env("QT_IM_MODULE", "fcitx")
+      hl.env("XMODIFIERS", "@im=fcitx")
+      hl.env("SDL_IM_MODULE", "fcitx")
 
-      windowrule {
-        name = fix-xwayland-drags
-        match:class = ^$
-        match:title = ^$
-        match:xwayland = true
-        match:float = true
-        match:fullscreen = false
-        match:pin = false
-        no_focus = true
-      }
+      -----------------------
+      ---- LOOK AND FEEL ----
+      -----------------------
+      hl.config({
+        ecosystem = {
+          no_update_news = true,
+        },
 
-      submap = resize
-      binde = , b, resizeactive, -10 0
-      binde = , n, resizeactive, 0 10
-      binde = , p, resizeactive, 0 -10
-      binde = , f, resizeactive, 10 0
-      binde = , left, resizeactive, -20 0
-      binde = , down, resizeactive, 0 20
-      binde = , up, resizeactive, 0 -20
-      binde = , right, resizeactive, 20 0
-      bind = , return, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgba(ff6600ee)"
-      bind = , return, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:border_size 1
-      bind = , return, submap, reset
-      bind = , escape, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgba(ff6600ee)"
-      bind = , escape, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:border_size 1
-      bind = , escape, submap, reset
-      bind = $mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:col.active_border "rgba(ff6600ee)"
-      bind = $mainMod, R, exec, ${pkgs.hyprland}/bin/hyprctl keyword general:border_size 1
-      bind = $mainMod, R, submap, reset
-      submap = reset
+        general = {
+          gaps_in = 3,
+          gaps_out = 2,
+          border_size = 1,
+          col = {
+            active_border = "rgba(ff6600ee)",
+            inactive_border = "rgba(595959aa)",
+          },
+          resize_on_border = false,
+          allow_tearing = false,
+          layout = "dwindle",
+        },
+
+        decoration = {
+          rounding = 12,
+          rounding_power = 2,
+          active_opacity = 1.0,
+          inactive_opacity = 1.0,
+          shadow = {
+            enabled = true,
+            range = 4,
+            render_power = 3,
+            color = 0xee1a1a1a,
+          },
+          blur = {
+            enabled = true,
+            size = 3,
+            passes = 1,
+            vibrancy = 0.1696,
+          },
+        },
+
+        animations = {
+          enabled = true,
+        },
+
+        dwindle = {
+          preserve_split = true,
+        },
+
+        master = {
+          new_status = "master",
+        },
+
+        misc = {
+          force_default_wallpaper = 0,
+          disable_hyprland_logo = true,
+        },
+
+        input = {
+          kb_layout = "us",
+          kb_rules = "evdev",
+          follow_mouse = 1,
+          sensitivity = 0,
+          touchpad = {
+            natural_scroll = false,
+          },
+        },
+      })
+
+      -- Default curves and animations
+      hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
+      hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } })
+      hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
+      hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1.0}  } })
+      hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
+
+      hl.animation({ leaf = "global",        enabled = true, speed = 10,   bezier = "default" })
+      hl.animation({ leaf = "border",        enabled = true, speed = 5.39, bezier = "easeOutQuint" })
+      hl.animation({ leaf = "windows",       enabled = true, speed = 4.79, bezier = "easeOutQuint" })
+      hl.animation({ leaf = "windowsIn",     enabled = true, speed = 4.1,  bezier = "easeOutQuint", style = "popin 87%" })
+      hl.animation({ leaf = "windowsOut",    enabled = true, speed = 1.49, bezier = "linear",       style = "popin 87%" })
+      hl.animation({ leaf = "fadeIn",        enabled = true, speed = 1.73, bezier = "almostLinear" })
+      hl.animation({ leaf = "fadeOut",       enabled = true, speed = 1.46, bezier = "almostLinear" })
+      hl.animation({ leaf = "fade",          enabled = true, speed = 3.03, bezier = "quick" })
+      hl.animation({ leaf = "layers",        enabled = true, speed = 3.81, bezier = "easeOutQuint" })
+      hl.animation({ leaf = "layersIn",      enabled = true, speed = 4,    bezier = "easeOutQuint", style = "fade" })
+      hl.animation({ leaf = "layersOut",     enabled = true, speed = 1.5,  bezier = "linear",       style = "fade" })
+      hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 1.79, bezier = "almostLinear" })
+      hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })
+      hl.animation({ leaf = "workspaces",    enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
+      hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 1.21, bezier = "almostLinear", style = "fade" })
+      hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
+
+      hl.workspace_rule({ workspace = "r[1-10]" })
+
+      ---------------
+      ---- INPUT ----
+      ---------------
+      hl.device({ name = "epic-mouse-v1", sensitivity = -0.5 })
+
+      ---------------------
+      ---- KEYBINDINGS ----
+      ---------------------
+      local mainMod = "SUPER"
+
+      -- 基本操作
+      hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd("${pkgs.alacritty}/bin/alacritty"))
+      hl.bind(mainMod .. " + Q", hl.dsp.window.close())
+      hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("${pkgs.kdePackages.dolphin}/bin/dolphin"))
+      hl.bind(mainMod .. " + space", hl.dsp.window.float({ action = "toggle" }))
+      hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("${pkgs.vicinae}/bin/vicinae toggle"))
+      hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
+      hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("${pkgs.hyprlock}/bin/hyprlock"))
+      -- フルスクリーン
+      hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
+
+      -- Emacs風フォーカス移動
+      hl.bind(mainMod .. " + p", hl.dsp.focus({ direction = "up" }))
+      hl.bind(mainMod .. " + n", hl.dsp.focus({ direction = "down" }))
+      hl.bind(mainMod .. " + f", hl.dsp.focus({ direction = "right" }))
+      hl.bind(mainMod .. " + b", hl.dsp.focus({ direction = "left" }))
+      -- Emacs風ウィンドウ移動
+      hl.bind(mainMod .. " + SHIFT + p", hl.dsp.window.move({ direction = "up" }))
+      hl.bind(mainMod .. " + SHIFT + n", hl.dsp.window.move({ direction = "down" }))
+      hl.bind(mainMod .. " + SHIFT + f", hl.dsp.window.move({ direction = "right" }))
+      hl.bind(mainMod .. " + SHIFT + b", hl.dsp.window.move({ direction = "left" }))
+      -- 矢印キー
+      hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
+      hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
+      hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
+      hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+
+      -- ワークスペース切り替え / ウィンドウをワークスペースへ移動
+      for i = 1, 10 do
+        local key = i % 10 -- 10 は 0 キーに割り当て
+        hl.bind(mainMod .. " + " .. key,         hl.dsp.focus({ workspace = i }))
+        hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+      end
+
+      -- スクラッチパッド
+      hl.bind(mainMod .. " + S",         hl.dsp.workspace.toggle_special("magic"))
+      hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+      -- マウスホイールでワークスペース
+      hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+      hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+
+      -- スクリーンショット
+      hl.bind("Print", hl.dsp.exec_cmd("${pkgs.grimblast}/bin/grimblast save area"))
+      hl.bind("SHIFT + Print", hl.dsp.exec_cmd("/home/bido/.config/hypr/scripts/toggle_recorder.sh"))
+
+      -- hyprselect
+      hl.bind(mainMod .. " + i", hl.dsp.exec_cmd("${pkgs.hyprselect}/bin/hyprselect --fill --bgcolor 'rgba(30,30,30,0.5)' --bgcolorcurrent 'rgba(48, 9, 11,0.6)' --textcolorcurrent lightseagreen --font 'UbuntuMono Nerd Font':200"))
+
+      -- リサイズモード開始（ボーダーを赤くしてから resize サブマップへ）
+      hl.bind(mainMod .. " + R", function()
+        hl.config({ general = { col = { active_border = "rgba(ff0000ee)" }, border_size = 5 } })
+        hl.dispatch(hl.dsp.submap("resize"))
+      end)
+
+      -- 音量/輝度（ロック画面でも動作 + 押下中リピート）
+      hl.bind("XF86AudioRaiseVolume",  hl.dsp.exec_cmd("${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+      hl.bind("XF86AudioLowerVolume",  hl.dsp.exec_cmd("${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
+      hl.bind("XF86AudioMute",         hl.dsp.exec_cmd("${pkgs.wireplumber}/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true, repeating = true })
+      hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("${pkgs.brightnessctl}/bin/brightnessctl s 10%+"), { locked = true, repeating = true })
+      hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("${pkgs.brightnessctl}/bin/brightnessctl s 10%-"), { locked = true, repeating = true })
+
+      -- メディアキー（ロック画面でも動作）
+      hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && (wpctl get-volume @DEFAULT_AUDIO_SOURCE@ 2>/dev/null | grep -q MUTED && echo 1 || echo 0) > /sys/class/leds/platform::micmute/brightness 2>/dev/null || true"), { locked = true })
+      hl.bind("XF86AudioNext",    hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl next"),       { locked = true })
+      hl.bind("XF86AudioPause",   hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl play-pause"), { locked = true })
+      hl.bind("XF86AudioPlay",    hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl play-pause"), { locked = true })
+      hl.bind("XF86AudioPrev",    hl.dsp.exec_cmd("${pkgs.playerctl}/bin/playerctl previous"),   { locked = true })
+
+      -- マウスでのウィンドウ移動/リサイズ
+      hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+      hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+      --------------------------------
+      ---- WINDOWS AND WORKSPACES ----
+      --------------------------------
+      hl.layer_rule({
+        name  = "quickshell-notification-no-blur",
+        match = { namespace = "^quickshell-notification$" },
+        blur  = false,
+      })
+
+      hl.window_rule({
+        name  = "suppress-maximize-events",
+        match = { class = ".*" },
+        suppress_event = "maximize",
+      })
+
+      hl.window_rule({
+        name  = "bitwig-splash-pin",
+        match = { class = "^show-splash-gtk$" },
+        pin   = true,
+        float = true,
+      })
+
+      hl.window_rule({
+        name  = "nautilus-float",
+        match = { class = "^org\\.gnome\\.Nautilus$" },
+        float = true,
+      })
+
+      hl.window_rule({
+        name   = "bitwig-file-dialog-center",
+        match  = { class = "^Show-file-dialog-gtk3$" },
+        float  = true,
+        center = true,
+      })
+
+      hl.window_rule({
+        name  = "fix-xwayland-drags",
+        match = {
+          class      = "^$",
+          title      = "^$",
+          xwayland   = true,
+          float      = true,
+          fullscreen = false,
+          pin        = false,
+        },
+        no_focus = true,
+      })
+
+      -- リサイズサブマップ
+      hl.define_submap("resize", function()
+        hl.bind("b",     hl.dsp.window.resize({ x = -10, y = 0,   relative = true }), { repeating = true })
+        hl.bind("n",     hl.dsp.window.resize({ x = 0,   y = 10,  relative = true }), { repeating = true })
+        hl.bind("p",     hl.dsp.window.resize({ x = 0,   y = -10, relative = true }), { repeating = true })
+        hl.bind("f",     hl.dsp.window.resize({ x = 10,  y = 0,   relative = true }), { repeating = true })
+        hl.bind("left",  hl.dsp.window.resize({ x = -20, y = 0,   relative = true }), { repeating = true })
+        hl.bind("down",  hl.dsp.window.resize({ x = 0,   y = 20,  relative = true }), { repeating = true })
+        hl.bind("up",    hl.dsp.window.resize({ x = 0,   y = -20, relative = true }), { repeating = true })
+        hl.bind("right", hl.dsp.window.resize({ x = 20,  y = 0,   relative = true }), { repeating = true })
+
+        local function exitResize()
+          hl.config({ general = { col = { active_border = "rgba(ff6600ee)" }, border_size = 1 } })
+          hl.dispatch(hl.dsp.submap("reset"))
+        end
+
+        hl.bind("return", exitResize)
+        hl.bind("escape", exitResize)
+      end)
     '';
   };
 

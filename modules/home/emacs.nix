@@ -3,8 +3,8 @@
 {
   programs.emacs = {
     enable = true;
-    # emacs30-pgtk: ネイティブ Wayland 対応 + tree-sitter 有効
-    package = pkgs.emacs30-pgtk;
+    # emacs-pgtk: ネイティブ Wayland 対応 + tree-sitter 有効（emacs30-pgtk は 2026-08 に emacs-pgtk へ統合）
+    package = pkgs.emacs-pgtk;
 
     extraPackages = epkgs: with epkgs; [
       # tree-sitter grammars（全言語分を一括提供）
