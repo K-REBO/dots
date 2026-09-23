@@ -19,7 +19,6 @@
       orderless
       consult
       corfu
-      corfu-terminal
       cape
       treesit-auto
       rainbow-delimiters

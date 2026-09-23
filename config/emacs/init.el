@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 ;; ============================================================
 ;; 基本設定
 ;; ============================================================
@@ -423,11 +425,10 @@
   (corfu-auto-prefix 2)    ; 何文字入力で候補を出すか
   (corfu-cycle t)          ; 候補リストを循環
   :config
-  (global-corfu-mode)
-  ;; ターミナル（-nw）では child frame が使えないため corfu-terminal で代替
-  (unless (display-graphic-p)
-    (require 'corfu-terminal)
-    (corfu-terminal-mode +1)))
+  ;; Emacs 31 で TTY のネイティブ child frame 対応が入ったため、
+  ;; 旧来の overlay ハックである corfu-terminal は不要（併用すると
+  ;; ポップアップの背景色計算が壊れ画面が赤くなる不具合の原因になる）
+  (global-corfu-mode))
 
 ;; ============================================================
 ;; Cape: 補完ソースの追加（ファイルパス・バッファ内単語など）
