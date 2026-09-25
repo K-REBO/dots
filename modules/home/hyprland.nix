@@ -208,6 +208,13 @@ in
       hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
       hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 
+      -- タッチパッド3本指スワイプでワークスペース移動
+      hl.gesture({
+        fingers = 3,
+        direction = "horizontal",
+        action = "workspace",
+      })
+
       -- スクリーンショット
       hl.bind("Print", hl.dsp.exec_cmd("${pkgs.grimblast}/bin/grimblast save area"))
       hl.bind("SHIFT + Print", hl.dsp.exec_cmd("/home/bido/.config/hypr/scripts/toggle_recorder.sh"))
