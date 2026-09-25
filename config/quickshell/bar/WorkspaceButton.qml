@@ -51,12 +51,13 @@ Rectangle {
 
     radius: Theme.radiusSm
 
+    // アクティブ時の背景・枠は Workspaces.qml のスライドするハイライトが描く
     color: isActive
-        ? wsCol
+        ? "transparent"
         : (occupied ? Qt.rgba(wsCol.r, wsCol.g, wsCol.b, 0.20) : Qt.rgba(1,1,1,0.04))
 
     border.color: isActive
-        ? Qt.darker(wsCol, 1.1)
+        ? "transparent"
         : (occupied ? Qt.rgba(wsCol.r, wsCol.g, wsCol.b, 0.45) : Qt.rgba(1,1,1,0.07))
     border.width: 1
 
@@ -108,6 +109,7 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         cursorShape:  Qt.PointingHandCursor
-        onClicked:    Hyprland.dispatch("workspace " + root.workspace.id)
+        // Lua設定ではdispatchの文字列がhl.dispatch(...)の引数(Lua式)として評価される
+        onClicked:    Hyprland.dispatch("hl.dsp.focus({ workspace = " + root.workspace.id + " })")
     }
 }
