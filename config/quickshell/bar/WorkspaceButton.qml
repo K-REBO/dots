@@ -8,6 +8,13 @@ Rectangle {
 
     required property var  workspace
     required property bool isActive
+    // スライドするハイライトがこのボタンを覆っている割合(0..1)。
+    // 文字色をハイライト上で読める色(黒)へ寄せるために使う
+    property real cover: isActive ? 1 : 0
+
+    function _mixBlack(c, t) {
+        return Qt.rgba(c.r * (1 - t), c.g * (1 - t), c.b * (1 - t), 1)
+    }
 
     readonly property color wsCol:    Theme.wsColor(workspace.id)
     readonly property var myToplevels: {
@@ -75,9 +82,7 @@ Rectangle {
             font.family:    Theme.fontFamily
             font.pixelSize: Theme.fontSm
             font.bold:      root.isActive
-            color:          root.isActive ? "#000000"
-                          : (root.occupied ? root.wsCol : Theme.fgDark)
-            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+            color:          root._mixBlack(root.occupied ? root.wsCol : Theme.fgDark, root.cover)
         }
 
         Repeater {
@@ -101,8 +106,7 @@ Rectangle {
             visible:        root.occupied && Theme.wsIconMode === "nerdfont"
             font.family:    Theme.iconFontFamily
             font.pixelSize: Theme.fontSm
-            color:          root.isActive ? "#000000" : root.wsCol
-            Behavior on color { ColorAnimation { duration: Theme.animFast } }
+            color:          root._mixBlack(root.wsCol, root.cover)
         }
     }
 

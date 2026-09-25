@@ -4,6 +4,7 @@
     quickshell
     pamtester   # ロック画面PAM認証
     file        # FileDrop MIME 判定
+    libinput    # ワークスペースバーのスワイプ追従 (libinput debug-events)
   ];
 
   home.file.".config/quickshell".source =

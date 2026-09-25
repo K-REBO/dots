@@ -71,6 +71,14 @@ QtObject {
     // "svg" = Colloid-Dark SVGアイコン / "nerdfont" = Nerd Fontグリフ
     readonly property string wsIconMode: "svg"
 
+    // ── Workspace Swipe (3本指スワイプへの追従) ────────────────────
+    // 1ワークスペース分に相当する指の移動量。hyprland.nixの
+    // gestures.workspace_swipe_distance と揃える
+    readonly property real wsSwipeDistance: 200
+    // ハイライトの動く向き。指が左に動いて次のワークスペースへ進むなら -1。
+    // 逆に動く場合は 1 にする (workspace_swipe_invert に依存)
+    readonly property int wsSwipeDirection: -1
+
     // ── Typography ───────────────────────────────────────────────
     // ewwと同じフォントファミリー
     readonly property string fontFamily:     "JetBrainsMono NF"

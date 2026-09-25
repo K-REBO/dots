@@ -124,7 +124,7 @@ in
           -- フリック的に切り替わるよう、速いスワイプなら距離が短くても確定させる
           workspace_swipe_min_speed_to_force = 10,
           workspace_swipe_cancel_ratio = 0.2,
-          workspace_swipe_distance = 200,
+          workspace_swipe_distance = 200,  -- quickshellのTheme.wsSwipeDistanceと揃える
         },
 
         input = {
