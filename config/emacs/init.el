@@ -3,6 +3,10 @@
 ;; ============================================================
 ;; 基本設定
 ;; ============================================================
+;; elgrep（依存パッケージ）が elgrep-data.el を lexical-binding クッキー無しで
+;; 保存し直すため、その警告のみ抑制する
+(setq warning-suppress-types (cons '(files missing-lexbind-cookie) (bound-and-true-p warning-suppress-types)))
+(setq warning-suppress-log-types (cons '(files missing-lexbind-cookie) (bound-and-true-p warning-suppress-log-types)))
 (setq inhibit-startup-message t) ; スタートアップ画面を非表示
 (setq make-backup-files nil)     ; バックアップファイル（~）を作らない
 (setq auto-save-default nil)     ; 自動保存ファイルを作らない
@@ -236,12 +240,17 @@
 
 ;; 背景透過: doom-dracula がセットする背景色をテーマロード後に上書きし、
 ;; ターミナルエミュレータ側の透過設定を活かす
-(defun my/terminal-transparent-bg ()
-  (unless (display-graphic-p)
-    (set-face-background 'default "unspecified-bg")
-    (set-face-background 'fringe "unspecified-bg")))
+;; デーモン運用では TTY フレームが after-init 後に作られる。Emacs 31 は端末から
+;; 取得した背景色 (#380C2A) をそのまま使い、256 色モードでは最寄りの暗赤
+;; (color-52) に丸められて画面が赤くなるため、フレーム作成時にも適用する
+(defun my/terminal-transparent-bg (&optional frame)
+  (let ((f (or frame (selected-frame))))
+    (unless (display-graphic-p f)
+      (set-face-background 'default "unspecified-bg" f)
+      (set-face-background 'fringe "unspecified-bg" f))))
 
 (add-hook 'after-init-hook #'my/terminal-transparent-bg)
+(add-hook 'after-make-frame-functions #'my/terminal-transparent-bg)
 
 (unless (display-graphic-p)
   (xterm-mouse-mode 1) ; マウス操作を有効化
