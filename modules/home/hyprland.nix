@@ -120,6 +120,13 @@ in
           disable_hyprland_logo = true,
         },
 
+        gestures = {
+          -- フリック的に切り替わるよう、速いスワイプなら距離が短くても確定させる
+          workspace_swipe_min_speed_to_force = 10,
+          workspace_swipe_cancel_ratio = 0.2,
+          workspace_swipe_distance = 200,
+        },
+
         input = {
           kb_layout = "us",
           kb_rules = "evdev",
@@ -151,9 +158,9 @@ in
       hl.animation({ leaf = "layersOut",     enabled = true, speed = 1.5,  bezier = "linear",       style = "fade" })
       hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 1.79, bezier = "almostLinear" })
       hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })
-      hl.animation({ leaf = "workspaces",    enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
-      hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 1.21, bezier = "almostLinear", style = "fade" })
-      hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
+      hl.animation({ leaf = "workspaces",    enabled = true, speed = 4, bezier = "almostLinear", style = "fade" })
+      hl.animation({ leaf = "workspacesIn",  enabled = true, speed = 4, bezier = "almostLinear", style = "fade" })
+      hl.animation({ leaf = "workspacesOut", enabled = true, speed = 4, bezier = "almostLinear", style = "fade" })
 
       hl.workspace_rule({ workspace = "r[1-10]" })
 
