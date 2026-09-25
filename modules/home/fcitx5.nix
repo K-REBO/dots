@@ -46,6 +46,13 @@ in
     else ../../config/fcitx5/profile;
   xdg.configFile."fcitx5/conf".source = ../../config/fcitx5/conf;
 
+  # Hazkeyの設定（autoConvertMode=2: 入力途中の自動変換を常に有効化）
+  # nix store への読み取り専用リンクになるため hazkey-settings からの保存はできない。
+  # 変更は config/hazkey/config.json を編集し、hazkey-server の再起動で反映する
+  xdg.configFile."hazkey/config.json" = lib.mkIf enableHazkey {
+    source = ../../config/hazkey/config.json;
+  };
+
   # NixOSのi18n.inputMethod.fcitx5がenvironment.systemPackages経由で
   # fcitx5-with-addonsパッケージのD-Busアクティベーションファイル
   # (.../share/dbus-1/services/org.fcitx.Fcitx5.service, --replaceなしのfcitx5を起動)
