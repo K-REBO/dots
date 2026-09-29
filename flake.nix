@@ -24,9 +24,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nur.url = "github:nix-community/NUR";
+    nur = {
+      url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    weathr.url = "github:Veirt/weathr";
+    weathr = {
+      url = "github:Veirt/weathr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nix-index-database = {
       url = "github:Mic92/nix-index-database";
