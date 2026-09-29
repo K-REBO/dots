@@ -10,7 +10,6 @@ final: prev: let
       sha256 = "sha256-ZiUVVPAkcs0Ps6M7xkaM/rdAlJdU3cB9vkFk5DmshhM=";
     };
     dependencies = with pyPkgs; [ beautifulsoup4 ];
-    pythonRuntimeDepsCheckHook = false;
     doCheck = false;
   };
 in {

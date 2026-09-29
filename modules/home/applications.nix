@@ -86,12 +86,11 @@
     # TeX / 文書作成
     # ============
     texstudio                        # TeXエディタ
-    (texlive.combine {
-      inherit (texlive)
-        scheme-medium                # 一般的なパッケージ一式
-        collection-langjapanese      # 日本語サポート
-        latexmk;                     # 自動ビルドツール
-    })
+    # texlive.combine は nixpkgs 27.05 で削除予定。texliveMedium = 旧 scheme-medium
+    (texliveMedium.withPackages (ps: with ps; [
+      collection-langjapanese      # 日本語サポート
+      latexmk                      # 自動ビルドツール
+    ]))
 
     # ============
     # その他ツール

@@ -11,7 +11,7 @@ let
     then osConfig.i18n.inputMethod.package
     else pkgs.qt6Packages.fcitx5-with-addons.override {
       addons = with pkgs; [ fcitx5-mozc fcitx5-gtk ]
-        ++ lib.optional enableHazkey inputs.nix-hazkey.packages.${pkgs.system}.fcitx5-hazkey;
+        ++ lib.optional enableHazkey inputs.nix-hazkey.packages.${pkgs.stdenv.hostPlatform.system}.fcitx5-hazkey;
     };
 in
 {
@@ -44,7 +44,14 @@ in
     if enableHazkey
     then ../../config/fcitx5/profile-hazkey
     else ../../config/fcitx5/profile;
-  xdg.configFile."fcitx5/conf".source = ../../config/fcitx5/conf;
+  # conf/ はディレクトリ丸ごとリンクせず個別に配置する。
+  # 丸ごとだと ~/.config/fcitx5/conf が読み取り専用リンクになり、fcitx5 が
+  # cached_layouts (キーボードレイアウト一覧のキャッシュ) を生成できない。
+  # 個別配置なら conf/ は実ディレクトリになり fcitx5 が自前でキャッシュを持てる。
+  xdg.configFile."fcitx5/conf/classicui.conf".source = ../../config/fcitx5/conf/classicui.conf;
+  xdg.configFile."fcitx5/conf/mozc.conf".source = ../../config/fcitx5/conf/mozc.conf;
+  xdg.configFile."fcitx5/conf/notifications.conf".source = ../../config/fcitx5/conf/notifications.conf;
+  xdg.configFile."fcitx5/conf/xim.conf".source = ../../config/fcitx5/conf/xim.conf;
 
   # Hazkeyの設定（autoConvertMode=2: 入力途中の自動変換を常に有効化）
   # nix store への読み取り専用リンクになるため hazkey-settings からの保存はできない。
