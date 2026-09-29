@@ -115,9 +115,4 @@
       ];
     };
   };
-
-  # VSCodeが依存するパッケージ
-  home.packages = with pkgs; [
-    # 既にcli-tools.nixでインストール済み
-  ];
 }

@@ -29,7 +29,6 @@
     ./modules/home/language-tools.nix
 
     # ランチャー / WMツール
-    ./modules/home/wofi.nix
     ./modules/home/vicinae.nix
 
     # デスクトップ環境

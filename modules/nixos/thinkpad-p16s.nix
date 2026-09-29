@@ -69,9 +69,6 @@
   # ThinkPad固有のハードウェアサポート
   # ====================
 
-  # 指紋認証 (P16sに搭載されている場合)
-  ## services.fprintd.enable = true;
-
   # ThinkPad ACPI モジュール
   boot.extraModprobeConfig = ''
     options thinkpad_acpi fan_control=1

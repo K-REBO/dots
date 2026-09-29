@@ -36,7 +36,7 @@
     # ipaexfont
 
     # その他
-    font-awesome                 # アイコンフォント（wofiで使用）
+    font-awesome                 # アイコンフォント
   ];
 
   # フォント設定（オプション）
