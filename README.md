@@ -8,7 +8,7 @@ NixOS + Home Manager で管理する個人用dotfiles
 
 - **OS**: NixOS (unstable)
 - **WM**: Hyprland
-- **Bar**: eww
+- **Bar**: Quickshell (QML)
 - **Terminal**: Alacritty
 - **Shell**: Zsh + Starship
 - **Launcher**: vicinae
@@ -23,29 +23,32 @@ NixOS + Home Manager で管理する個人用dotfiles
 ├── home.nix               # Home Manager entry point
 ├── config/                # Raw config files
 │   ├── emacs/             # Emacs init.el
-│   ├── eww/               # eww widgets & scripts
+│   ├── eww/               # eww widgets & scripts（バーは移行済み、demo-recorderが参照）
 │   ├── fcitx5/            # Fcitx5 settings
+│   ├── hazkey/            # Hazkey (日本語入力) settings
 │   ├── hypr/              # Hyprland config, wallpapers & scripts
+│   ├── quickshell/        # Quickshell バー・ランチャー・ロック画面 (QML)
 │   ├── vicinae/           # vicinae launcher config
-│   ├── xremap/            # Key remapping
-│   └── quickshell/        # quickshell widgets
+│   └── xremap/            # Key remapping
 ├── modules/
 │   ├── home/              # Home Manager modules
 │   │   ├── alacritty.nix
 │   │   ├── applications.nix
 │   │   ├── cli-tools.nix
 │   │   ├── emacs.nix
-│   │   ├── eww.nix
+│   │   ├── eww.nix        # 無効化済み（home.nixでコメントアウト）
 │   │   ├── fcitx5.nix
 │   │   ├── fonts.nix
 │   │   ├── git.nix
 │   │   ├── hyprland.nix
 │   │   ├── language-tools.nix
+│   │   ├── quickshell.nix
 │   │   ├── shell.nix
 │   │   ├── themes.nix
-│   │   ├── vscode.nix
 │   │   ├── vicinae.nix
+│   │   ├── vscode.nix
 │   │   ├── zsh.nix
+│   │   ├── zsh-completions/   # 手書きzsh補完（_twitter）
 │   │   └── ...
 │   └── nixos/             # NixOS modules
 ├── hosts/
@@ -58,45 +61,47 @@ NixOS + Home Manager で管理する個人用dotfiles
 └── secrets/               # Encrypted secrets (agenix)
 ```
 
-## eww Bar
+## Quickshell Bar
 
-Tokyo Night テーマの水平トップバー。全ウィジェットをスクラッチで自作。
+Tokyo Night テーマの水平トップバー。QML (Quickshell) でスクラッチから自作。
+かつては eww を使っていたが Quickshell に移行済み (`modules/home/eww.nix` と
+`config/eww/` は demo-recorder が参照しているため残置)。
+
+構成は `config/quickshell/` 配下。`bar/` が表示コンポーネント、`services/` が
+Hyprland IPC・PipeWire・NetworkManager 等とのデータ連携を担う。バー本体とは別に、
+ポップアップを持つウィジェットはそれぞれ独立した `PanelWindow` として実装され、
+バー側にはスペーサーだけを置いて位置を同期させている。
 
 ### Bar ウィジェット一覧
 
+左から順に:
+
 | ウィジェット | 説明 |
 |---|---|
-| **Power Menu** | NixOSアイコン、ホバーでShutdown/Reboot/Sleep/Lock/Logoutを展開 |
-| **Workspaces** | Hyprland IPC をリッスンしてリアルタイム更新 |
-| **Volume** | ホバーでスライダー展開、スクロールで音量調整、右クリックで出力デバイス切替ポップアップ |
-| **WiFi** | SSID表示、ホバーで信号強度/IP/ゲートウェイを展開 |
-| **Bluetooth** | クリックでデバイス一覧ポップアップ（接続/切断/バッテリー残量表示） |
-| **Battery** | アイコン + 残量% + 残り時間 |
-| **IME** | Fcitx5 トグル（右クリックでメニュー） |
-| **Brightness** | ホバーでスライダー展開、スクロールで調整 |
-| **Screen Recorder** | 録画中のみ表示されるインジケーター |
+| **PowerMenu** | NixOSアイコン、ホバーでShutdown/Reboot/Sleep/Lock/Logoutを展開 |
+| **Workspaces** | Hyprland IPC をリッスンしてリアルタイム更新。3本指スワイプにハイライトが追従 |
 | **Taildrop** | ファイル転送中のみ表示、ファイル名とステータスをリアルタイム表示 |
-| **DateTime** | 日付 + 時刻、ホバーでカレンダーポップアップ |
+| **RunCat** | CPU使用率に応じて走る速度が変わる猫 |
+| **Volume** | ホバーでスライダー展開、スクロールで音量調整、アプリ別音量も操作可 |
+| **Network** | SSID表示、ホバーで信号強度/IP/ゲートウェイを展開 |
+| **Bluetooth** | クリックでデバイス一覧ポップアップ（接続/切断/バッテリー残量表示） |
+| **Battery** | アイコン + 残量%、ドロップダウンでTLP電源プロファイル切替 |
+| **IME** | Fcitx5 トグル |
+| **SleepTime** | 自動サスペンドまでの残り時間表示・抑止切替 |
+| **Brightness** | ホバーでスライダー展開、スクロールで調整 |
+| **Recorder** | 録画中のみ表示されるインジケーター |
+| **GitHub Issues** | 担当Issueの一覧をポップアップ表示 |
+| **Clock** | 日付 + 時刻、ホバーでカレンダーポップアップ |
+| **Notifications** | 通知ベル（最右）。通知デーモンも Quickshell が兼ねる |
 
-### スクリプト
+### バー以外のコンポーネント
 
-`config/eww/scripts/` に各ウィジェット対応のシェルスクリプトを配置。イベント駆動のものは `deflisten` で常駐プロセスを使用し、ポーリングを最小化。
-
-```
-scripts/
-├── battery     # バッテリー残量・状態・残り時間
-├── bluetooth   # デバイス一覧・接続制御
-├── brightness  # 輝度取得・設定・inotifyリッスン
-├── ime         # Fcitx5 状態トグル
-├── micmute     # マイクミュート状態
-├── power       # 電源操作
-├── recorder    # 録画状態監視
-├── taildrop    # ファイル転送監視
-├── volume      # 音量・出力デバイス制御
-├── weather     # 天気情報
-├── wifi        # WiFi状態・詳細情報
-└── workspace   # Hyprland ワークスペース状態
-```
+| | 説明 |
+|---|---|
+| `launcher/Launcher.qml` | アプリランチャー |
+| `lock/Lock.qml` | ロック画面（PAM認証は `pamtester`） |
+| `bar/FileDropWidget.qml` | ドラッグ&ドロップでのファイル受け渡し |
+| `bar/NotificationPopup.qml` | 通知トースト |
 
 ## Emacs
 
