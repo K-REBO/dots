@@ -32,3 +32,6 @@ Thumbs.db
 demo-vm.qcow2
 pkgs/mt-power-drum-kit/*.zip
 private/
+
+# fcitx5 が自動生成するキーボードレイアウトキャッシュ
+config/fcitx5/conf/cached_layouts
