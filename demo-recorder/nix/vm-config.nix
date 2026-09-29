@@ -433,18 +433,15 @@ in
       recordings = {
         source        = "$HOME/vm-recordings";
         target        = "/recordings";
-        securityModel = "none";
       };
       demo-scripts = {
         source        = "$DEMO_DIR";
         target        = "/shared";
-        securityModel = "none";
       };
       # ホスト home-manager プロファイル (ホストの CLI ツールを VM から利用可能にする)
       host-profile = {
         source        = "$HOME/.local/state/nix/profiles/home-manager/home-path";
         target        = "/host-profile";
-        securityModel = "none";
       };
     };
   };
