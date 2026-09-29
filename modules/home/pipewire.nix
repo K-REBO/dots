@@ -14,6 +14,8 @@
 
     # CLIツール
     pulsemixer     # CLI audio mixer
+    pulseaudio     # pactl のみ目的 (daemonは services.pulseaudio.enable = false で無効)
+                   # quickshell の AudioService.qml が pactl subscribe でsink/source変化を監視
 
     # 既にcli-tools.nixでインストール済みのものはコメントアウト
   ];

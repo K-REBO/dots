@@ -61,8 +61,10 @@ QtObject {
     }
 
     // ── pactl subscribe でスピーカー／マイク変化を監視 ───────────
+    // LC_ALL=C は必須: pactl subscribe の出力はロケール依存で、ja_JP では
+    // 「イベント '変更' が シンク #57 上にあります」となり sink/source にマッチしない
     property var _sub: Process {
-        command: ["bash", "-c", "pactl subscribe 2>/dev/null | grep --line-buffered 'sink\\|source'"]
+        command: ["bash", "-c", "LC_ALL=C pactl subscribe 2>/dev/null | grep --line-buffered 'sink\\|source'"]
         running: true
         stdout: SplitParser {
             onRead: line => {
