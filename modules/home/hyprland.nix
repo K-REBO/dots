@@ -183,7 +183,9 @@ in
       hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
       hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("${pkgs.hyprlock}/bin/hyprlock"))
       -- フルスクリーン
-      hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
+      -- Hyprlandは英字キーのkeysymを大文字小文字区別せず解決するため、
+      -- SUPER+F は下のEmacs風 focus right (SUPER+f) と衝突する。よってM (maximize)
+      hl.bind(mainMod .. " + M", hl.dsp.window.fullscreen())
 
       -- Emacs風フォーカス移動
       hl.bind(mainMod .. " + p", hl.dsp.focus({ direction = "up" }))
