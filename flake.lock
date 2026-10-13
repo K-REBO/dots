@@ -613,7 +613,8 @@
         "obsidian-vault-cli": "obsidian-vault-cli",
         "tp-render-src": "tp-render-src",
         "wayland-fcitx5-indicator": "wayland-fcitx5-indicator",
-        "weathr": "weathr"
+        "weathr": "weathr",
+        "yt-dlp-src": "yt-dlp-src"
       }
     },
     "rust-analyzer-src": {
@@ -836,6 +837,22 @@
       "original": {
         "owner": "Veirt",
         "repo": "weathr",
+        "type": "github"
+      }
+    },
+    "yt-dlp-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791666952,
+        "narHash": "sha256-BiCa0iQA4jLZxBxOxGpcuCXH13cSt+2iOFqCeLlwI3k=",
+        "owner": "yt-dlp",
+        "repo": "yt-dlp",
+        "rev": "897341241f2bfb2439fe0367f4c7c9ccd29a3828",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yt-dlp",
+        "repo": "yt-dlp",
         "type": "github"
       }
     }

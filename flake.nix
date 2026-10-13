@@ -14,6 +14,13 @@
       flake = false;
     };
 
+    # yt-dlp は対象サイトの仕様変更で頻繁に壊れるため master を追従する
+    # (更新: nix flake update yt-dlp-src)
+    yt-dlp-src = {
+      url = "github:yt-dlp/yt-dlp";
+      flake = false;
+    };
+
     wayland-fcitx5-indicator = {
       url = "github:K-REBO/wayland_fcitx5_indicator";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -105,6 +112,7 @@
       (import ./overlays/chois-cli.nix inputs)
       (import ./overlays/apple-color-emoji.nix)
       (import ./overlays/alacritty-sixel.nix)
+      (import ./overlays/yt-dlp.nix inputs)
       (import ./overlays/typescript-language-server.nix)
       nur.overlays.default
       inputs.fenix.overlays.default
