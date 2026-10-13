@@ -18,10 +18,6 @@
       ];
       # テストを無効化（テストコードにコンパイルエラーあり）
       doCheck = false;
-      # expat-sys cmake互換性問題の回避
-      preBuild = ''
-        export CMAKE_POLICY_VERSION_MINIMUM=3.5
-      '';
     };
     # 依存クレートを先にビルド → Nixストアにキャッシュ
     cargoArtifacts = craneLib.buildDepsOnly commonArgs;

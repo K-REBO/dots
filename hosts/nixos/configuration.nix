@@ -111,7 +111,6 @@ in
     SDL_IM_MODULE = "fcitx";
     # Wayland用設定
     NIXOS_OZONE_WL = "1";  # Electron/Chromiumアプリ用
-    WLR_NO_HARDWARE_CURSORS = "1";  # 一部GPUでのカーソル問題回避
   };
 
 

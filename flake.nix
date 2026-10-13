@@ -120,7 +120,6 @@
       (import ./overlays/alacritty-sixel.nix)
       (import ./overlays/typescript-language-server.nix)
       nur.overlays.default
-      (import ./overlays/rtk.nix)
       inputs.fenix.overlays.default
     ];
 
