@@ -118,6 +118,7 @@
       (import ./overlays/chois-cli.nix inputs)
       (import ./overlays/apple-color-emoji.nix)
       (import ./overlays/alacritty-sixel.nix)
+      (import ./overlays/typescript-language-server.nix)
       nur.overlays.default
       (import ./overlays/rtk.nix)
       inputs.fenix.overlays.default
