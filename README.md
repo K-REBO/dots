@@ -2,7 +2,7 @@
 
 NixOS + Home Manager で管理する個人用dotfiles
 
-![demo](demo-recorder/demo.gif)
+![demo](assets/demo.gif)
 
 ## Stack
 
@@ -23,7 +23,6 @@ NixOS + Home Manager で管理する個人用dotfiles
 ├── home.nix               # Home Manager entry point
 ├── config/                # Raw config files
 │   ├── emacs/             # Emacs init.el
-│   ├── eww/               # eww widgets & scripts（バーは移行済み、demo-recorderが参照）
 │   ├── fcitx5/            # Fcitx5 settings
 │   ├── hazkey/            # Hazkey (日本語入力) settings
 │   ├── hypr/              # Hyprland config, wallpapers & scripts
@@ -36,7 +35,6 @@ NixOS + Home Manager で管理する個人用dotfiles
 │   │   ├── applications.nix
 │   │   ├── cli-tools.nix
 │   │   ├── emacs.nix
-│   │   ├── eww.nix        # 無効化済み（home.nixでコメントアウト）
 │   │   ├── fcitx5.nix
 │   │   ├── fonts.nix
 │   │   ├── git.nix
@@ -53,19 +51,13 @@ NixOS + Home Manager で管理する個人用dotfiles
 │   └── nixos/             # NixOS modules
 ├── hosts/
 │   └── nixos/             # Host-specific config
-├── demo-recorder/         # 再現性のあるデモGIF生成ツール
-│   ├── demos/             # デモスクリプト (JSON)
-│   ├── nix/               # VM設定
-│   ├── scripts/           # replay-engine, make-gif, run-demo
-│   └── wm/hyprland/       # WM別設定
 └── secrets/               # Encrypted secrets (agenix)
 ```
 
 ## Quickshell Bar
 
 Tokyo Night テーマの水平トップバー。QML (Quickshell) でスクラッチから自作。
-かつては eww を使っていたが Quickshell に移行済み (`modules/home/eww.nix` と
-`config/eww/` は demo-recorder が参照しているため残置)。
+かつては eww を使っていたが Quickshell に全面移行済み。
 
 構成は `config/quickshell/` 配下。`bar/` が表示コンポーネント、`services/` が
 Hyprland IPC・PipeWire・NetworkManager 等とのデータ連携を担う。バー本体とは別に、
@@ -111,20 +103,6 @@ Hyprland IPC・PipeWire・NetworkManager 等とのデータ連携を担う。バ
 - **設定**: `config/emacs/init.el`
 - **Nix**: `modules/home/emacs.nix`
 - tree-sitter grammars は `treesit-grammars.with-all-grammars` で一括管理
-
-## Demo Recorder
-
-QEMU VM 上で headless Hyprland を起動し、`demos/demo.json` に記述したアクションを自動実行して GIF を生成するサブツール。
-
-```bash
-# VM ビルド (初回のみ)
-nix build .#nixosConfigurations.demo-vm.config.system.build.vm
-
-# GIF 生成
-./demo-recorder/scripts/run-demo
-```
-
-詳細は [demo-recorder/README.md](demo-recorder/README.md) を参照。
 
 ## Installation
 

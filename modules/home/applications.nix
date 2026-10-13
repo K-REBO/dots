@@ -34,7 +34,6 @@
           --prefix LD_LIBRARY_PATH : ${fontconfig.lib}/lib
       '';
     })
-    musescore                   # 楽譜作成
 
     # ============
     # ダウンローダー

@@ -16,8 +16,6 @@
         expat
         freetype
       ];
-      # テストを無効化（テストコードにコンパイルエラーあり）
-      doCheck = false;
     };
     # 依存クレートを先にビルド → Nixストアにキャッシュ
     cargoArtifacts = craneLib.buildDepsOnly commonArgs;

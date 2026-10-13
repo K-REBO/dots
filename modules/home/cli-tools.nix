@@ -6,7 +6,7 @@
     # ファイル管理・表示
     bat           # catの代替（シンタックスハイライト）
     eza           # lsの代替
-	fd            # findの代替
+    fd            # findの代替
     dust          # duの代替（ディスク使用量）
     hexyl         # hexダンプ
     duf           # duの代替 (直感的)
@@ -54,14 +54,11 @@
 
     # LLM agent cliツール
     # claude-code  # curlでnativeでインストール
-	rtk           # rtk is CLI proxy to reduces LLM token cost
-
-	## gemini cli is deprecated now. antigravity-cli is replacement for gemini-cli
-	antigravity-cli
-	opencode
-    # gemini-cli
-
-	github-copilot-cli
+    # gemini-cli   # 非推奨。antigravity-cli が後継
+    rtk                # LLMトークン削減CLIプロキシ
+    antigravity-cli    # gemini-cli の後継
+    opencode
+    github-copilot-cli
 
     # SNS
     twitter-cli
@@ -72,22 +69,16 @@
     # ウィンドウフォーカス
     hyprselect
 
-
     # キー入力表示（Wayland）
     wshowkeys
 
     # Obsidian Templater CLIレンダラー
     tp-render
 
-	# trashy(rmを使わないように!)
-	trashy
-
-	# timg(sixel image viewer)
-	timg
-
-	## SL
-	sl
-
+    # その他
+    trashy        # rmの代替（削除せずゴミ箱へ）
+    timg          # sixel対応の画像ビューア
+    sl            # 蒸気機関車
   ] ++ [
     # Nix関連 (flake inputsから取得して競合を回避)
     inputs.home-manager.packages.${pkgs.stdenv.hostPlatform.system}.home-manager

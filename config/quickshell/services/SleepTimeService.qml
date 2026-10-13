@@ -25,7 +25,7 @@ QtObject {
         _updateLabel()
         _setProc.command = [
             "bash", "-c",
-            `~/.config/nix/config/eww/scripts/dpms-timeout set ${secs}`
+            `~/.config/nix/config/hypr/scripts/dpms-timeout set ${secs}`
         ]
         _setProc.running = true
     }

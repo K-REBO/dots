@@ -408,11 +408,11 @@
     "hyprselect-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1779779840,
-        "narHash": "sha256-zszuMbukRzUBOLGLTNIaPk3O5DzIOYUEEXJcvh/78Yg=",
+        "lastModified": 1791860562,
+        "narHash": "sha256-CStHcUwrSyyMXCHhi7w2usjIzOxztlzvAdq8c61w0QQ=",
         "owner": "K-REBO",
         "repo": "hyprselect",
-        "rev": "6d4ca4de641e13e4d24f29fcc6d3d22d252ca5d0",
+        "rev": "f34c7aacb24bce0c97b9528d14b78ddb15232bd4",
         "type": "github"
       },
       "original": {

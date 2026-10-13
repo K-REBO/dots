@@ -96,19 +96,6 @@
     # (modules/nixos/hazkey.nix, modules/home/fcitx5.nix で参照)
     enableHazkey = true;
 
-    # nixpkgs-unstable より新しいバージョンを使いたい場合はコメントを外してバージョンとhashを更新する
-    # yt-dlpOverlay = final: prev: {
-    #   yt-dlp = prev.yt-dlp.overrideAttrs (old: rec {
-    #     version = "2026.02.04";
-    #     src = final.fetchFromGitHub {
-    #       owner = "yt-dlp";
-    #       repo = "yt-dlp";
-    #       tag = version;
-    #       hash = "sha256-KXnz/ocHBftenDUkCiFoBRBxi6yWt0fNuRX+vKFWDQw=";
-    #     };
-    #   });
-    # };
-
     overlays = [
       (import ./overlays/hyprselect.nix inputs)
       (import ./overlays/twitter-cli.nix)
@@ -154,15 +141,6 @@
           };
           nixpkgs.overlays = overlays;
         }
-      ];
-    };
-
-    # Demo VM configuration (録画生成用 QEMU VM)
-    nixosConfigurations.demo-vm = nixpkgs.lib.nixosSystem {
-      modules = [
-        { nixpkgs.hostPlatform = system; }
-        ./demo-recorder/nix/vm-config.nix
-        { nixpkgs.overlays = overlays; }
       ];
     };
 

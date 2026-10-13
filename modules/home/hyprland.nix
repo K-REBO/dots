@@ -44,9 +44,6 @@ in
         hl.exec_cmd("${pkgs.awww}/bin/awww img $HOME/.config/hypr/wallpapers/moshi_moshi_moshimo_saa.jpg")
         hl.exec_cmd("${pkgs.quickshell}/bin/quickshell")
 
-        -- eww は quickshell に移行済み（復元時はコメントを外す）
-        -- hl.exec_cmd("${config.programs.eww.package}/bin/eww open bar")
-
         hl.exec_cmd("${pkgs.hypridle}/bin/hypridle")
         hl.exec_cmd("${config.programs.wayland-fcitx5-indicator.package}/bin/wayland_fcitx5_indicator")
         -- reboot後のBitwig起動を高速化するためキーファイルをページキャッシュに読み込む
