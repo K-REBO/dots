@@ -22,6 +22,6 @@
   in craneLib.buildPackage (commonArgs // {
     inherit cargoArtifacts;
     pname = "hyprselect";
-    version = "1.5.0";
+    version = "0.2.0";
   });
 }
