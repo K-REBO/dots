@@ -288,6 +288,10 @@ in
     htop
     psmisc  # killall, fuser, pstree等
     nautilus  # ファイルマネージャー（xdg-desktop-portal-gnomeのファイルチューザー用）
+
+    # iOS デバイス (iPhone/iPad)
+    libimobiledevice  # ideviceinfo / idevicepair / idevice_id 等
+    ifuse             # iOS を FUSE でマウント (ifuse --documents <app-id>)
     # Hyprland関連パッケージはHome Managerで管理
 
     # QEMU/KVM
@@ -343,6 +347,11 @@ in
 
   # GVFS (Nautilus等のファイルマネージャ用)
   services.gvfs.enable = true;
+
+  # iPhone/iPad を USB デバイスとしてマウントする
+  # udev ルール + usbmuxd デーモンを常駐させ、gvfs の AFC バックエンド経由で
+  # Nautilus に自動マウントさせる（初回は端末側で「このコンピュータを信頼」が必要）
+  services.usbmuxd.enable = true;
 
   # ====================
   # Hardware
