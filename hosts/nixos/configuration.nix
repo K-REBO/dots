@@ -22,6 +22,7 @@ in
     ../../modules/nixos/thinkpad-p16s.nix
     ../../modules/nixos/winapps.nix
     ../../modules/nixos/wifi-audio-mute.nix
+    ../../modules/nixos/captive-portal-dns.nix
     ../../modules/nixos/hazkey.nix
     ../../modules/nixos/chuo.nix
   ];
