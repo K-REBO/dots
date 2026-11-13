@@ -72,6 +72,11 @@ in
   networking = {
     hostName = "nixos";
     networkmanager.enable = true;
+    # captive portal 検出（GNOMEがログイン画面を自動で開く）
+    networkmanager.settings.connectivity = {
+      uri = "http://nmcheck.gnome.org/check_network_status.txt";
+      interval = 60;
+    };
 
     firewall = {
       enable = true;
