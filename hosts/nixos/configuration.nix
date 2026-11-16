@@ -53,6 +53,10 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # 起動・シャットダウン時に systemd ジョブの進行をツリー表示する
+  # (NixOS 26.05 以降は systemd initrd がデフォルトなので initrd 段階から表示される)
+  services.bootvine.enable = true;
+
   # linuxPackages_latest = 6.13 以降で rtw88_8821au がカーネル標準搭載
   boot.kernelPackages = pkgs.linuxPackages_latest;
 

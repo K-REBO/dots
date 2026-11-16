@@ -93,6 +93,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # 起動/シャットダウン時に systemd ジョブのツリーをコンソールに表示する
+    bootvine = {
+      url = "git+https://codeberg.org/wvhulle/bootvine";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs = { self, nixpkgs, home-manager, wayland-fcitx5-indicator, agenix, nur, weathr, nix-index-database, deploy-rs, obsidian-vault-cli, ... }@inputs: let
@@ -132,6 +138,7 @@
         { nixpkgs.hostPlatform = system; }
         ./hosts/nixos/configuration.nix
         agenix.nixosModules.default
+        inputs.bootvine.nixosModules.default
         nix-index-database.nixosModules.nix-index
         home-manager.nixosModules.home-manager
         {
