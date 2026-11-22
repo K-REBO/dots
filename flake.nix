@@ -119,7 +119,6 @@
       (import ./overlays/apple-color-emoji.nix)
       (import ./overlays/alacritty-sixel.nix)
       (import ./overlays/yt-dlp.nix inputs)
-      (import ./overlays/typescript-language-server.nix)
       (import ./overlays/audacity.nix)
       nur.overlays.default
       inputs.fenix.overlays.default
