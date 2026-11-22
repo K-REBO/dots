@@ -1,6 +1,28 @@
 { config, pkgs, ... }:
 
+let
+  tailscale = "${config.services.tailscale.package}/bin/tailscale";
+
+  # 手動で portal のログイン画面を出すコマンド
+  #   portal       : DNS を直接カフェのものにして、ログイン画面を開く
+  #   portal done  : MagicDNS を戻す（ログイン完了後は dispatcher が自動で戻すので通常は不要）
+  # bido は tailscale の operator なので sudo は不要
+  portal = pkgs.writeShellScriptBin "portal" ''
+    if [ "''${1:-}" = "done" ]; then
+      ${tailscale} set --accept-dns=true
+      echo "Tailscale DNS: on"
+      exit 0
+    fi
+
+    ${tailscale} set --accept-dns=false
+    echo "Tailscale DNS: off（ログイン後に自動で戻ります）"
+    # 平文 http のページを開くと portal にリダイレクトされる
+    ${pkgs.xdg-utils}/bin/xdg-open "http://nmcheck.gnome.org/check_network_status.txt"
+  '';
+in
 {
+  environment.systemPackages = [ portal ];
+
   # captive portal のログイン完了までは Tailscale の DNS (MagicDNS) を無効にする
   #
   # 背景:
