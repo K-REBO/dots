@@ -10,7 +10,7 @@
   #
   # 動作:
   #   NetworkManager の connectivity-change を契機に切り替える
-  #     PORTAL → tailscale set --accept-dns=false
+  #     PORTAL → tailscale set --accept-dns=false + ログイン画面をブラウザで開く
   #     FULL   → tailscale set --accept-dns=true  (MagicDNS を戻す)
   #   LIMITED / NONE では何もしない（状態を変えない）
   #
@@ -25,6 +25,16 @@
         case "$CONNECTIVITY_STATE" in
           PORTAL)
             ${config.services.tailscale.package}/bin/tailscale set --accept-dns=false || true
+
+            # ログイン画面を自動で開く（セッション期限切れの再認証対策）
+            # ブラウザは期限切れ前の DNS キャッシュで実IPに直接つなぎ、portal にリダイレクト
+            # されず固まる。名前を引き直す平文 http のページを開いて portal に誘導する。
+            # Hyprland 環境で GNOME の自動ポップアップは出ないため、ここで開く。
+            ${pkgs.util-linux}/bin/runuser -u bido -- \
+              env XDG_RUNTIME_DIR=/run/user/1000 \
+                  DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus \
+                  WAYLAND_DISPLAY=wayland-1 \
+              ${pkgs.xdg-utils}/bin/xdg-open "http://nmcheck.gnome.org/check_network_status.txt" || true
             ;;
           FULL)
             ${config.services.tailscale.package}/bin/tailscale set --accept-dns=true || true
