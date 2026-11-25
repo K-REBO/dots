@@ -56,11 +56,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1795177966,
-        "narHash": "sha256-sRE3N7Wl1M3kQ2v9UX+skYbG3GK+fQ9JANn9MjJV5ZQ=",
+        "lastModified": 1795417174,
+        "narHash": "sha256-YZhRJqsSuwA/Xh5RSELzVh1j7q9d+gwCc4iQs6cd4J0=",
         "ref": "refs/heads/main",
-        "rev": "958cfa1b54451a7481f315de76bcf5a4400e2793",
-        "revCount": 150,
+        "rev": "0e7acf85f85084b30c681658a4b8fc1c3a90b0a3",
+        "revCount": 152,
         "type": "git",
         "url": "https://codeberg.org/wvhulle/bootvine"
       },
@@ -223,11 +223,11 @@
         "rust-analyzer-src": "rust-analyzer-src"
       },
       "locked": {
-        "lastModified": 1795187345,
-        "narHash": "sha256-5ncfNXhwirKE2EKvq5srtuNF4j0V9+6XiRI0CqGcFtQ=",
+        "lastModified": 1795540720,
+        "narHash": "sha256-I4XtLHtuQa4roY8uky/9PqPSpm5sqt6uWkmY5eRxzN0=",
         "owner": "nix-community",
         "repo": "fenix",
-        "rev": "ea745d6a7730c73bb5e0c028818240234e7bda05",
+        "rev": "c0e82cad53833b053f4e1ec2c596cb3b18f00cbf",
         "type": "github"
       },
       "original": {
@@ -430,11 +430,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794963576,
-        "narHash": "sha256-+CPrP74GDJ63f7bgEFC9Av4hbxc7K9WUNv1ZVRifRe8=",
+        "lastModified": 1795534022,
+        "narHash": "sha256-xkRZ+PcPWaAyf9YrEBszYD5w2S6/Ac2tIfsufzd4dEQ=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "2b13c9cb3aa20653e6f8ee0b7f8331a53ea9b0a9",
+        "rev": "b56bcd042b5e69ad188eca20d9bec1bfbf3dd453",
         "type": "github"
       },
       "original": {
@@ -541,11 +541,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794739050,
-        "narHash": "sha256-PCGNIyAydZcdUXCxEXTjrS1+wWS+k9E+ENqBkUK2Mpg=",
+        "lastModified": 1795345257,
+        "narHash": "sha256-p1dA8lUFQTLJfDI2gaTZQ+CcMKw3nxvyHNbwpVMy2rY=",
         "owner": "Mic92",
         "repo": "nix-index-database",
-        "rev": "9bd074026d6db75b59aae8cd6071b5f2fe27a36c",
+        "rev": "905f3e6f1e78165e79457c0bbe7ec4b885a5fce1",
         "type": "github"
       },
       "original": {
@@ -587,11 +587,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1795085501,
-        "narHash": "sha256-S5keGWzaKpuXo9MNoIC2FfTIuTyTnx8P4NhYJMEsTLI=",
+        "lastModified": 1795234589,
+        "narHash": "sha256-f/VVvxf5RsQgWVhUtefoca5ktVg0DA2bnkMOcmSnozo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "0bb8272318b4ca41bf0edc6224df3e3e3046b70d",
+        "rev": "2786a2a72088ecf32aea5b3ec52099e6a7cff78f",
         "type": "github"
       },
       "original": {
@@ -609,11 +609,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1795198946,
-        "narHash": "sha256-TLQEd6V5rMobx9ZMutHwkXfzKdop3rTQKJo0bToyVjo=",
+        "lastModified": 1795593831,
+        "narHash": "sha256-pALZX5VYfcaWd+fa8BSZ160sGLWxjavbkFk0vAQ4S80=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "fff99871b1032711df813e88b9163af38d75c61a",
+        "rev": "0f388f88acc990becbcef115bcfedd5ef581abdc",
         "type": "github"
       },
       "original": {
@@ -696,11 +696,11 @@
     "rust-analyzer-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1795098625,
-        "narHash": "sha256-fu0a0Rp87IfJuB/9m+4HQ+zEEaGUjk4u8+fyiOx1+SE=",
+        "lastModified": 1795455634,
+        "narHash": "sha256-dQs68Zn+7G1CX+Z40TmtPCIfw3fpfYEuZ90EqiZWIaE=",
         "owner": "rust-lang",
         "repo": "rust-analyzer",
-        "rev": "aa198229289901e5718e7c0a8d4115638cc1900c",
+        "rev": "9c74e78e01d7cd31663f4ecf71e65b1cc4b9ccb8",
         "type": "github"
       },
       "original": {
@@ -940,11 +940,11 @@
     "yt-dlp-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1795132744,
-        "narHash": "sha256-18HGOUwkhdGuZtHrlHWzp9ST7mPwKQyuzqQgtXAook0=",
+        "lastModified": 1795543628,
+        "narHash": "sha256-nQdQm48lsICquIz+L1wkmWFn8fPLhW08coJIozQvgxM=",
         "owner": "yt-dlp",
         "repo": "yt-dlp",
-        "rev": "4adbf698d9a7d79d67a7d11669d04efde3722951",
+        "rev": "da452a569fb3d04091468d920f9b9e68512e0373",
         "type": "github"
       },
       "original": {
